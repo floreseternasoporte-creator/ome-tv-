@@ -461,17 +461,14 @@
     /* Controles y swipe */
     .video-controls {
       position: fixed;
-      bottom: 20px;
-      left: 50%;
-      transform: translateX(-50%);
+      top: calc(16px + env(safe-area-inset-top));
+      left: calc(16px + env(safe-area-inset-left));
       display: flex;
-      gap: 16px;
+      gap: 12px;
       z-index: 1100;
-      background: rgba(22, 24, 28, 0.8);
-      padding: 12px 20px;
-      border-radius: 9999px;
-      border: 1px solid var(--border-color);
-      backdrop-filter: blur(12px);
+      background: transparent;
+      padding: 0;
+      border: none;
     }
     .control-btn {
       width: 44px;
@@ -496,7 +493,7 @@
       position: fixed;
       left: 50%;
       transform: translateX(-50%);
-      bottom: 92px;
+      bottom: 14px;
       width: min(500px, calc(100vw - 20px));
       background: rgba(22, 24, 28, 0.75);
       border: 1px solid var(--border-color);
@@ -630,8 +627,9 @@
       width: 100%; 
       height: 100%;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: center;
+      padding-top: 22%;
       color: #fff;
       background: rgba(0, 0, 0, 0.45);
       z-index: 99;
@@ -1866,10 +1864,6 @@
         <div class="video-container">
           <div class="local-video">
             <video id="localVideo" autoplay playsinline muted></video>
-            <div class="camera-offline" id="localCameraOffline">
-              <i class="fa-solid fa-video-slash"></i>
-              <p>Cámara Offline</p>
-            </div>
           </div>
         </div>
         <div class="video-container">
@@ -1893,9 +1887,6 @@
         <div class="video-controls">
           <div class="control-btn" onclick="toggleAudio()">
             <i class="fa-solid fa-microphone-slash" id="micIcon"></i>
-          </div>
-          <div class="control-btn" onclick="toggleVideo()">
-            <i class="fa-solid fa-video-slash" id="videoIcon"></i>
           </div>
         </div>
 
@@ -3090,7 +3081,10 @@
     }
 
     async function sendChatMessage(overrideText = '', isEmoji = false) {
-      if(!currentCallId || !currentUser) return;
+      if(!currentCallId || !currentUser) {
+        if(!overrideText) alert('Aún no estás conectado con otro usuario.');
+        return;
+      }
       const input = document.getElementById('chatInput');
       const raw = overrideText || (input ? input.value : '');
       const text = raw.trim();
@@ -3102,8 +3096,13 @@
         createdAt: firebase.database.ServerValue.TIMESTAMP,
         expiresAt: Date.now() + 60000
       };
-      await database.ref(`calls/${currentCallId}/messages`).push(payload);
-      if(input && !overrideText) input.value = '';
+      try {
+        await database.ref(`calls/${currentCallId}/messages`).push(payload);
+        if(input && !overrideText) input.value = '';
+      } catch (err) {
+        console.error('Error enviando mensaje:', err);
+        if(!overrideText) alert('No se pudo enviar el mensaje');
+      }
     }
 
     function autoNextPartner(reason = 'auto') {
@@ -3625,11 +3624,16 @@
         }
       });
 
+      const callStartedAt = Date.now();
       currentPresenceRef = database.ref(`calls/${callId}/presence`);
       currentPresenceRef.on('value', snap => {
+        if(currentCallId !== callId) return;
         const pres = snap.val() || {};
         const count = Object.keys(pres).length;
-        if(count < 2){
+        const iceState = peerConnection?.iceConnectionState;
+        const isConnected = iceState === 'connected' || iceState === 'completed';
+        const graceDone = (Date.now() - callStartedAt) > 8000;
+        if(count < 2 && (isConnected || graceDone)){
           autoNextPartner('peer-left');
         }
       });
@@ -3656,23 +3660,6 @@
       localStream.getAudioTracks().forEach(track => track.enabled = !track.enabled);
       document.getElementById('micIcon').classList.toggle('fa-microphone-slash');
       document.getElementById('micIcon').classList.toggle('fa-microphone');
-    }
-    function toggleVideo(){
-      if(!localStream) return;
-      const videoTrack = localStream.getVideoTracks()[0];
-      if(videoTrack) {
-        videoTrack.enabled = !videoTrack.enabled;
-        document.getElementById('videoIcon').classList.toggle('fa-video-slash');
-        document.getElementById('videoIcon').classList.toggle('fa-video');
-        
-        // Mostrar/ocultar indicador de cámara offline
-        const offlineIndicator = document.getElementById('localCameraOffline');
-        if(videoTrack.enabled) {
-          offlineIndicator.classList.remove('active');
-        } else {
-          offlineIndicator.classList.add('active');
-        }
-      }
     }
     function restartCall(){
       autoNextPartner('manual-compat');
