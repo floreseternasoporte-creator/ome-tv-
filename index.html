@@ -491,6 +491,45 @@
       background-color: var(--hover-bg);
       border-color: var(--gray-text);
     }
+
+    .chat-panel {
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 92px;
+      width: min(500px, calc(100vw - 20px));
+      background: rgba(22, 24, 28, 0.75);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 8px;
+      z-index: 1100;
+      backdrop-filter: blur(10px);
+    }
+    .emoji-carousel {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+    .emoji-btn {
+      border: 1px solid var(--border-color);
+      background: #fff;
+      border-radius: 999px;
+      min-width: 36px;
+      height: 36px;
+      font-size: 18px;
+      cursor: pointer;
+    }
+    .chat-input-row { display:flex; gap:8px; }
+    #chatInput {
+      flex:1; border-radius:10px; border:1px solid var(--border-color);
+      padding:8px 10px;
+    }
+    #sendChatBtn {
+      border:none; border-radius:10px; padding:8px 12px; background:var(--google-blue); color:#fff; cursor:pointer;
+    }
+    .chat-messages { max-height:90px; overflow:auto; margin-top:8px; color:#fff; font-size:13px; }
+    .chat-message { margin-bottom:4px; }
     .swipe-hint {
       position: absolute;
       right: 20px;
@@ -1860,9 +1899,15 @@
           <div class="control-btn" onclick="toggleVideo()">
             <i class="fa-solid fa-video-slash" id="videoIcon"></i>
           </div>
-          <div class="control-btn" onclick="restartCall()">
-            <i class="fa-solid fa-arrows-rotate"></i>
+        </div>
+
+        <div class="chat-panel" id="chatPanel">
+          <div class="emoji-carousel" id="emojiCarousel"></div>
+          <div class="chat-input-row">
+            <input id="chatInput" type="text" maxlength="120" placeholder="Escribe un mensaje...">
+            <button type="button" id="sendChatBtn" onclick="sendChatMessage()">Enviar</button>
           </div>
+          <div class="chat-messages" id="chatMessages"></div>
         </div>
         
       </div>
@@ -2157,8 +2202,14 @@
     const database = firebase.database();
 
     auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
-      .then(() => console.log("Persistencia configurada"))
-      .catch(error => console.error("Error configurando persistencia:", error));
+      .then(() => {
+        console.log("Persistencia configurada");
+        authObserverReady = true;
+      })
+      .catch(error => {
+        console.error("Error configurando persistencia:", error);
+        authObserverReady = true;
+      });
 
     /* ====================== VARIABLES GLOBALES ====================== */
     let currentUser = null;
@@ -2426,7 +2477,12 @@
     let pendingAvatarDataUrl = '';
     let remoteUidGlobal = null; // Para el UID remoto
     let speechRecognition = null;
+    let currentCallMessagesRef = null;
+    let currentParticipantsRef = null;
+    let currentPresenceRef = null;
+    let reconnectingInProgress = false;
     let isListening = false;
+    let authObserverReady = false;
     let offenseCount = 0;
     
     // Lista de palabras ofensivas - se puede expandir
@@ -2439,6 +2495,7 @@
     ];
     
     const OFFENSE_THRESHOLD = 3; // Número de ofensas antes del bloqueo
+    const QUICK_EMOJIS = ['😀','😂','😍','😎','🔥','👍','👏','😮','🥳','💯','👋','❤️'];
     const BLOCK_DURATION_DAYS = 3;
 
     const configuration = {
@@ -2550,6 +2607,7 @@
         document.querySelector('.account-status-icon').style.display = 'flex';
         document.querySelector('.report-icon').style.display = 'flex';
         
+        initEmojiCarousel();
         startLocalStream();
         showConnecting();
         startMatching();
@@ -2719,7 +2777,9 @@
       } else {
         currentUser = null;
         currentProfile = null;
-        goToScreen('loginScreen');
+        if(authObserverReady) {
+          goToScreen('loginScreen');
+        }
       }
     });
 
@@ -2991,6 +3051,101 @@
         .catch(error => console.error('Error detectando país:', error));
     }
 
+
+    function initEmojiCarousel() {
+      const wrap = document.getElementById('emojiCarousel');
+      if(!wrap || wrap.childElementCount) return;
+      QUICK_EMOJIS.forEach(emoji => {
+        const b = document.createElement('button');
+        b.className = 'emoji-btn';
+        b.type = 'button';
+        b.textContent = emoji;
+        b.onclick = () => sendChatMessage(emoji, true);
+        wrap.appendChild(b);
+      });
+    }
+
+    function renderChatMessage(msg, isMine) {
+      const box = document.getElementById('chatMessages');
+      if(!box) return;
+      const el = document.createElement('div');
+      el.className = 'chat-message';
+      const who = isMine ? 'Tú' : 'Otro';
+      el.textContent = `${who}: ${msg.text}`;
+      box.appendChild(el);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function startMessageCleanup(callId){
+      if(window.messageCleanupTimer) clearInterval(window.messageCleanupTimer);
+      window.messageCleanupTimer = setInterval(async () => {
+        if(!callId) return;
+        const snap = await database.ref(`calls/${callId}/messages`).once('value');
+        const all = snap.val() || {};
+        const now = Date.now();
+        Object.entries(all).forEach(([k,v]) => {
+          if(v.expiresAt && v.expiresAt < now){
+            database.ref(`calls/${callId}/messages/${k}`).remove();
+          }
+        });
+      }, 15000);
+    }
+
+    async function sendChatMessage(overrideText = '', isEmoji = false) {
+      if(!currentCallId || !currentUser) return;
+      const input = document.getElementById('chatInput');
+      const raw = overrideText || (input ? input.value : '');
+      const text = raw.trim();
+      if(!text) return;
+      const payload = {
+        senderUid: currentUser.uid,
+        text,
+        type: isEmoji ? 'emoji' : 'text',
+        createdAt: firebase.database.ServerValue.TIMESTAMP,
+        expiresAt: Date.now() + 60000
+      };
+      await database.ref(`calls/${currentCallId}/messages`).push(payload);
+      if(input && !overrideText) input.value = '';
+    }
+
+    function autoNextPartner(reason = 'auto') {
+      if(reconnectingInProgress) return;
+      reconnectingInProgress = true;
+      console.log('🔁 Buscando nuevo usuario automáticamente:', reason);
+      showConnecting();
+      offenseCount = 0;
+      cleanupCurrentCall(true).finally(() => {
+        setTimeout(() => {
+          reconnectingInProgress = false;
+          findRandomUser();
+        }, 1200);
+      });
+    }
+
+    async function cleanupCurrentCall(removeCallNode = false) {
+      try {
+        if(peerConnection){ peerConnection.close(); }
+      } catch(e) {}
+      peerConnection = null;
+      remoteStream = null;
+      document.getElementById('remoteVideo').srcObject = null;
+      if(currentCallMessagesRef){ currentCallMessagesRef.off(); currentCallMessagesRef = null; }
+      if(currentParticipantsRef){ currentParticipantsRef.off(); currentParticipantsRef = null; }
+      if(currentPresenceRef){ currentPresenceRef.off(); currentPresenceRef = null; }
+      if(window.messageCleanupTimer){ clearInterval(window.messageCleanupTimer); window.messageCleanupTimer = null; }
+      const chatBox = document.getElementById('chatMessages');
+      if(chatBox) chatBox.innerHTML = '';
+
+      if(currentCallId){
+        const callIdToCleanup = currentCallId;
+        currentCallId = null;
+        if(removeCallNode){
+          await database.ref('calls/' + callIdToCleanup).remove().catch(()=>{});
+        }
+      }
+      hideConnecting();
+    }
+
     /* ====================== PRESENCIA Y MATCHING ====================== */
     async function startMatching(){
       if(!currentUser || !currentProfile || !currentProfile.username || !currentProfile.avatar_url || !currentProfile.country || !currentProfile.birthDate){
@@ -2999,6 +3154,7 @@
       }
       
       console.log("✅ Marcando usuario como online:", currentUser.uid);
+      window.isInVideoSession = true;
       const userRef = database.ref('onlineUsers/' + currentUser.uid);
       await userRef.set({
         username: currentProfile.username,
@@ -3043,6 +3199,8 @@
         caller: currentUser.uid,
         callee: remoteUid
       });
+      await database.ref(`calls/${callId}/presence/${currentUser.uid}`).set(true);
+      database.ref(`calls/${callId}/presence/${currentUser.uid}`).onDisconnect().remove();
       
       startWebRTC(callId, true);
     }
@@ -3053,6 +3211,8 @@
       const { caller, callee } = callData.participants;
       if(callee === currentUser?.uid){
         currentCallId = callId;
+        database.ref(`calls/${callId}/presence/${currentUser.uid}`).set(true);
+        database.ref(`calls/${callId}/presence/${currentUser.uid}`).onDisconnect().remove();
         startWebRTC(callId, false);
       }
     });
@@ -3336,9 +3496,10 @@
         if(peerConnection.iceConnectionState === "connected" || peerConnection.iceConnectionState === "completed"){
           indicator.style.backgroundColor = "green";
           console.log("✅ Conexión establecida");
-        } else if(peerConnection.iceConnectionState === "disconnected" || peerConnection.iceConnectionState === "failed"){
+        } else if(peerConnection.iceConnectionState === "disconnected" || peerConnection.iceConnectionState === "failed" || peerConnection.iceConnectionState === "closed"){
           indicator.style.backgroundColor = "red";
           console.log("❌ Conexión fallida o desconectada");
+          autoNextPartner('ice-' + peerConnection.iceConnectionState);
         } else {
           indicator.style.backgroundColor = "orange";
         }
@@ -3445,6 +3606,36 @@
           }
         });
       });
+
+      currentCallMessagesRef = database.ref(`calls/${callId}/messages`);
+      currentCallMessagesRef.on('child_added', snap => {
+        const msg = snap.val();
+        if(!msg || !msg.text) return;
+        if(msg.expiresAt && msg.expiresAt < Date.now()){
+          snap.ref.remove();
+          return;
+        }
+        renderChatMessage(msg, msg.senderUid === currentUser?.uid);
+      });
+      startMessageCleanup(callId);
+
+      currentParticipantsRef = database.ref(`calls/${callId}/participants`);
+      currentParticipantsRef.on('value', snap => {
+        const parts = snap.val();
+        if(!parts || !parts.caller || !parts.callee){
+          autoNextPartner('participants-missing');
+        }
+      });
+
+      currentPresenceRef = database.ref(`calls/${callId}/presence`);
+      currentPresenceRef.on('value', snap => {
+        const pres = snap.val() || {};
+        const count = Object.keys(pres).length;
+        if(count < 2){
+          autoNextPartner('peer-left');
+        }
+      });
+
     }
     async function createOffer(callId){
       try {
@@ -3486,24 +3677,25 @@
       }
     }
     function restartCall(){
-      showConnecting();
-      // Reiniciar contador de ofensas al cambiar de usuario
-      offenseCount = 0;
-      
-      setTimeout(() => {
-        hideConnecting();
-        if(peerConnection) peerConnection.close();
-        peerConnection = null;
-        remoteStream = null;
-        document.getElementById('remoteVideo').srcObject = null;
-        if(currentCallId){
-          database.ref('calls/' + currentCallId).remove();
-          currentCallId = null;
-        }
-        findRandomUser();
-      }, 2000);
+      autoNextPartner('manual-compat');
     }
     
+    window.addEventListener('beforeunload', () => {
+      if(currentUser){
+        database.ref(`onlineUsers/${currentUser.uid}`).remove();
+      }
+      if(currentCallId){
+        database.ref(`calls/${currentCallId}`).remove();
+      }
+    });
+
+    document.getElementById('chatInput')?.addEventListener('keydown', function(e){
+      if(e.key === 'Enter'){
+        e.preventDefault();
+        sendChatMessage();
+      }
+    });
+
     document.getElementById('registerPassword').addEventListener('focus', () => {
       document.getElementById('passwordMonkey').style.display = 'block';
     });
