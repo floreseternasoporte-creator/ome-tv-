@@ -1788,7 +1788,7 @@
               <input type="text" id="username" placeholder="Elige un nombre de usuario" required>
             </div>
           </div>
-          <button type="button" class="btn btn-primary mt-4" onclick="saveProfileAndContinue()">Continuar</button>
+          <button type="button" id="profileContinueBtn" class="btn btn-primary mt-4" onclick="saveProfileAndContinue()">Continuar</button>
         </div>
       </div>
     </div>
@@ -2421,6 +2421,9 @@
     let peerConnection = null;
     let currentCallId = null;
     let userPhotos = [null, null, null, null, null, null];
+    let isSavingProfile = false;
+    let isAvatarProcessing = false;
+    let pendingAvatarDataUrl = '';
     let remoteUidGlobal = null; // Para el UID remoto
     let speechRecognition = null;
     let isListening = false;
@@ -2726,17 +2729,62 @@
       loginUser();
     });
 
-    document.getElementById('avatarInput').addEventListener('change', function(e){
+    async function compressImageFile(file, maxSize = 512, quality = 0.78) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          const img = new Image();
+          img.onload = function() {
+            const canvas = document.createElement('canvas');
+            let { width, height } = img;
+            if(width > height && width > maxSize){
+              height = Math.round((height * maxSize) / width);
+              width = maxSize;
+            } else if(height >= width && height > maxSize){
+              width = Math.round((width * maxSize) / height);
+              height = maxSize;
+            }
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            resolve(canvas.toDataURL('image/jpeg', quality));
+          };
+          img.onerror = reject;
+          img.src = event.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    document.getElementById('avatarInput').addEventListener('change', async function(e){
       const file = e.target.files[0];
       if(file){
-        const reader = new FileReader();
-        reader.onload = function(event){
+        const continueBtn = document.getElementById('profileContinueBtn');
+        try {
+          isAvatarProcessing = true;
+          if(continueBtn){
+            continueBtn.disabled = true;
+            continueBtn.textContent = 'Procesando foto...';
+          }
+
+          pendingAvatarDataUrl = await compressImageFile(file);
           const avatarPreview = document.getElementById('avatarPreview');
-          avatarPreview.src = event.target.result;
+          avatarPreview.src = pendingAvatarDataUrl;
           avatarPreview.style.display = 'block';
           document.querySelector('.avatar-upload i').style.display = 'none';
+        } catch(err) {
+          console.error('Error procesando avatar:', err);
+          pendingAvatarDataUrl = '';
+          alert('No se pudo procesar la imagen. Intenta con otra foto.');
+        } finally {
+          isAvatarProcessing = false;
+          if(continueBtn){
+            continueBtn.disabled = false;
+            continueBtn.textContent = 'Continuar';
+          }
         }
-        reader.readAsDataURL(file);
       }
     });
     async function updateProfile() {
@@ -2842,11 +2890,19 @@
 
     /* ====================== GUARDAR PERFIL Y CONTINUAR ====================== */
     async function saveProfileAndContinue() {
+      if(isSavingProfile) return;
+
+      const continueBtn = document.getElementById('profileContinueBtn');
       const usernameInput = document.getElementById('username');
       const username = usernameInput ? usernameInput.value.trim() : "";
       
       if(!username || username.length < 2){
         alert("Ingresa un nombre de usuario válido (mínimo 2 caracteres)");
+        return;
+      }
+
+      if(isAvatarProcessing){
+        alert('Espera un momento, todavía se está procesando la foto.');
         return;
       }
       
@@ -2856,6 +2912,12 @@
       }
       
       try {
+        isSavingProfile = true;
+        if(continueBtn){
+          continueBtn.disabled = true;
+          continueBtn.textContent = 'Guardando...';
+        }
+
         // Crear o actualizar perfil
         const profileData = {
           username: username,
@@ -2872,11 +2934,15 @@
         }
         
         // Manejar avatar
-        const avatarEl = document.getElementById('avatarPreview');
-        if(avatarEl && avatarEl.src && avatarEl.src.startsWith('data:')) {
-          profileData.avatar_url = avatarEl.src;
+        if(pendingAvatarDataUrl && pendingAvatarDataUrl.startsWith('data:')) {
+          profileData.avatar_url = pendingAvatarDataUrl;
         } else {
-          profileData.avatar_url = "https://cdn-icons-png.flaticon.com/512/3237/3237472.png";
+          const avatarEl = document.getElementById('avatarPreview');
+          if(avatarEl && avatarEl.src && avatarEl.src.startsWith('data:')) {
+            profileData.avatar_url = avatarEl.src;
+          } else {
+            profileData.avatar_url = "https://cdn-icons-png.flaticon.com/512/3237/3237472.png";
+          }
         }
         
         console.log("Guardando perfil:", profileData);
@@ -2899,6 +2965,12 @@
       } catch(error) {
         console.error("Error saving profile:", error);
         alert("Error al guardar el perfil: " + error.message);
+      } finally {
+        isSavingProfile = false;
+        if(continueBtn){
+          continueBtn.disabled = false;
+          continueBtn.textContent = 'Continuar';
+        }
       }
     }
 
