@@ -1691,7 +1691,7 @@
       .screen-content {
         min-height: 100vh;
         justify-content: flex-start;
-        padding-top: 40px;
+        padding-top: 34px;
       }
 
       .logo {
@@ -3976,6 +3976,9 @@
         alert("No se pudo acceder a la cámara/micrófono. Verifica los permisos.");
         return false;
       }
+      localStream = null;
+      const localVideo = document.getElementById('localVideo');
+      if(localVideo) localVideo.srcObject = null;
     }
 
     function stopLocalStream(){
