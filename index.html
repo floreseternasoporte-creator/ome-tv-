@@ -252,6 +252,7 @@
       .screen-content {
         padding: 64px 20px 30px;
         justify-content: flex-start;
+        padding-top: 62px;
       }
 
       #loginScreen .screen-content,
@@ -2760,6 +2761,9 @@
       }
       // Si es videoCallScreen, iniciamos streaming + matching
       if(screenId === 'videoCallScreen'){
+        if(window.isInVideoSession && currentCallId){
+          return;
+        }
         // Mostrar iconos de moderación solo en videollamada
         document.querySelector('.account-status-icon').style.display = 'flex';
         document.querySelector('.report-icon').style.display = 'flex';
@@ -3357,7 +3361,9 @@
         const callIdToCleanup = currentCallId;
         currentCallId = null;
 
-        await database.ref(`calls/${callIdToCleanup}/presence/${currentUser?.uid || ''}`).remove().catch(()=>{});
+        if(currentUser?.uid){
+          await database.ref(`calls/${callIdToCleanup}/presence/${currentUser.uid}`).remove().catch(()=>{});
+        }
 
         if(removeCallNode){
           const partsSnap = await database.ref(`calls/${callIdToCleanup}/participants`).once('value').catch(()=>null);
@@ -3370,6 +3376,7 @@
         }
       }
 
+      pendingChatQueue = [];
       remoteUidGlobal = null;
       pendingIncomingCallId = null;
       unregisterCallsListener();
@@ -3441,6 +3448,8 @@
         const callData = snapshot.val();
         if(!callData || !callData.participants) return;
         const { caller, callee } = callData.participants;
+        const createdAt = callData.createdAt || 0;
+        if(createdAt && (Date.now() - createdAt) > 45000) return;
         if(callee === currentUser?.uid){
           if(!window.isInVideoSession) return;
           if(currentCallId && currentCallId !== callId) return;
