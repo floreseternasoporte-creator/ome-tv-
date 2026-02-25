@@ -1958,148 +1958,151 @@
 
 
     .settings-screen-content {
-      width: min(100%, 560px);
-      margin: 0 auto;
-      padding: 88px 20px 36px;
+      width: 100%;
+      max-width: none;
+      min-height: 100vh;
+      margin: 0;
+      padding: calc(72px + env(safe-area-inset-top)) 16px 28px;
+      background: linear-gradient(180deg, #0a0a0d 0%, #111216 14%, #f4f5f7 40%);
+    }
+
+    .screen-topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1200;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: calc(12px + env(safe-area-inset-top)) 16px 12px;
+      background: linear-gradient(180deg, rgba(5,5,7,0.94), rgba(5,5,7,0.75));
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .screen-topbar h2 {
+      color: #fff;
+      font-size: 18px;
+      margin: 0;
+      letter-spacing: 0.2px;
+    }
+
+    .screen-close-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid rgba(255,255,255,0.24);
+      background: rgba(255,255,255,0.12);
+      color: #fff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
     }
 
     .settings-hero {
-      background: linear-gradient(140deg, #060607 0%, #15161c 68%, #2c2e35 100%);
+      background: linear-gradient(136deg, #080809 0%, #17181e 60%, #22242b 100%);
       color: #fff;
-      border-radius: 22px;
+      border-radius: 20px;
       padding: 20px;
-      margin-bottom: 16px;
-      box-shadow: 0 12px 28px rgba(2, 6, 23, 0.36);
+      margin-bottom: 14px;
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 14px 26px rgba(2, 6, 23, 0.42);
     }
 
-    .settings-hero h2 {
-      font-size: 21px;
-      margin-bottom: 8px;
-    }
+    .settings-hero h3 { font-size: 22px; margin-bottom: 8px; }
+    .settings-hero p { color: rgba(255,255,255,0.82); font-size: 13px; }
 
-    .settings-hero p {
-      color: rgba(255,255,255,0.8);
-      font-size: 13px;
-    }
-
-    .settings-list {
-      display: grid;
-      gap: 10px;
-    }
+    .settings-list { display: grid; gap: 10px; }
 
     .settings-item {
-      border: 1px solid var(--border-color);
+      width: 100%;
+      border: 1px solid #e4e7ed;
       border-radius: 14px;
-      background: var(--card-bg);
+      background: #fff;
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 14px;
       cursor: pointer;
+      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
     }
 
-    .settings-item-left {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
+    .settings-item-left { display: flex; align-items: center; gap: 12px; }
     .settings-item-left i {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      background: #fff1f2;
-      color: var(--primary-color);
+      width: 36px; height: 36px; border-radius: 50%;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: #fff1f2; color: var(--primary-color);
     }
 
     .profile-summary-card,
     .activity-card,
     .legal-card,
-    .notifications-card {
-      border: 1px solid var(--border-color);
+    .notifications-card,
+    .support-card {
+      border: 1px solid #e3e7ee;
       border-radius: 16px;
-      background: var(--card-bg);
+      background: #fff;
       padding: 16px;
-      margin-bottom: 14px;
-      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.07);
+      margin-bottom: 12px;
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.09);
     }
 
-    .profile-header {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 14px;
+    .profile-header { display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+    .profile-header img { width:68px; height:68px; border-radius:50%; object-fit:cover; border:3px solid #fff; box-shadow: 0 4px 14px rgba(0,0,0,0.2); }
+
+    .kpi-grid { display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .kpi { border-radius:12px; border:1px solid #eceff3; padding:10px; background:#fafafa; }
+    .kpi strong { display:block; font-size:20px; margin-top:4px; }
+
+    .activity-tabs { display:flex; gap:8px; overflow-x:auto; padding-bottom:6px; margin-bottom:10px; }
+    .activity-tab {
+      border: 1px solid #d8dbe3;
+      background: #fff;
+      color: #1f2937;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 12px;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+    .activity-tab.active {
+      background: #101114;
+      color: #fff;
+      border-color: #101114;
     }
 
-    .profile-header img {
-      width: 64px;
-      height: 64px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 3px solid #fff;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.16);
+    .activity-bars { display:grid; gap:10px; margin: 8px 0 12px; }
+    .activity-bar-row { display:grid; gap:6px; }
+    .activity-bar-track {
+      width: 100%;
+      height: 10px;
+      border-radius: 999px;
+      background: #eceff4;
+      overflow: hidden;
+    }
+    .activity-bar-fill {
+      height: 100%;
+      width: 0;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #cd040b, #ef4444);
+      transition: width .35s ease;
     }
 
-    .kpi-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-    }
-
-    .kpi {
-      border-radius: 12px;
-      border: 1px solid #eceff3;
-      padding: 10px;
-      background: #fafafa;
-    }
-
-    .kpi strong {
-      display: block;
-      font-size: 20px;
-      margin-top: 4px;
-    }
-
-    .country-pill {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-size: 13px;
-      border-radius: 10px;
-      padding: 8px 10px;
-      background: #f8fafc;
-      margin-bottom: 8px;
-      border: 1px solid #edf2f7;
-    }
-
-    .activity-live {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: #059669;
-      font-size: 13px;
-      margin-bottom: 10px;
-    }
-
-    .activity-live::before {
-      content: "";
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      background: #10b981;
-      box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.14);
-    }
+    .country-pill { display:flex; align-items:center; justify-content:space-between; font-size:13px; border-radius:10px; padding:8px 10px; background:#f8fafc; margin-bottom:8px; border:1px solid #edf2f7; }
+    .activity-live { display:flex; align-items:center; gap:8px; color:#059669; font-size:13px; margin-bottom:10px; }
+    .activity-live::before { content:""; width:8px; height:8px; border-radius:50%; background:#10b981; box-shadow: 0 0 0 6px rgba(16,185,129,.14); }
 
     .legal-text {
-      max-height: 52vh;
+      max-height: 56vh;
       overflow-y: auto;
-      line-height: 1.6;
+      line-height: 1.62;
       color: var(--google-text-secondary);
       font-size: 13px;
       padding-right: 4px;
     }
+
   </style>
 </head>
 <body>
@@ -2134,14 +2137,13 @@
        data-full-width-responsive="true"></ins>
 
   <div class="screen" id="supportScreen">
-    <div class="support-container">
-      <div class="support-header">
-        <h2>Centro de Ayuda</h2>
-        <button class="btn-outline" onclick="goToScreen('settingsScreen')" style="border:none;background:none;">
-          <i class="fa-solid fa-times" style="font-size: 24px;"></i>
-        </button>
-      </div>
-      <div class="support-content">
+    <div class="screen-topbar">
+      <h2>Soporte</h2>
+      <button class="screen-close-btn" onclick="goToScreen('settingsScreen')"><i class="fa-solid fa-times"></i></button>
+    </div>
+    <div class="settings-screen-content">
+      <div class="support-card">
+        <p style="margin-bottom:10px;color:var(--gray-text);">Describe tu problema. Te responderemos y la respuesta llegará a Notificaciones.</p>
         <div class="incidence-list" id="incidenceList"></div>
         <button class="btn-new-incidence" onclick="toggleNewIncidenceForm()">
           <i class="fa-solid fa-plus"></i> Nueva Consulta
@@ -2641,12 +2643,16 @@
     </div>
   </div>
 
-  <!-- NUEVA PANTALLA: SOPORTE / INCIDENCIAS -->
+  <!-- SECCIONES DE CONFIGURACIÓN / PERFIL / ACTIVIDAD / NOTIFICACIONES / LEGAL -->
   <div class="screen" id="settingsScreen">
+    <div class="screen-topbar">
+      <h2>Configuración</h2>
+      <button class="screen-close-btn" onclick="goToScreen('videoCallScreen')"><i class="fa-solid fa-times"></i></button>
+    </div>
     <div class="settings-screen-content">
       <div class="settings-hero">
-        <h2>Configuración</h2>
-        <p>Gestiona tu experiencia de videochat y el estado de tu cuenta.</p>
+        <h3>Panel Verizon</h3>
+        <p>Control total de tu cuenta, actividad, soporte y legal desde pantalla completa.</p>
       </div>
       <div class="settings-list">
         <button class="settings-item" onclick="goToScreen('activityScreen')">
@@ -2665,15 +2671,15 @@
           <span class="settings-item-left"><i class="fa-solid fa-scale-balanced"></i><span>Legal</span></span>
           <i class="fa-solid fa-chevron-right"></i>
         </button>
-        <button class="settings-item" onclick="goToScreen('videoCallScreen')">
-          <span class="settings-item-left"><i class="fa-solid fa-video"></i><span>Volver al videochat</span></span>
-          <i class="fa-solid fa-chevron-right"></i>
-        </button>
       </div>
     </div>
   </div>
 
   <div class="screen" id="profileScreen">
+    <div class="screen-topbar">
+      <h2>Perfil</h2>
+      <button class="screen-close-btn" onclick="goToScreen('videoCallScreen')"><i class="fa-solid fa-times"></i></button>
+    </div>
     <div class="settings-screen-content">
       <div class="profile-summary-card">
         <div class="profile-header">
@@ -2690,42 +2696,55 @@
           <div class="kpi"><span>Reportes</span><strong id="profileReports">0</strong></div>
         </div>
       </div>
-      <button class="btn btn-outline" onclick="goToScreen('videoCallScreen')">Volver</button>
     </div>
   </div>
 
   <div class="screen" id="activityScreen">
+    <div class="screen-topbar">
+      <h2>Tu actividad</h2>
+      <button class="screen-close-btn" onclick="goToScreen('settingsScreen')"><i class="fa-solid fa-times"></i></button>
+    </div>
     <div class="settings-screen-content">
       <div class="activity-card">
-        <h3>Tu actividad</h3>
         <div class="activity-live">Actualizando en tiempo real</div>
+        <div class="activity-tabs">
+          <button class="activity-tab active" data-metric="connections" onclick="selectActivityMetric('connections')">Conexiones</button>
+          <button class="activity-tab" data-metric="minutes" onclick="selectActivityMetric('minutes')">Minutos</button>
+          <button class="activity-tab" data-metric="interactions" onclick="selectActivityMetric('interactions')">Interacción</button>
+        </div>
         <div class="kpi-grid" style="margin-bottom:12px;">
           <div class="kpi"><span>Usuarios conectados</span><strong id="activityConnectionsCount">0</strong></div>
           <div class="kpi"><span>Tiempo total</span><strong id="activityMinutes">0m</strong></div>
         </div>
+        <div class="activity-bars" id="activityBars"></div>
         <h4 style="margin-bottom:8px;">Países con los que has conectado</h4>
         <div id="activityCountryList"></div>
         <h4 style="margin:12px 0 8px;">Nivel de interacción</h4>
         <p id="activityInteractionLabel">Aún sin suficiente información.</p>
       </div>
-      <button class="btn btn-outline" onclick="goToScreen('settingsScreen')">Volver</button>
     </div>
   </div>
 
   <div class="screen" id="notificationsScreen">
+    <div class="screen-topbar">
+      <h2>Notificaciones</h2>
+      <button class="screen-close-btn" onclick="goToScreen('settingsScreen')"><i class="fa-solid fa-times"></i></button>
+    </div>
     <div class="settings-screen-content">
       <div class="notifications-card">
-        <h3>Notificaciones</h3>
         <p style="margin:8px 0 12px;">Aquí llegarán notificaciones del sistema y respuestas de soporte.</p>
         <div id="notificationsList">
           <p style="color:var(--gray-text);">Sin notificaciones por ahora.</p>
         </div>
       </div>
-      <button class="btn btn-outline" onclick="goToScreen('settingsScreen')">Volver</button>
     </div>
   </div>
 
   <div class="screen" id="legalScreen">
+    <div class="screen-topbar">
+      <h2>Legal</h2>
+      <button class="screen-close-btn" onclick="goToScreen('settingsScreen')"><i class="fa-solid fa-times"></i></button>
+    </div>
     <div class="settings-screen-content">
       <div class="legal-card">
         <h3>Términos de servicio</h3>
@@ -5291,6 +5310,36 @@
       renderRealtimeCards();
     }
 
+    function selectActivityMetric(metric) {
+      document.querySelectorAll('.activity-tab').forEach(tab => {
+        tab.classList.toggle('active', tab.dataset.metric === metric);
+      });
+      renderActivityBars(metric);
+    }
+
+    function renderActivityBars(metric = 'connections') {
+      const host = document.getElementById('activityBars');
+      if(!host) return;
+      const values = {
+        connections: Number(profileStats.connections || 0),
+        minutes: Number(profileStats.minutes || 0),
+        interactions: Number(profileStats.interactions || 0)
+      };
+      const max = Math.max(1, values.connections, values.minutes, values.interactions);
+      const rows = [
+        ['Conexiones', values.connections],
+        ['Minutos', values.minutes],
+        ['Interacciones', values.interactions]
+      ];
+      host.innerHTML = rows.map(([label,val]) => {
+        const width = Math.max(6, Math.round((val / max) * 100));
+        const current = (metric === 'connections' && label === 'Conexiones') ||
+                        (metric === 'minutes' && label === 'Minutos') ||
+                        (metric === 'interactions' && label === 'Interacciones');
+        return `<div class="activity-bar-row"><div style="display:flex;justify-content:space-between;font-size:12px;"><span>${label}</span><strong>${val}</strong></div><div class="activity-bar-track"><div class="activity-bar-fill" style="width:${current ? width : Math.max(4, Math.round(width*0.72))}%"></div></div></div>`;
+      }).join('');
+    }
+
     function renderRealtimeCards() {
       document.getElementById('profileTotalConnections').textContent = String(profileStats.connections || 0);
       document.getElementById('profileTotalInteractions').textContent = String(profileStats.interactions || 0);
@@ -5307,6 +5356,8 @@
       } else {
         countryList.innerHTML = countries.slice(0,6).map(([country,count]) => `<div class="country-pill"><span>${country}</span><strong>${count}</strong></div>`).join('');
       }
+
+      renderActivityBars(document.querySelector('.activity-tab.active')?.dataset.metric || 'connections');
 
       const interactionLabel = document.getElementById('activityInteractionLabel');
       if((profileStats.interactions || 0) >= 20) {
