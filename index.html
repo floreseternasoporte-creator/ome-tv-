@@ -453,7 +453,7 @@
       pointer-events: none;
     }
     .auth-terms {
-      margin-top: 18px;
+      margin-top: auto;
       font-size: 12px;
       line-height: 1.5;
       color: var(--google-text-secondary);
@@ -463,6 +463,70 @@
       color: #cd040b;
       text-decoration: underline;
       font-weight: 600;
+    }
+
+    #authMethodScreen .screen-content {
+      justify-content: flex-start;
+      padding-top: clamp(72px, 10vh, 110px);
+      padding-bottom: 20px;
+    }
+
+    .auth-method-title {
+      font-size: 13px;
+      color: var(--google-text-secondary);
+      margin-bottom: 12px;
+      text-align: left;
+    }
+
+    .auth-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 14px;
+      padding: 4px;
+      border-radius: 14px;
+      background: #f3f4f6;
+    }
+
+    .auth-tab-btn {
+      border: none;
+      border-radius: 10px;
+      padding: 10px 8px;
+      font-size: 14px;
+      font-weight: 700;
+      background: transparent;
+      color: var(--google-text-secondary);
+      cursor: pointer;
+    }
+
+    .auth-tab-btn.active {
+      background: #fff;
+      color: var(--google-text);
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.08);
+    }
+
+
+    #loginScreen .screen-content,
+    #registerScreen .screen-content {
+      justify-content: flex-start;
+      padding-top: clamp(76px, 11vh, 120px);
+    }
+
+    #loginScreen form,
+    #registerScreen form {
+      margin-top: 16px;
+    }
+
+    #loginScreen .links {
+      margin-top: auto;
+      padding-top: 14px;
+      margin-bottom: 0;
+    }
+
+    @media (max-width: 768px) {
+      #authMethodScreen .screen-content {
+        padding-top: 56px;
+      }
     }
     .links {
       margin: 20px 0;
@@ -1912,7 +1976,7 @@
         <div class="logo">
           <h1>BealyChat</h1>
         </div>
-        <p style="font-size:13px;color:var(--google-text-secondary);margin-bottom:12px;">Elige cómo quieres continuar</p>
+        <p class="auth-method-title">Elige cómo quieres continuar</p>
         <div class="auth-methods">
           <button type="button" class="auth-method-btn email" onclick="goToScreen('loginScreen')">
             <i class="fa-solid fa-envelope"></i>
@@ -1936,6 +2000,10 @@
         <div class="logo">
           <h1>BealyChat</h1>
         </div>
+        <div class="auth-tabs">
+          <button type="button" class="auth-tab-btn active">Iniciar sesión</button>
+          <button type="button" class="auth-tab-btn" onclick="goToScreen('registerScreen')">Registrarse</button>
+        </div>
         <form id="loginForm">
           <div class="form-group">
             <label for="email">Correo electrónico</label>
@@ -1957,9 +2025,6 @@
           <a href="#" onclick="toggleForm('forgotPasswordForm')">¿Olvidaste tu contraseña?</a>
         </div>
 
-        <div>
-          <p>¿No tienes una cuenta? <a href="#" onclick="toggleForm('registerForm')" style="color: var(--secondary-color);">Regístrate</a></p>
-        </div>
       </div>
     </div>
 
@@ -1967,6 +2032,10 @@
       <div class="screen-content">
         <div class="logo">
           <h1>BealyChat</h1>
+        </div>
+        <div class="auth-tabs">
+          <button type="button" class="auth-tab-btn" onclick="goToScreen('loginScreen')">Iniciar sesión</button>
+          <button type="button" class="auth-tab-btn active">Registrarse</button>
         </div>
         <form id="registerForm">
           <div class="form-group">
@@ -2008,9 +2077,6 @@
           <button type="button" class="btn btn-primary" onclick="registerUser()">Registrarse</button>
         </form>
 
-        <div>
-          <p>¿Ya tienes una cuenta? <a href="#" onclick="goToScreen('loginScreen')" style="color: var(--secondary-color);">Inicia sesión</a></p>
-        </div>
       </div>
     </div>
 
@@ -2028,7 +2094,7 @@
             </div>
           </div>
           <button type="button" class="btn btn-primary">Enviar enlace de recuperación</button>
-          <button type="button" class="btn btn-outline mt-3" onclick="goToScreen('authMethodScreen')">Volver</button>
+          <button type="button" class="btn btn-outline mt-3" onclick="goToScreen('authMethodScreen')">Volver al inicio</button>
         </form>
       </div>
     </div>
@@ -4072,6 +4138,9 @@
         alert("No se pudo acceder a la cámara/micrófono. Verifica los permisos.");
         return false;
       }
+      localStream = null;
+      const localVideo = document.getElementById('localVideo');
+      if(localVideo) localVideo.srcObject = null;
     }
 
     function stopLocalStream(){
