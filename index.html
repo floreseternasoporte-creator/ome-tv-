@@ -107,7 +107,9 @@
     }
     /* Íconos de estado de cuenta y reporte estilo Google */
     .account-status-icon,
-    .report-icon {
+    .report-icon,
+    .profile-icon,
+    .config-icon {
       position: fixed;
       width: 48px;
       height: 48px;
@@ -133,16 +135,28 @@
     }
 
     .account-status-icon:hover,
-    .report-icon:hover {
+    .report-icon:hover,
+    .profile-icon:hover,
+    .config-icon:hover {
       background-color: rgba(255, 255, 255, 1);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
       transform: scale(1.05);
     }
 
     .account-status-icon i,
-    .report-icon i {
+    .report-icon i,
+    .profile-icon i,
+    .config-icon i {
       color: var(--google-text);
       font-size: 20px;
+    }
+
+    .profile-icon {
+      top: calc(136px + env(safe-area-inset-top));
+    }
+
+    .config-icon {
+      top: calc(196px + env(safe-area-inset-top));
     }
     .screen {
       width: 100vw;
@@ -1941,6 +1955,151 @@
       color: blue;
       font-size: 14px;
     }
+
+
+    .settings-screen-content {
+      width: min(100%, 560px);
+      margin: 0 auto;
+      padding: 88px 20px 36px;
+    }
+
+    .settings-hero {
+      background: linear-gradient(140deg, #060607 0%, #15161c 68%, #2c2e35 100%);
+      color: #fff;
+      border-radius: 22px;
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: 0 12px 28px rgba(2, 6, 23, 0.36);
+    }
+
+    .settings-hero h2 {
+      font-size: 21px;
+      margin-bottom: 8px;
+    }
+
+    .settings-hero p {
+      color: rgba(255,255,255,0.8);
+      font-size: 13px;
+    }
+
+    .settings-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .settings-item {
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      background: var(--card-bg);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px;
+      cursor: pointer;
+    }
+
+    .settings-item-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .settings-item-left i {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #fff1f2;
+      color: var(--primary-color);
+    }
+
+    .profile-summary-card,
+    .activity-card,
+    .legal-card,
+    .notifications-card {
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      background: var(--card-bg);
+      padding: 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.07);
+    }
+
+    .profile-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .profile-header img {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid #fff;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.16);
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .kpi {
+      border-radius: 12px;
+      border: 1px solid #eceff3;
+      padding: 10px;
+      background: #fafafa;
+    }
+
+    .kpi strong {
+      display: block;
+      font-size: 20px;
+      margin-top: 4px;
+    }
+
+    .country-pill {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      border-radius: 10px;
+      padding: 8px 10px;
+      background: #f8fafc;
+      margin-bottom: 8px;
+      border: 1px solid #edf2f7;
+    }
+
+    .activity-live {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #059669;
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+
+    .activity-live::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.14);
+    }
+
+    .legal-text {
+      max-height: 52vh;
+      overflow-y: auto;
+      line-height: 1.6;
+      color: var(--google-text-secondary);
+      font-size: 13px;
+      padding-right: 4px;
+    }
   </style>
 </head>
 <body>
@@ -1957,6 +2116,14 @@
        style="display: none;">
     <i class="fa-solid fa-flag"></i>
   </div>
+  <div class="profile-icon" onclick="openProfileScreen()"
+       style="display: none;">
+    <i class="fa-solid fa-user"></i>
+  </div>
+  <div class="config-icon" onclick="openConfigScreen()"
+       style="display: none;">
+    <i class="fa-solid fa-gear"></i>
+  </div>
 
   <!-- Google AdSense Ad Unit -->
   <ins class="adsbygoogle"
@@ -1965,6 +2132,33 @@
        data-ad-slot="1234567890"
        data-ad-format="auto"
        data-full-width-responsive="true"></ins>
+
+  <div class="screen" id="supportScreen">
+    <div class="support-container">
+      <div class="support-header">
+        <h2>Centro de Ayuda</h2>
+        <button class="btn-outline" onclick="goToScreen('settingsScreen')" style="border:none;background:none;">
+          <i class="fa-solid fa-times" style="font-size: 24px;"></i>
+        </button>
+      </div>
+      <div class="support-content">
+        <div class="incidence-list" id="incidenceList"></div>
+        <button class="btn-new-incidence" onclick="toggleNewIncidenceForm()">
+          <i class="fa-solid fa-plus"></i> Nueva Consulta
+        </button>
+        <div class="new-incidence-form" id="newIncidenceForm" style="display:none;">
+          <h3>Crear Nueva Consulta</h3>
+          <p>Describe tu problema o pregunta (mínimo 11 caracteres)</p>
+          <textarea id="incidenceDescription" placeholder="¿En qué podemos ayudarte?"></textarea>
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <p id="charCounter" style="color:var(--fb-gray);">0/11</p>
+            <button class="btn-new-incidence" onclick="submitIncidence()">Enviar Consulta</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
        (adsbygoogle = window.adsbygoogle || []).push({});
   </script>
@@ -2448,38 +2642,121 @@
   </div>
 
   <!-- NUEVA PANTALLA: SOPORTE / INCIDENCIAS -->
-  <div class="screen" id="supportScreen">
-      <div class="support-container">
-        <div class="support-header">
-          <h2>Centro de Ayuda</h2>
-          <button class="btn-outline" onclick="goToScreen('settingsScreen')" style="border:none;background:none;">
-            <i class="fa-solid fa-times" style="font-size: 24px;"></i>
-          </button>
-        </div>
-
-        <div class="support-content">
-          <div class="incidence-list" id="incidenceList"></div>
-          <button class="btn-new-incidence" onclick="toggleNewIncidenceForm()">
-            <i class="fa-solid fa-plus"></i> Nueva Consulta
-          </button>
-
-          <div class="new-incidence-form" id="newIncidenceForm" style="display:none;">
-            <h3>Crear Nueva Consulta</h3>
-            <p>Describe tu problema o pregunta (mínimo 11 caracteres)</p>
-            <textarea
-              id="incidenceDescription"
-              placeholder="¿En qué podemos ayudarte?"
-            ></textarea>
-            <div style="display:flex;justify-content:space-between;align-items:center;">
-              <p id="charCounter" style="color:var(--fb-gray);">0/11</p>
-              <button class="btn-new-incidence" onclick="submitIncidence()">
-                Enviar Consulta
-              </button>
-            </div>
-          </div>
-        </div>
+  <div class="screen" id="settingsScreen">
+    <div class="settings-screen-content">
+      <div class="settings-hero">
+        <h2>Configuración</h2>
+        <p>Gestiona tu experiencia de videochat y el estado de tu cuenta.</p>
+      </div>
+      <div class="settings-list">
+        <button class="settings-item" onclick="goToScreen('activityScreen')">
+          <span class="settings-item-left"><i class="fa-solid fa-chart-line"></i><span>Tu actividad</span></span>
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+        <button class="settings-item" onclick="goToScreen('notificationsScreen')">
+          <span class="settings-item-left"><i class="fa-solid fa-bell"></i><span>Notificaciones</span></span>
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+        <button class="settings-item" onclick="openSupportScreen()">
+          <span class="settings-item-left"><i class="fa-solid fa-headset"></i><span>Soporte</span></span>
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+        <button class="settings-item" onclick="goToScreen('legalScreen')">
+          <span class="settings-item-left"><i class="fa-solid fa-scale-balanced"></i><span>Legal</span></span>
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+        <button class="settings-item" onclick="goToScreen('videoCallScreen')">
+          <span class="settings-item-left"><i class="fa-solid fa-video"></i><span>Volver al videochat</span></span>
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
       </div>
     </div>
+  </div>
+
+  <div class="screen" id="profileScreen">
+    <div class="settings-screen-content">
+      <div class="profile-summary-card">
+        <div class="profile-header">
+          <img id="profileScreenAvatar" src="https://cdn-icons-png.flaticon.com/512/3237/3237472.png" alt="avatar">
+          <div>
+            <h3 id="profileScreenName">Usuario</h3>
+            <p id="profileScreenCountry">País no definido</p>
+          </div>
+        </div>
+        <div class="kpi-grid">
+          <div class="kpi"><span>Conexiones</span><strong id="profileTotalConnections">0</strong></div>
+          <div class="kpi"><span>Interacciones</span><strong id="profileTotalInteractions">0</strong></div>
+          <div class="kpi"><span>Seguidores</span><strong id="profileFollowers">0</strong></div>
+          <div class="kpi"><span>Reportes</span><strong id="profileReports">0</strong></div>
+        </div>
+      </div>
+      <button class="btn btn-outline" onclick="goToScreen('videoCallScreen')">Volver</button>
+    </div>
+  </div>
+
+  <div class="screen" id="activityScreen">
+    <div class="settings-screen-content">
+      <div class="activity-card">
+        <h3>Tu actividad</h3>
+        <div class="activity-live">Actualizando en tiempo real</div>
+        <div class="kpi-grid" style="margin-bottom:12px;">
+          <div class="kpi"><span>Usuarios conectados</span><strong id="activityConnectionsCount">0</strong></div>
+          <div class="kpi"><span>Tiempo total</span><strong id="activityMinutes">0m</strong></div>
+        </div>
+        <h4 style="margin-bottom:8px;">Países con los que has conectado</h4>
+        <div id="activityCountryList"></div>
+        <h4 style="margin:12px 0 8px;">Nivel de interacción</h4>
+        <p id="activityInteractionLabel">Aún sin suficiente información.</p>
+      </div>
+      <button class="btn btn-outline" onclick="goToScreen('settingsScreen')">Volver</button>
+    </div>
+  </div>
+
+  <div class="screen" id="notificationsScreen">
+    <div class="settings-screen-content">
+      <div class="notifications-card">
+        <h3>Notificaciones</h3>
+        <p style="margin:8px 0 12px;">Aquí llegarán notificaciones del sistema y respuestas de soporte.</p>
+        <div id="notificationsList">
+          <p style="color:var(--gray-text);">Sin notificaciones por ahora.</p>
+        </div>
+      </div>
+      <button class="btn btn-outline" onclick="goToScreen('settingsScreen')">Volver</button>
+    </div>
+  </div>
+
+  <div class="screen" id="legalScreen">
+    <div class="settings-screen-content">
+      <div class="legal-card">
+        <h3>Términos de servicio</h3>
+        <div class="legal-text" id="termsText">
+          <p>Bienvenido a BealyChat. Al utilizar la plataforma, aceptas mantener una conducta respetuosa, no compartir contenido ilegal, y cumplir con la mayoría de edad aplicable en tu jurisdicción.</p>
+          <p>1) Uso permitido: BealyChat es una plataforma de videochat aleatorio para socializar. Está prohibido usar la app para acoso, fraude, spam, explotación, extorsión, distribución de malware o cualquier actividad ilícita.</p>
+          <p>2) Moderación y seguridad: Nos reservamos el derecho de aplicar advertencias, suspensiones temporales o bloqueos permanentes cuando se detecte comportamiento que incumpla estas reglas. Los procesos pueden incluir revisión automática y reportes de usuarios.</p>
+          <p>3) Contenido del usuario: Eres responsable del contenido que compartes (texto, audio, video, imagen, nombre de usuario y foto de perfil). No publiques información sensible de terceros sin consentimiento.</p>
+          <p>4) Edad mínima: Solo usuarios con edad legal permitida pueden utilizar BealyChat. Las cuentas que infrinjan este requisito pueden ser suspendidas inmediatamente.</p>
+          <p>5) Disponibilidad del servicio: Intentamos mantener la plataforma operativa 24/7; sin embargo, puede haber interrupciones por mantenimiento, incidentes técnicos o causas externas.</p>
+          <p>6) Propiedad intelectual: El software, diseño y marca de BealyChat pertenecen a sus titulares. No está permitido copiar, revender o explotar el servicio sin autorización.</p>
+          <p>7) Limitación de responsabilidad: BealyChat ofrece la plataforma "tal cual". No garantizamos que todas las interacciones entre usuarios sean adecuadas. Usa el servicio bajo tu propio criterio y reporta cualquier abuso.</p>
+          <p>8) Cambios de términos: Podemos actualizar estos términos. El uso continuo después de cambios implica aceptación de la nueva versión.</p>
+        </div>
+      </div>
+      <div class="legal-card">
+        <h3>Política de privacidad</h3>
+        <div class="legal-text" id="privacyText">
+          <p>Recopilamos información básica para operar el servicio: correo de acceso, identificador de cuenta, país seleccionado, preferencias de interés, y datos técnicos de conexión.</p>
+          <p>1) Finalidad: Usamos datos para autenticar, conectar usuarios, moderar contenido, atender soporte y mejorar rendimiento.</p>
+          <p>2) Seguridad: Aplicamos medidas técnicas y organizativas razonables para proteger tu información. Aun así, ningún sistema es completamente invulnerable.</p>
+          <p>3) Conservación: Conservamos datos por el tiempo necesario para cumplir finalidades de seguridad, continuidad del servicio y obligaciones legales.</p>
+          <p>4) Reportes y soporte: Si envías una incidencia, almacenamos su contenido y la respuesta del equipo. Las respuestas pueden mostrarse en tu sección de notificaciones.</p>
+          <p>5) Compartición: No vendemos datos personales. Solo compartimos información cuando sea necesario para operar la plataforma, cumplir la ley o responder a requerimientos legítimos.</p>
+          <p>6) Tus derechos: Puedes solicitar actualización de datos de perfil o, cuando aplique, eliminación de cuenta conforme a normativa local.</p>
+          <p>7) Contacto: Para consultas de privacidad o soporte, utiliza la sección Soporte dentro de la aplicación.</p>
+        </div>
+      </div>
+      <button class="btn btn-outline" onclick="goToScreen('settingsScreen')">Volver</button>
+    </div>
+  </div>
 
   <script>
     /* ====================== INICIALIZAR FIREBASE ====================== */
@@ -2512,6 +2789,18 @@
     /* ====================== VARIABLES GLOBALES ====================== */
     let currentUser = null;
     let currentProfile = null;
+    let activityListenersBound = false;
+    let profileStats = {
+      connections: 0,
+      interactions: 0,
+      minutes: 0,
+      reports: 0,
+      followers: 0,
+      countries: {}
+    };
+    let activeCallConnectedAt = null;
+    let activeCallConnectionLogged = false;
+    let currentRemoteCountry = '';
 
     // Lista completa de países con sus códigos y banderas
     const COUNTRIES = [
@@ -2928,7 +3217,11 @@
         // Mostrar iconos de moderación solo en videollamada
         document.querySelector('.account-status-icon').style.display = 'flex';
         document.querySelector('.report-icon').style.display = 'flex';
+        document.querySelector('.profile-icon').style.display = 'flex';
+        document.querySelector('.config-icon').style.display = 'flex';
 
+        bindRealtimeActivity();
+        hydrateProfileWidgets();
         initEmojiCarousel();
         showConnecting();
         const streamReady = await startLocalStream();
@@ -2945,6 +3238,8 @@
       } else {
         document.querySelector('.account-status-icon').style.display = 'none';
         document.querySelector('.report-icon').style.display = 'none';
+        document.querySelector('.profile-icon').style.display = 'none';
+        document.querySelector('.config-icon').style.display = 'none';
 
         stopSpeechMonitoring();
         stopBodyMonitoring();
@@ -3068,6 +3363,8 @@
             if(snapshot.exists()){
               currentProfile = snapshot.val();
               console.log("Perfil cargado:", currentProfile);
+              bindRealtimeActivity();
+              hydrateProfileWidgets();
 
               // Chequeo si está bloqueado
               if(currentProfile.blockedUntil){
@@ -3115,6 +3412,8 @@
         stopLocalStream();
         currentUser = null;
         currentProfile = null;
+        activityListenersBound = false;
+        profileStats = { connections: 0, interactions: 0, minutes: 0, reports: 0, followers: 0, countries: {} };
         if(authObserverReady) {
           goToScreen('authMethodScreen');
         }
@@ -3470,6 +3769,7 @@
       try {
         await database.ref(`calls/${currentCallId}/messages`).push(payload);
         if(input && !overrideText) input.value = '';
+        incrementAnalytics({ interactions: 1 }).catch(() => {});
       } catch (err) {
         console.error('Error enviando mensaje, se reintentará:', err);
         pendingChatQueue.push(payload);
@@ -3514,6 +3814,8 @@
     }
 
     async function cleanupCurrentCall(removeCallNode = false) {
+      await finalizeCallAnalytics();
+      activeCallConnectionLogged = false;
       if(matchingRetryTimer){ clearTimeout(matchingRetryTimer); matchingRetryTimer = null; }
       if(connectWatchdogTimer){ clearTimeout(connectWatchdogTimer); connectWatchdogTimer = null; }
 
@@ -3558,6 +3860,7 @@
 
       pendingChatQueue = [];
       remoteUidGlobal = null;
+      currentRemoteCountry = '';
       pendingIncomingCallId = null;
       unregisterCallsListener();
 
@@ -3584,6 +3887,8 @@
 
       console.log("✅ Marcando usuario como online:", currentUser.uid);
       window.isInVideoSession = true;
+      activeCallConnectedAt = null;
+      activeCallConnectionLogged = false;
       const userRef = database.ref('onlineUsers/' + currentUser.uid);
       await userRef.set({
         username: currentProfile.username,
@@ -4138,9 +4443,6 @@
         alert("No se pudo acceder a la cámara/micrófono. Verifica los permisos.");
         return false;
       }
-      localStream = null;
-      const localVideo = document.getElementById('localVideo');
-      if(localVideo) localVideo.srcObject = null;
     }
 
     function stopLocalStream(){
@@ -4174,9 +4476,16 @@
           indicator.style.backgroundColor = "green";
           console.log("✅ Conexión establecida");
           flushPendingChatQueue();
+          if(!activeCallConnectionLogged){
+            activeCallConnectionLogged = true;
+            activeCallConnectedAt = Date.now();
+            incrementAnalytics({ connections: 1, countryName: currentRemoteCountry || 'Sin país' }).catch(() => {});
+          }
         } else if(peerConnection.iceConnectionState === "disconnected" || peerConnection.iceConnectionState === "failed" || peerConnection.iceConnectionState === "closed"){
           indicator.style.backgroundColor = "red";
           console.log("❌ Conexión fallida o desconectada");
+          finalizeCallAnalytics().catch(() => {});
+          activeCallConnectionLogged = false;
           autoNextPartner('ice-' + peerConnection.iceConnectionState);
         } else {
           indicator.style.backgroundColor = "orange";
@@ -4281,9 +4590,11 @@
             document.getElementById('remoteAvatar').src = rProfile.avatar_url || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2230%22 height=%2230%22 viewBox=%220 0 30 30%22%3E%3Crect width=%2230%22 height=%2230%22 fill=%22%23e8eaed%22/%3E%3Ccircle cx=%2215%22 cy=%2211%22 r=%225%22 fill=%22%239aa0a6%22/%3E%3Crect x=%227%22 y=%2219%22 width=%2216%22 height=%227%22 rx=%223.5%22 fill=%22%239aa0a6%22/%3E%3C/svg%3E';
             let nameText = rProfile.username ? rProfile.username : "";
             document.getElementById('remoteName').textContent = nameText;
+            currentRemoteCountry = rProfile.country || 'Sin país';
           } else {
             document.getElementById('remoteName').textContent = "";
             document.getElementById('remoteAvatar').src = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2230%22 height=%2230%22 viewBox=%220 0 30 30%22%3E%3Crect width=%2230%22 height=%2230%22 fill=%22%23e8eaed%22/%3E%3Ccircle cx=%2215%22 cy=%2211%22 r=%225%22 fill=%22%239aa0a6%22/%3E%3Crect x=%227%22 y=%2219%22 width=%2216%22 height=%227%22 rx=%223.5%22 fill=%22%239aa0a6%22/%3E%3C/svg%3E';
+            currentRemoteCountry = '';
           }
         });
       });
@@ -4457,6 +4768,8 @@
       // Ocultar iconos de moderación
       document.querySelector('.account-status-icon').style.display = 'none';
       document.querySelector('.report-icon').style.display = 'none';
+      document.querySelector('.profile-icon').style.display = 'none';
+      document.querySelector('.config-icon').style.display = 'none';
 
       // Obtener información del usuario remoto
       if(remoteUidGlobal) {
@@ -4480,6 +4793,8 @@
       // Mostrar iconos de moderación nuevamente
       document.querySelector('.account-status-icon').style.display = 'flex';
       document.querySelector('.report-icon').style.display = 'flex';
+      document.querySelector('.profile-icon').style.display = 'flex';
+      document.querySelector('.config-icon').style.display = 'flex';
 
       // Resetear selecciones
       selectedReportOption = null;
@@ -4772,6 +5087,8 @@
       // Ocultar iconos de moderación
       document.querySelector('.account-status-icon').style.display = 'none';
       document.querySelector('.report-icon').style.display = 'none';
+      document.querySelector('.profile-icon').style.display = 'none';
+      document.querySelector('.config-icon').style.display = 'none';
 
       goToScreen('accountStatusScreen');
       const scanAvatar = document.getElementById('scanAvatar');
@@ -4953,6 +5270,117 @@
         toggleNewIncidenceForm();
       }).catch(err => {
         console.error("Error creando incidencia:", err);
+      });
+    }
+
+    function openProfileScreen() {
+      hydrateProfileWidgets();
+      goToScreen('profileScreen');
+    }
+
+    function openConfigScreen() {
+      goToScreen('settingsScreen');
+      bindRealtimeActivity();
+    }
+
+    function hydrateProfileWidgets() {
+      if(!currentProfile) return;
+      document.getElementById('profileScreenAvatar').src = currentProfile.avatar_url || 'https://cdn-icons-png.flaticon.com/512/3237/3237472.png';
+      document.getElementById('profileScreenName').textContent = currentProfile.username || 'Usuario';
+      document.getElementById('profileScreenCountry').textContent = currentProfile.country || 'País no definido';
+      renderRealtimeCards();
+    }
+
+    function renderRealtimeCards() {
+      document.getElementById('profileTotalConnections').textContent = String(profileStats.connections || 0);
+      document.getElementById('profileTotalInteractions').textContent = String(profileStats.interactions || 0);
+      document.getElementById('profileFollowers').textContent = String(profileStats.followers || 0);
+      document.getElementById('profileReports').textContent = String(profileStats.reports || 0);
+
+      document.getElementById('activityConnectionsCount').textContent = String(profileStats.connections || 0);
+      document.getElementById('activityMinutes').textContent = `${profileStats.minutes || 0}m`;
+
+      const countryList = document.getElementById('activityCountryList');
+      const countries = Object.entries(profileStats.countries || {}).sort((a,b) => (b[1]||0) - (a[1]||0));
+      if(!countries.length) {
+        countryList.innerHTML = '<p style="color:var(--gray-text);">Aún no hay conexiones registradas por país.</p>';
+      } else {
+        countryList.innerHTML = countries.slice(0,6).map(([country,count]) => `<div class="country-pill"><span>${country}</span><strong>${count}</strong></div>`).join('');
+      }
+
+      const interactionLabel = document.getElementById('activityInteractionLabel');
+      if((profileStats.interactions || 0) >= 20) {
+        interactionLabel.textContent = 'Interacción alta: estás conversando de forma frecuente con otros usuarios.';
+      } else if((profileStats.interactions || 0) >= 8) {
+        interactionLabel.textContent = 'Interacción media: tu nivel de actividad es constante.';
+      } else {
+        interactionLabel.textContent = 'Interacción inicial: sigue conectando para desbloquear más estadísticas.';
+      }
+    }
+
+    async function incrementAnalytics(changes = {}) {
+      if(!currentUser) return;
+      const ref = database.ref('analytics/' + currentUser.uid);
+      await ref.transaction(prev => {
+        const base = prev || { connections: 0, interactions: 0, minutes: 0, reports: 0, countries: {} };
+        base.connections = Number(base.connections || 0) + Number(changes.connections || 0);
+        base.interactions = Number(base.interactions || 0) + Number(changes.interactions || 0);
+        base.minutes = Number(base.minutes || 0) + Number(changes.minutes || 0);
+        base.reports = Number(base.reports || 0) + Number(changes.reports || 0);
+        base.countries = base.countries || {};
+        if(changes.countryName){
+          const key = changes.countryName;
+          base.countries[key] = Number(base.countries[key] || 0) + 1;
+        }
+        return base;
+      });
+    }
+
+    async function finalizeCallAnalytics() {
+      if(!activeCallConnectedAt || !currentUser) return;
+      const elapsedMin = Math.max(1, Math.floor((Date.now() - activeCallConnectedAt) / 60000));
+      activeCallConnectedAt = null;
+      try {
+        await incrementAnalytics({ minutes: elapsedMin });
+      } catch(err) {
+        console.warn('No se pudo actualizar minutos de actividad:', err);
+      }
+    }
+
+    function bindRealtimeActivity() {
+      if(!currentUser || activityListenersBound) return;
+      activityListenersBound = true;
+
+      database.ref('analytics/' + currentUser.uid).on('value', snap => {
+        const data = snap.val() || {};
+        profileStats.connections = Number(data.connections || 0);
+        profileStats.interactions = Number(data.interactions || 0);
+        profileStats.minutes = Number(data.minutes || 0);
+        profileStats.reports = Number(data.reports || 0);
+        profileStats.countries = data.countries || {};
+        renderRealtimeCards();
+      });
+
+      database.ref('profiles/' + currentUser.uid + '/followersCount').on('value', snap => {
+        profileStats.followers = Number(snap.val() || 0);
+        renderRealtimeCards();
+      });
+
+      database.ref('incidences/' + currentUser.uid).on('value', snap => {
+        const data = snap.val() || {};
+        const notes = [];
+        Object.keys(data).forEach(key => {
+          const item = data[key] || {};
+          if(item.adminResponse){
+            notes.push(`<div class="country-pill"><span>Soporte</span><strong>${item.adminResponse}</strong></div>`);
+          }
+        });
+        const host = document.getElementById('notificationsList');
+        if(host){
+          host.innerHTML = notes.length
+            ? notes.join('')
+            : '<p style="color:var(--gray-text);">Aquí llegarán notificaciones del sistema.</p>';
+        }
       });
     }
     document.getElementById('incidenceDescription').addEventListener('input', e => {
