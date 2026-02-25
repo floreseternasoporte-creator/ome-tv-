@@ -14,37 +14,40 @@
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.20.0/dist/tf.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3/dist/coco-ssd.min.js"></script>
   <style>
-    /* ====================== ESTILOS TIPO GOOGLE ====================== */
+    /* ====================== ESTILO MODERNO TIPO VERIZON ====================== */
     :root {
-      --google-blue: #1a73e8;
-      --google-blue-hover: #1765cc;
-      --google-blue-active: #1557b0;
-      --google-red: #d93025;
-      --google-green: #1e8e3e;
-      --google-gray: #5f6368;
-      --google-border: #dadce0;
-      --google-bg: #ffffff;
-      --google-text: #202124;
-      --google-text-secondary: #5f6368;
-      --google-hover: #f1f3f4;
-      --google-focus: #e8f0fe;
+      --google-blue: #cd040b;
+      --google-blue-hover: #a70007;
+      --google-blue-active: #7d0005;
+      --google-red: #ff2d2d;
+      --google-green: #15c37e;
+      --google-gray: #7f8792;
+      --google-border: #272b31;
+      --google-bg: #0b0d12;
+      --google-text: #f7f8fa;
+      --google-text-secondary: #b2b8c3;
+      --google-hover: #151922;
+      --google-focus: #1f2531;
       
       /* Variables unificadas */
-      --primary-color: #1a73e8;
-      --secondary-color: #1a73e8; 
-      --background: #ffffff;
-      --card-bg: #ffffff;
-      --light-text: #202124;
-      --gray-text: #5f6368;
-      --border-color: #dadce0;
-      --hover-bg: #f1f3f4;
-      --danger-color: #d93025;
-      --success-color: #1e8e3e;
+      --primary-color: #cd040b;
+      --secondary-color: #ff2d2d;
+      --background: #07090e;
+      --card-bg: #11151d;
+      --light-text: #f7f8fa;
+      --gray-text: #b2b8c3;
+      --border-color: #272b31;
+      --hover-bg: #1a202b;
+      --danger-color: #ff3b44;
+      --success-color: #15c37e;
     }
     html, body {
       margin: 0;
       padding: 0;
-      background-color: #f5f5f5;
+      background:
+        radial-gradient(circle at top right, rgba(205, 4, 11, 0.2), transparent 45%),
+        radial-gradient(circle at bottom left, rgba(255, 45, 45, 0.14), transparent 40%),
+        var(--background);
       color: var(--google-text);
       overflow-x: hidden;
       touch-action: manipulation;
@@ -65,6 +68,11 @@
       font-family: 'Google Sans', 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
       margin: 0;
       padding: 0;
+    }
+
+    ::selection {
+      background: rgba(205, 4, 11, 0.4);
+      color: #fff;
     }
     .container {
       width: 100vw;
@@ -138,7 +146,7 @@
       position: fixed;
       top: 0;
       left: 0;
-      background-color: #f5f5f5;
+      background-color: var(--background);
       transition: transform 0.3s ease;
       overflow-y: auto;
       overflow-x: hidden;
@@ -209,11 +217,12 @@
       margin-top: 0;
     }
     .logo h1 {
-      font-size: 28px;
+      font-size: 30px;
       color: var(--google-text);
-      font-weight: 500;
+      font-weight: 700;
       letter-spacing: -0.5px;
       margin-bottom: 0;
+      text-transform: uppercase;
     }
     .logo p {
       font-size: 16px;
@@ -246,7 +255,7 @@
     input, select {
       width: 100%;
       padding: 13px 15px;
-      border-radius: 4px;
+      border-radius: 12px;
       border: 1px solid var(--google-border);
       background-color: var(--google-bg);
       color: var(--google-text);
@@ -260,10 +269,9 @@
     }
     input:focus, select:focus {
       border-color: var(--google-blue);
-      border-width: 2px;
-      padding: 12px 14px;
+      border-width: 1px;
       background-color: var(--google-focus);
-      box-shadow: 0 1px 6px rgba(26, 115, 232, 0.3);
+      box-shadow: 0 0 0 3px rgba(205, 4, 11, 0.28);
     }
     input::placeholder {
       color: var(--google-text-secondary);
@@ -275,11 +283,11 @@
     }
     .btn {
       width: 100%;
-      padding: 10px 24px;
+      padding: 12px 24px;
       border: none;
-      border-radius: 4px;
+      border-radius: 999px;
       font-size: 14px;
-      font-weight: 500;
+      font-weight: 700;
       cursor: pointer;
       transition: all 0.2s ease;
       text-align: center;
@@ -288,12 +296,14 @@
       letter-spacing: 0.25px;
     }
     .btn-primary {
-      background-color: var(--google-blue);
+      background: linear-gradient(135deg, var(--google-blue), var(--secondary-color));
       color: white;
+      box-shadow: 0 10px 26px rgba(205, 4, 11, 0.4);
     }
     .btn-primary:hover {
-      background-color: var(--google-blue-hover);
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+      background: linear-gradient(135deg, var(--google-blue-hover), var(--google-blue));
+      box-shadow: 0 14px 30px rgba(205, 4, 11, 0.45);
+      transform: translateY(-1px);
     }
     .btn-primary:active {
       background-color: var(--google-blue-active);
@@ -301,7 +311,7 @@
     .btn-outline {
       background-color: transparent;
       border: 1px solid var(--google-border);
-      color: var(--google-blue);
+      color: var(--google-text);
     }
     .btn-outline:hover {
       background-color: var(--google-hover);
