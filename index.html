@@ -2018,10 +2018,14 @@
           </div>
         </div>
         <div class="video-controls">
-          <div class="control-btn" onclick="toggleAudio()">
+          <div class="control-btn" onclick="toggleAudio()" title="Micrófono">
             <i class="fa-solid fa-microphone-slash" id="micIcon"></i>
           </div>
+          <div class="control-btn" onclick="restartCall()" title="Siguiente usuario">
+            <i class="fa-solid fa-forward"></i>
+          </div>
         </div>
+        <div class="swipe-hint" id="swipeHint">⇆</div>
 
         <div class="chat-panel" id="chatPanel">
           <div class="emoji-carousel" id="emojiCarousel"></div>
@@ -2610,7 +2614,16 @@
     let currentCallMessagesRef = null;
     let currentParticipantsRef = null;
     let currentPresenceRef = null;
+    let currentIceCandidatesRef = null;
+    let currentOfferRef = null;
+    let currentAnswerRef = null;
+    let currentRemoteProfileRef = null;
     let reconnectingInProgress = false;
+    let matchingRetryTimer = null;
+    let connectWatchdogTimer = null;
+    let pendingChatQueue = [];
+    let touchStartX = 0;
+    let touchStartY = 0;
     let isListening = false;
     let authObserverReady = false;
     let offenseCount = 0;
@@ -3235,28 +3248,54 @@
     }
 
     async function sendChatMessage(overrideText = '', isEmoji = false) {
-      if(!currentCallId || !currentUser) {
-        if(!overrideText) alert('Aún no estás conectado con otro usuario.');
-        return;
-      }
       const input = document.getElementById('chatInput');
       const raw = overrideText || (input ? input.value : '');
       const text = raw.trim();
       if(!text) return;
+
       const payload = {
-        senderUid: currentUser.uid,
+        senderUid: currentUser?.uid || '',
         text,
         type: isEmoji ? 'emoji' : 'text',
         createdAt: firebase.database.ServerValue.TIMESTAMP,
         expiresAt: Date.now() + 60000
       };
+
+      if(!currentCallId || !currentUser) {
+        if(!overrideText) alert('Aún no estás conectado con otro usuario.');
+        return;
+      }
+
       try {
         await database.ref(`calls/${currentCallId}/messages`).push(payload);
         if(input && !overrideText) input.value = '';
       } catch (err) {
-        console.error('Error enviando mensaje:', err);
-        if(!overrideText) alert('No se pudo enviar el mensaje');
+        console.error('Error enviando mensaje, se reintentará:', err);
+        pendingChatQueue.push(payload);
+        if(input && !overrideText) input.value = '';
       }
+    }
+
+    async function flushPendingChatQueue(){
+      if(!currentCallId || !pendingChatQueue.length) return;
+      const queue = [...pendingChatQueue];
+      pendingChatQueue = [];
+      for(const msg of queue){
+        try {
+          await database.ref(`calls/${currentCallId}/messages`).push(msg);
+        } catch(err){
+          console.error('No se pudo reenviar mensaje en cola:', err);
+          pendingChatQueue.unshift(msg);
+          break;
+        }
+      }
+    }
+
+    function scheduleFindRandomUser(delay = 3000){
+      if(matchingRetryTimer) clearTimeout(matchingRetryTimer);
+      matchingRetryTimer = setTimeout(() => {
+        findRandomUser();
+      }, delay);
     }
 
     function autoNextPartner(reason = 'auto') {
@@ -3269,20 +3308,30 @@
         setTimeout(() => {
           reconnectingInProgress = false;
           findRandomUser();
-        }, 1200);
+        }, 900);
       });
     }
 
     async function cleanupCurrentCall(removeCallNode = false) {
+      if(matchingRetryTimer){ clearTimeout(matchingRetryTimer); matchingRetryTimer = null; }
+      if(connectWatchdogTimer){ clearTimeout(connectWatchdogTimer); connectWatchdogTimer = null; }
+
       try {
         if(peerConnection){ peerConnection.close(); }
       } catch(e) {}
       peerConnection = null;
       remoteStream = null;
-      document.getElementById('remoteVideo').srcObject = null;
+      const remoteVideoEl = document.getElementById('remoteVideo');
+      if(remoteVideoEl) remoteVideoEl.srcObject = null;
+
       if(currentCallMessagesRef){ currentCallMessagesRef.off(); currentCallMessagesRef = null; }
       if(currentParticipantsRef){ currentParticipantsRef.off(); currentParticipantsRef = null; }
       if(currentPresenceRef){ currentPresenceRef.off(); currentPresenceRef = null; }
+      if(currentIceCandidatesRef){ currentIceCandidatesRef.off(); currentIceCandidatesRef = null; }
+      if(currentOfferRef){ currentOfferRef.off(); currentOfferRef = null; }
+      if(currentAnswerRef){ currentAnswerRef.off(); currentAnswerRef = null; }
+      if(currentRemoteProfileRef){ currentRemoteProfileRef.off(); currentRemoteProfileRef = null; }
+
       if(window.messageCleanupTimer){ clearInterval(window.messageCleanupTimer); window.messageCleanupTimer = null; }
       const chatBox = document.getElementById('chatMessages');
       if(chatBox) chatBox.innerHTML = '';
@@ -3294,6 +3343,11 @@
           await database.ref('calls/' + callIdToCleanup).remove().catch(()=>{});
         }
       }
+
+      if(currentUser && window.isInVideoSession){
+        await database.ref('onlineUsers/' + currentUser.uid + '/status').set('available').catch(()=>{});
+      }
+
       hideConnecting();
     }
 
@@ -3312,43 +3366,59 @@
         avatar_url: currentProfile.avatar_url,
         country: currentProfile.country,
         birthDate: currentProfile.birthDate,
-        timestamp: firebase.database.ServerValue.TIMESTAMP
+        timestamp: firebase.database.ServerValue.TIMESTAMP,
+        status: 'available'
       });
       userRef.onDisconnect().remove();
 
-      // Esperar 1 segundo antes de buscar
-      setTimeout(() => {
-        findRandomUser();
-      }, 1000);
+      scheduleFindRandomUser(800);
     }
 
     async function findRandomUser(){
-      console.log("🔍 Buscando usuarios online...");
-      const snapshot = await database.ref('onlineUsers').once('value');
-      const online = snapshot.val() || {};
-      const uids = Object.keys(online).filter(uid => uid !== currentUser.uid);
+      if(!currentUser || !window.isInVideoSession || currentCallId) return;
+      try {
+        console.log("🔍 Buscando usuarios online...");
+        const snapshot = await database.ref('onlineUsers').once('value');
+        const online = snapshot.val() || {};
+        const candidates = Object.entries(online)
+          .filter(([uid, data]) => uid !== currentUser.uid && data && data.status !== 'busy')
+          .map(([uid]) => uid);
 
-      console.log("👥 Usuarios online:", uids.length);
+        console.log("👥 Usuarios online disponibles:", candidates.length);
 
-      if(uids.length === 0){
-        console.log("⏳ Nadie disponible, reintentando en 3s...");
-        setTimeout(findRandomUser, 3000);
-        return;
+        if(candidates.length === 0){
+          console.log("⏳ Nadie disponible, reintentando en 2.5s...");
+          scheduleFindRandomUser(2500);
+          return;
+        }
+
+        const randomUid = candidates[Math.floor(Math.random() * candidates.length)];
+        console.log("🎯 Usuario seleccionado:", randomUid);
+        await createCall(randomUid);
+      } catch(err){
+        console.error('❌ Error buscando usuario, retry:', err);
+        scheduleFindRandomUser(3000);
       }
-
-      const randomUid = uids[Math.floor(Math.random() * uids.length)];
-      console.log("🎯 Usuario seleccionado:", randomUid);
-      createCall(randomUid);
     }
 
     async function createCall(remoteUid){
+      const remoteOnline = await database.ref('onlineUsers/' + remoteUid).once('value');
+      if(!remoteOnline.exists()){
+        scheduleFindRandomUser(500);
+        return;
+      }
+
       const callId = database.ref('calls').push().key;
       currentCallId = callId;
       console.log("📞 Creando llamada:", callId);
 
-      await database.ref('calls/' + callId + '/participants').set({
-        caller: currentUser.uid,
-        callee: remoteUid
+      await database.ref('onlineUsers/' + currentUser.uid + '/status').set('busy').catch(()=>{});
+      await database.ref('calls/' + callId).set({
+        participants: {
+          caller: currentUser.uid,
+          callee: remoteUid
+        },
+        createdAt: firebase.database.ServerValue.TIMESTAMP
       });
       await database.ref(`calls/${callId}/presence/${currentUser.uid}`).set(true);
       database.ref(`calls/${callId}/presence/${currentUser.uid}`).onDisconnect().remove();
@@ -3361,7 +3431,9 @@
       if(!callData || !callData.participants) return;
       const { caller, callee } = callData.participants;
       if(callee === currentUser?.uid){
+        if(currentCallId && currentCallId !== callId) return;
         currentCallId = callId;
+        database.ref('onlineUsers/' + currentUser.uid + '/status').set('busy').catch(()=>{});
         database.ref(`calls/${callId}/presence/${currentUser.uid}`).set(true);
         database.ref(`calls/${callId}/presence/${currentUser.uid}`).onDisconnect().remove();
         startWebRTC(callId, false);
@@ -3789,6 +3861,7 @@
         if(peerConnection.iceConnectionState === "connected" || peerConnection.iceConnectionState === "completed"){
           indicator.style.backgroundColor = "green";
           console.log("✅ Conexión establecida");
+          flushPendingChatQueue();
         } else if(peerConnection.iceConnectionState === "disconnected" || peerConnection.iceConnectionState === "failed" || peerConnection.iceConnectionState === "closed"){
           indicator.style.backgroundColor = "red";
           console.log("❌ Conexión fallida o desconectada");
@@ -3826,7 +3899,8 @@
         }
       };
 
-      database.ref(`calls/${callId}/iceCandidates`).on('child_added', snapshot => {
+      currentIceCandidatesRef = database.ref(`calls/${callId}/iceCandidates`);
+      currentIceCandidatesRef.on('child_added', snapshot => {
         const userUid = snapshot.key;
         if(userUid !== currentUser.uid){
           snapshot.forEach(candidateSnap => {
@@ -3844,7 +3918,8 @@
       if(isCaller){
         createOffer(callId);
       } else {
-        database.ref(`calls/${callId}/offer`).on('value', async snapshot => {
+        currentOfferRef = database.ref(`calls/${callId}/offer`);
+        currentOfferRef.on('value', async snapshot => {
           const offerData = snapshot.val();
           if(offerData){
             try {
@@ -3862,7 +3937,8 @@
         });
       }
 
-      database.ref(`calls/${callId}/answer`).on('value', async snapshot => {
+      currentAnswerRef = database.ref(`calls/${callId}/answer`);
+      currentAnswerRef.on('value', async snapshot => {
         const answerData = snapshot.val();
         if(answerData && peerConnection.signalingState === 'have-local-offer'){
           try {
@@ -3887,7 +3963,9 @@
           document.getElementById('remoteAvatar').src = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2230%22 height=%2230%22 viewBox=%220 0 30 30%22%3E%3Crect width=%2230%22 height=%2230%22 fill=%22%23e8eaed%22/%3E%3Ccircle cx=%2215%22 cy=%2211%22 r=%225%22 fill=%22%239aa0a6%22/%3E%3Crect x=%227%22 y=%2219%22 width=%2216%22 height=%227%22 rx=%223.5%22 fill=%22%239aa0a6%22/%3E%3C/svg%3E';
           return;
         }
-        database.ref('profiles/' + remoteUid).on('value', userSnap => {
+        if(currentRemoteProfileRef){ currentRemoteProfileRef.off(); }
+        currentRemoteProfileRef = database.ref('profiles/' + remoteUid);
+        currentRemoteProfileRef.on('value', userSnap => {
           if(userSnap.exists()){
             const rProfile = userSnap.val();
             document.getElementById('remoteAvatar').src = rProfile.avatar_url || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2230%22 height=%2230%22 viewBox=%220 0 30 30%22%3E%3Crect width=%2230%22 height=%2230%22 fill=%22%23e8eaed%22/%3E%3Ccircle cx=%2215%22 cy=%2211%22 r=%225%22 fill=%22%239aa0a6%22/%3E%3Crect x=%227%22 y=%2219%22 width=%2216%22 height=%227%22 rx=%223.5%22 fill=%22%239aa0a6%22/%3E%3C/svg%3E';
@@ -3909,6 +3987,7 @@
           return;
         }
         renderChatMessage(msg, msg.senderUid === currentUser?.uid);
+        flushPendingChatQueue();
       });
       startMessageCleanup(callId);
 
@@ -3921,6 +4000,16 @@
       });
 
       const callStartedAt = Date.now();
+      if(connectWatchdogTimer) clearTimeout(connectWatchdogTimer);
+      connectWatchdogTimer = setTimeout(() => {
+        if(currentCallId !== callId) return;
+        const state = peerConnection?.iceConnectionState;
+        if(state !== 'connected' && state !== 'completed'){
+          console.warn('⏱️ Timeout de conexión, cambiando de usuario');
+          autoNextPartner('connect-timeout');
+        }
+      }, 18000);
+
       currentPresenceRef = database.ref(`calls/${callId}/presence`);
       currentPresenceRef.on('value', snap => {
         if(currentCallId !== callId) return;
@@ -3958,7 +4047,7 @@
       document.getElementById('micIcon').classList.toggle('fa-microphone');
     }
     function restartCall(){
-      autoNextPartner('manual-compat');
+      autoNextPartner('manual-next');
     }
 
     window.addEventListener('beforeunload', () => {
@@ -3966,7 +4055,7 @@
         database.ref(`onlineUsers/${currentUser.uid}`).remove();
       }
       if(currentCallId){
-        database.ref(`calls/${currentCallId}`).remove();
+        database.ref(`calls/${currentCallId}/presence/${currentUser.uid}`).remove();
       }
     });
 
@@ -3976,6 +4065,28 @@
         sendChatMessage();
       }
     });
+
+
+    const remoteVideoContainer = document.getElementById('remoteVideoContainer');
+    if(remoteVideoContainer){
+      remoteVideoContainer.addEventListener('touchstart', (e) => {
+        const t = e.changedTouches && e.changedTouches[0];
+        if(!t) return;
+        touchStartX = t.clientX;
+        touchStartY = t.clientY;
+      }, { passive: true });
+
+      remoteVideoContainer.addEventListener('touchend', (e) => {
+        const t = e.changedTouches && e.changedTouches[0];
+        if(!t) return;
+        const dx = t.clientX - touchStartX;
+        const dy = t.clientY - touchStartY;
+        const isHorizontalSwipe = Math.abs(dx) > 85 && Math.abs(dx) > Math.abs(dy) * 1.2;
+        if(isHorizontalSwipe){
+          autoNextPartner('swipe-next');
+        }
+      }, { passive: true });
+    }
 
     document.getElementById('registerPassword').addEventListener('focus', () => {
       document.getElementById('passwordMonkey').style.display = 'block';
