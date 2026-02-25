@@ -252,6 +252,7 @@
       .screen-content {
         padding: 64px 20px 30px;
         justify-content: flex-start;
+        padding-top: 62px;
       }
 
       #loginScreen .screen-content,
@@ -2624,6 +2625,7 @@
     let pendingChatQueue = [];
     let touchStartX = 0;
     let touchStartY = 0;
+    let pendingIncomingCallId = null;
     let isListening = false;
     let authObserverReady = false;
     let offenseCount = 0;
@@ -3348,6 +3350,8 @@
         }
       }
 
+      pendingIncomingCallId = null;
+
       if(currentUser && window.isInVideoSession){
         await database.ref('onlineUsers/' + currentUser.uid + '/status').set('available').catch(()=>{});
       }
@@ -3441,13 +3445,34 @@
       if(!callData || !callData.participants) return;
       const { caller, callee } = callData.participants;
       if(callee === currentUser?.uid){
+        if(!window.isInVideoSession) return;
         if(currentCallId && currentCallId !== callId) return;
-        currentCallId = callId;
-        database.ref('onlineUsers/' + currentUser.uid + '/status').set('busy').catch(()=>{});
-        database.ref('onlineUsers/' + caller + '/status').set('busy').catch(()=>{});
-        database.ref(`calls/${callId}/presence/${currentUser.uid}`).set(true);
-        database.ref(`calls/${callId}/presence/${currentUser.uid}`).onDisconnect().remove();
-        startWebRTC(callId, false);
+        if(pendingIncomingCallId && pendingIncomingCallId !== callId) return;
+
+        const acceptIncomingCall = async () => {
+          pendingIncomingCallId = callId;
+          if(!localStream){
+            await startLocalStream();
+          }
+          if(!localStream){
+            console.warn('⚠️ No hay stream local para aceptar llamada entrante');
+            pendingIncomingCallId = null;
+            return;
+          }
+
+          currentCallId = callId;
+          database.ref('onlineUsers/' + currentUser.uid + '/status').set('busy').catch(()=>{});
+          database.ref('onlineUsers/' + caller + '/status').set('busy').catch(()=>{});
+          database.ref(`calls/${callId}/presence/${currentUser.uid}`).set(true);
+          database.ref(`calls/${callId}/presence/${currentUser.uid}`).onDisconnect().remove();
+          startWebRTC(callId, false);
+          pendingIncomingCallId = null;
+        };
+
+        acceptIncomingCall().catch(err => {
+          console.error('❌ Error aceptando llamada entrante:', err);
+          pendingIncomingCallId = null;
+        });
       }
     });
 
@@ -4026,8 +4051,7 @@
         const count = Object.keys(pres).length;
         const iceState = peerConnection?.iceConnectionState;
         const isConnected = iceState === 'connected' || iceState === 'completed';
-        const graceDone = (Date.now() - callStartedAt) > 8000;
-        if(count < 2 && (isConnected || graceDone)){
+        if(count < 2 && isConnected){
           autoNextPartner('peer-left');
         }
       });
