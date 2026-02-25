@@ -17,36 +17,36 @@
     /* ====================== ESTILO MODERNO TIPO VERIZON ====================== */
     :root {
       --google-blue: #cd040b;
-      --google-blue-hover: #a70007;
-      --google-blue-active: #7d0005;
-      --google-red: #ff2d2d;
-      --google-green: #15c37e;
-      --google-gray: #7f8792;
-      --google-border: #272b31;
-      --google-bg: #0b0d12;
-      --google-text: #f7f8fa;
-      --google-text-secondary: #b2b8c3;
-      --google-hover: #151922;
-      --google-focus: #1f2531;
+      --google-blue-hover: #b10008;
+      --google-blue-active: #930007;
+      --google-red: #cd040b;
+      --google-green: #08875d;
+      --google-gray: #6b7280;
+      --google-border: #d9dce1;
+      --google-bg: #ffffff;
+      --google-text: #121417;
+      --google-text-secondary: #4b5563;
+      --google-hover: #f3f4f6;
+      --google-focus: #fff1f2;
       
       /* Variables unificadas */
       --primary-color: #cd040b;
-      --secondary-color: #ff2d2d;
-      --background: #07090e;
-      --card-bg: #11151d;
-      --light-text: #f7f8fa;
-      --gray-text: #b2b8c3;
-      --border-color: #272b31;
-      --hover-bg: #1a202b;
-      --danger-color: #ff3b44;
-      --success-color: #15c37e;
+      --secondary-color: #ef4444;
+      --background: #f4f5f7;
+      --card-bg: #ffffff;
+      --light-text: #121417;
+      --gray-text: #6b7280;
+      --border-color: #d9dce1;
+      --hover-bg: #f3f4f6;
+      --danger-color: #dc2626;
+      --success-color: #08875d;
     }
     html, body {
       margin: 0;
       padding: 0;
       background:
-        radial-gradient(circle at top right, rgba(205, 4, 11, 0.2), transparent 45%),
-        radial-gradient(circle at bottom left, rgba(255, 45, 45, 0.14), transparent 40%),
+        radial-gradient(circle at top right, rgba(205, 4, 11, 0.10), transparent 38%),
+        radial-gradient(circle at bottom left, rgba(17, 24, 39, 0.07), transparent 40%),
         var(--background);
       color: var(--google-text);
       overflow-x: hidden;
@@ -171,15 +171,37 @@
     }
     .screen-content {
       width: 100%;
-      max-width: 450px;
+      max-width: 520px;
       margin: 0 auto;
-      padding: 60px 40px;
+      padding: 76px 32px 40px;
       text-align: center;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
       box-sizing: border-box;
+    }
+
+    #loginScreen .screen-content,
+    #registerScreen .screen-content,
+    #forgotPasswordScreen .screen-content,
+    #profileSetupScreen .screen-content,
+    #countryScreen .screen-content {
+      justify-content: center;
+      padding-top: clamp(64px, 12vh, 120px);
+      padding-bottom: 34px;
+    }
+
+    #loginScreen form,
+    #registerScreen form,
+    #forgotPasswordScreen form,
+    #profileSetupScreen .screen-content > div:not(.logo),
+    #countryScreen .screen-content > div:not(.logo) {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 22px 20px;
+      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
     }
     
     /* Fondo blanco completo para pantallas de auth */
@@ -193,18 +215,27 @@
     
     @media (max-width: 768px) {
       .screen-content {
-        padding: 40px 24px;
+        padding: 54px 20px 28px;
       }
     }
     
     @media (max-width: 768px) {
       .screen-content {
-        padding: 40px 24px;
+        padding: 54px 20px 28px;
         justify-content: flex-start;
+      }
+
+      #loginScreen .screen-content,
+      #registerScreen .screen-content,
+      #forgotPasswordScreen .screen-content,
+      #profileSetupScreen .screen-content,
+      #countryScreen .screen-content {
+        justify-content: flex-start;
+        padding-top: 46px;
       }
       
       .logo {
-        margin-bottom: 32px;
+        margin-bottom: 18px;
         margin-top: 0;
       }
       
@@ -213,19 +244,20 @@
       }
     }
     .logo {
-      margin-bottom: 48px;
+      margin-bottom: 24px;
       margin-top: 0;
     }
     .logo h1 {
-      font-size: 30px;
+      font-size: 32px;
       color: var(--google-text);
       font-weight: 700;
-      letter-spacing: -0.5px;
+      letter-spacing: -0.65px;
       margin-bottom: 0;
       text-transform: uppercase;
+      font-family: 'Inter', 'Segoe UI', 'Roboto', Arial, sans-serif;
     }
     .logo p {
-      font-size: 16px;
+      font-size: 15px;
       margin-bottom: 0;
       color: var(--google-text-secondary);
       font-weight: 400;
@@ -255,7 +287,7 @@
     input, select {
       width: 100%;
       padding: 13px 15px;
-      border-radius: 12px;
+      border-radius: 14px;
       border: 1px solid var(--google-border);
       background-color: var(--google-bg);
       color: var(--google-text);
@@ -271,7 +303,7 @@
       border-color: var(--google-blue);
       border-width: 1px;
       background-color: var(--google-focus);
-      box-shadow: 0 0 0 3px rgba(205, 4, 11, 0.28);
+      box-shadow: 0 0 0 3px rgba(205, 4, 11, 0.2);
     }
     input::placeholder {
       color: var(--google-text-secondary);
@@ -285,7 +317,7 @@
       width: 100%;
       padding: 12px 24px;
       border: none;
-      border-radius: 999px;
+      border-radius: 14px;
       font-size: 14px;
       font-weight: 700;
       cursor: pointer;
@@ -293,16 +325,16 @@
       text-align: center;
       margin-top: 24px;
       min-height: 40px;
-      letter-spacing: 0.25px;
+      letter-spacing: 0.2px;
     }
     .btn-primary {
       background: linear-gradient(135deg, var(--google-blue), var(--secondary-color));
       color: white;
-      box-shadow: 0 10px 26px rgba(205, 4, 11, 0.4);
+      box-shadow: 0 10px 20px rgba(205, 4, 11, 0.28);
     }
     .btn-primary:hover {
       background: linear-gradient(135deg, var(--google-blue-hover), var(--google-blue));
-      box-shadow: 0 14px 30px rgba(205, 4, 11, 0.45);
+      box-shadow: 0 12px 24px rgba(205, 4, 11, 0.3);
       transform: translateY(-1px);
     }
     .btn-primary:active {
@@ -312,6 +344,7 @@
       background-color: transparent;
       border: 1px solid var(--google-border);
       color: var(--google-text);
+      box-shadow: inset 0 0 0 1px rgba(205, 4, 11, 0.1);
     }
     .btn-outline:hover {
       background-color: var(--google-hover);
@@ -523,7 +556,7 @@
     .emoji-btn {
       border: 1px solid var(--border-color);
       background: #fff;
-      border-radius: 999px;
+      border-radius: 14px;
       min-width: 36px;
       height: 36px;
       font-size: 18px;
@@ -545,7 +578,7 @@
       top: 50%;
       transform: translateY(-50%);
       color: white;
-      font-size: 30px;
+      font-size: 32px;
       z-index: 10;
       animation: pulse 2s infinite;
     }
@@ -597,7 +630,7 @@
       margin-left: auto;
       padding: 5px 15px;
       border: none;
-      border-radius: 12px;
+      border-radius: 14px;
       background-color: var(--primary-color);
       color: #fff;
       font-size: 12px;
@@ -854,6 +887,7 @@
       font-size: 16px;
       font-weight: 500;
       color: var(--google-text);
+      box-shadow: inset 0 0 0 1px rgba(205, 4, 11, 0.1);
     }
     .report-user-info .user-details p {
       margin: 4px 0 0 0;
@@ -1376,7 +1410,7 @@
     .offense-detected-word {
       background: rgba(244, 33, 46, 0.1);
       border: 1px solid rgba(244, 33, 46, 0.3);
-      border-radius: 12px;
+      border-radius: 14px;
       padding: 16px 20px;
       margin: 24px 0;
       color: var(--danger-color);
@@ -1587,18 +1621,12 @@
       
       input, select {
         font-size: 16px; /* Previene zoom en iOS */
-        padding: 10px 10px 10px 35px;
+        padding: 11px 12px;
       }
       
       .screen-content {
-        padding: 0 10px;
-        padding-top: 0;
+        padding: 42px 14px 20px;
         margin-top: 0;
-      }
-      
-      .screen-content > *:first-child {
-        margin-top: 0 !important;
-        padding-top: 0 !important;
       }
     }
     
@@ -1607,7 +1635,7 @@
       .screen-content {
         min-height: 100vh;
         justify-content: flex-start;
-        padding-top: 40px;
+        padding-top: 34px;
       }
       
       .logo {
