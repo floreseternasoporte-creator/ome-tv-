@@ -1830,7 +1830,7 @@
   <ins class="adsbygoogle"
        style="display:block"
        data-ad-client="ca-pub-4653147807800151"
-       data-ad-slot="YOUR_AD_SLOT_ID"
+       data-ad-slot="1234567890"
        data-ad-format="auto"
        data-full-width-responsive="true"></ins>
   <script>
@@ -2625,6 +2625,8 @@
     let touchStartX = 0;
     let touchStartY = 0;
     let pendingIncomingCallId = null;
+    let callsRef = null;
+    let callsChildAddedHandler = null;
     let isListening = false;
     let authObserverReady = false;
     let offenseCount = 0;
@@ -2892,7 +2894,7 @@
     }
 
     // Observador de autenticación (para corregir que no pida reconfigurar el perfil si ya está completo)
-    auth.onAuthStateChanged(user => {
+    auth.onAuthStateChanged(async user => {
       if(user){
         currentUser = user;
         console.log("Usuario autenticado:", user.uid);
@@ -2944,7 +2946,7 @@
           });
       } else {
         window.isInVideoSession = false;
-        cleanupCurrentCall(true).catch(()=>{});
+        await cleanupCurrentCall(true).catch(()=>{});
         stopLocalStream();
         currentUser = null;
         currentProfile = null;
@@ -3370,6 +3372,7 @@
 
       remoteUidGlobal = null;
       pendingIncomingCallId = null;
+      unregisterCallsListener();
 
       if(currentUser && window.isInVideoSession){
         await database.ref('onlineUsers/' + currentUser.uid + '/status').set('available').catch(()=>{});
@@ -3397,6 +3400,7 @@
         status: 'available'
       });
       userRef.onDisconnect().remove();
+      registerCallsListener();
 
       scheduleFindRandomUser(800);
     }
@@ -3426,6 +3430,60 @@
         console.error('❌ Error buscando usuario, retry:', err);
         scheduleFindRandomUser(3000);
       }
+    }
+
+
+    function registerCallsListener(){
+      if(callsRef && callsChildAddedHandler) return;
+      callsRef = database.ref('calls');
+      callsChildAddedHandler = snapshot => {
+        const callId = snapshot.key;
+        const callData = snapshot.val();
+        if(!callData || !callData.participants) return;
+        const { caller, callee } = callData.participants;
+        if(callee === currentUser?.uid){
+          if(!window.isInVideoSession) return;
+          if(currentCallId && currentCallId !== callId) return;
+          if(pendingIncomingCallId && pendingIncomingCallId !== callId) return;
+
+          const acceptIncomingCall = async () => {
+            pendingIncomingCallId = callId;
+            if(!localStream){
+              await startLocalStream();
+            }
+            if(!localStream){
+              console.warn('⚠️ No hay stream local para aceptar llamada entrante');
+              database.ref('onlineUsers/' + currentUser.uid + '/status').set('available').catch(()=>{});
+              database.ref('onlineUsers/' + caller + '/status').set('available').catch(()=>{});
+              database.ref('calls/' + callId).remove().catch(()=>{});
+              pendingIncomingCallId = null;
+              return;
+            }
+
+            currentCallId = callId;
+            database.ref('onlineUsers/' + currentUser.uid + '/status').set('busy').catch(()=>{});
+            database.ref('onlineUsers/' + caller + '/status').set('busy').catch(()=>{});
+            database.ref(`calls/${callId}/presence/${currentUser.uid}`).set(true);
+            database.ref(`calls/${callId}/presence/${currentUser.uid}`).onDisconnect().remove();
+            startWebRTC(callId, false);
+            pendingIncomingCallId = null;
+          };
+
+          acceptIncomingCall().catch(err => {
+            console.error('❌ Error aceptando llamada entrante:', err);
+            pendingIncomingCallId = null;
+          });
+        }
+      };
+      callsRef.on('child_added', callsChildAddedHandler);
+    }
+
+    function unregisterCallsListener(){
+      if(callsRef && callsChildAddedHandler){
+        callsRef.off('child_added', callsChildAddedHandler);
+      }
+      callsRef = null;
+      callsChildAddedHandler = null;
     }
 
     async function createCall(remoteUid){
@@ -3467,45 +3525,6 @@
         scheduleFindRandomUser(1200);
       }
     }
-    database.ref('calls').on('child_added', snapshot => {
-      const callId = snapshot.key;
-      const callData = snapshot.val();
-      if(!callData || !callData.participants) return;
-      const { caller, callee } = callData.participants;
-      if(callee === currentUser?.uid){
-        if(!window.isInVideoSession) return;
-        if(currentCallId && currentCallId !== callId) return;
-        if(pendingIncomingCallId && pendingIncomingCallId !== callId) return;
-
-        const acceptIncomingCall = async () => {
-          pendingIncomingCallId = callId;
-          if(!localStream){
-            await startLocalStream();
-          }
-          if(!localStream){
-            console.warn('⚠️ No hay stream local para aceptar llamada entrante');
-            database.ref('onlineUsers/' + currentUser.uid + '/status').set('available').catch(()=>{});
-            database.ref('onlineUsers/' + caller + '/status').set('available').catch(()=>{});
-            database.ref('calls/' + callId).remove().catch(()=>{});
-            pendingIncomingCallId = null;
-            return;
-          }
-
-          currentCallId = callId;
-          database.ref('onlineUsers/' + currentUser.uid + '/status').set('busy').catch(()=>{});
-          database.ref('onlineUsers/' + caller + '/status').set('busy').catch(()=>{});
-          database.ref(`calls/${callId}/presence/${currentUser.uid}`).set(true);
-          database.ref(`calls/${callId}/presence/${currentUser.uid}`).onDisconnect().remove();
-          startWebRTC(callId, false);
-          pendingIncomingCallId = null;
-        };
-
-        acceptIncomingCall().catch(err => {
-          console.error('❌ Error aceptando llamada entrante:', err);
-          pendingIncomingCallId = null;
-        });
-      }
-    });
 
     /* ====================== SISTEMA DE DETECCIÓN DE OFENSAS ====================== */
     function initSpeechRecognition() {
@@ -4139,7 +4158,7 @@
       if(currentUser){
         database.ref(`onlineUsers/${currentUser.uid}`).remove();
       }
-      if(currentCallId){
+      if(currentCallId && currentUser){
         database.ref(`calls/${currentCallId}/presence/${currentUser.uid}`).remove();
       }
     });
