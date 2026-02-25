@@ -2052,14 +2052,55 @@
       border-color: #cd040b;
     }
 
-    .activity-bars { display:grid; gap:10px; margin: 8px 0 12px; }
+    .activity-bars {
+      display:grid;
+      gap:12px;
+      margin: 10px 0 14px;
+      border: 1px solid #edf1f7;
+      border-radius: 10px;
+      padding: 10px;
+      background: #fcfdff;
+    }
+    .activity-scale {
+      display:grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 4px;
+      font-size: 10px;
+      color: #94a3b8;
+      margin-bottom: 4px;
+    }
     .activity-bar-row { display:grid; gap:6px; }
+    .activity-bar-meta {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-size:12px;
+      color:#0f172a;
+    }
+    .activity-value-badge {
+      font-weight:700;
+      font-variant-numeric: tabular-nums;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #fff1f2;
+      color: #b91c1c;
+      border: 1px solid #fecdd3;
+    }
     .activity-bar-track {
       width: 100%;
-      height: 10px;
+      height: 12px;
       border-radius: 999px;
-      background: #eceff4;
+      background:
+        repeating-linear-gradient(
+          90deg,
+          rgba(148, 163, 184, 0.12) 0,
+          rgba(148, 163, 184, 0.12) 19%,
+          transparent 19%,
+          transparent 20%
+        ),
+        #eef2f7;
       overflow: hidden;
+      border: 1px solid #e5eaf1;
     }
     .activity-bar-fill {
       height: 100%;
@@ -2067,6 +2108,10 @@
       border-radius: 999px;
       background: linear-gradient(90deg, #cd040b, #ef4444);
       transition: width .35s ease;
+    }
+    .activity-bar-fill.is-secondary {
+      opacity: 0.72;
+      filter: saturate(0.72);
     }
 
     .country-pill { display:flex; align-items:center; justify-content:space-between; font-size:13px; border-radius:10px; padding:8px 10px; background:#f8fafc; margin-bottom:8px; border:1px solid #edf2f7; }
@@ -4310,6 +4355,17 @@
       const localVideo = document.getElementById('localVideo');
       if(localVideo) localVideo.srcObject = null;
     }
+
+    function stopLocalStream(){
+      if(localStream){
+        localStream.getTracks().forEach(track => {
+          try { track.stop(); } catch(e) {}
+        });
+      }
+      localStream = null;
+      const localVideo = document.getElementById('localVideo');
+      if(localVideo) localVideo.srcObject = null;
+    }
     function startWebRTC(callId, isCaller){
       peerConnection = new RTCPeerConnection(configuration);
       console.log("🔄 Iniciando WebRTC, es caller?", isCaller);
@@ -5167,13 +5223,17 @@
         ['Minutos', values.minutes],
         ['Interacciones', values.interactions]
       ];
-      host.innerHTML = rows.map(([label,val]) => {
-        const width = Math.max(6, Math.round((val / max) * 100));
+      const ticks = [0, 25, 50, 75, 100];
+      const rowsHtml = rows.map(([label,val]) => {
+        const width = Math.max(4, Math.round((val / max) * 100));
         const current = (metric === 'connections' && label === 'Conexiones') ||
                         (metric === 'minutes' && label === 'Minutos') ||
                         (metric === 'interactions' && label === 'Interacciones');
-        return `<div class="activity-bar-row"><div style="display:flex;justify-content:space-between;font-size:12px;"><span>${label}</span><strong>${val}</strong></div><div class="activity-bar-track"><div class="activity-bar-fill" style="width:${current ? width : Math.max(4, Math.round(width*0.72))}%"></div></div></div>`;
+        const finalWidth = current ? width : Math.max(3, Math.round(width * 0.72));
+        const klass = current ? 'activity-bar-fill' : 'activity-bar-fill is-secondary';
+        return `<div class="activity-bar-row"><div class="activity-bar-meta"><span>${label}</span><strong class="activity-value-badge">${val}</strong></div><div class="activity-bar-track"><div class="${klass}" style="width:${finalWidth}%"></div></div></div>`;
       }).join('');
+      host.innerHTML = `<div class="activity-scale">${ticks.map(t=>`<span>${t}%</span>`).join('')}</div>${rowsHtml}`;
     }
 
     function renderRealtimeCards() {
