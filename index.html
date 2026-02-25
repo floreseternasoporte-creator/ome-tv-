@@ -1957,13 +1957,22 @@
     }
 
 
+    #settingsScreen,
+    #profileScreen,
+    #activityScreen,
+    #notificationsScreen,
+    #legalScreen,
+    #supportScreen {
+      background: #ffffff;
+    }
+
     .settings-screen-content {
       width: 100%;
       max-width: none;
       min-height: 100vh;
       margin: 0;
       padding: calc(72px + env(safe-area-inset-top)) 16px 28px;
-      background: linear-gradient(180deg, #0a0a0d 0%, #111216 14%, #f4f5f7 40%);
+      background: #ffffff;
     }
 
     .screen-topbar {
@@ -1976,13 +1985,13 @@
       align-items: center;
       justify-content: space-between;
       padding: calc(12px + env(safe-area-inset-top)) 16px 12px;
-      background: linear-gradient(180deg, rgba(5,5,7,0.94), rgba(5,5,7,0.75));
-      backdrop-filter: blur(8px);
-      border-bottom: 1px solid rgba(255,255,255,0.08);
+      background: #ffffff;
+      backdrop-filter: none;
+      border-bottom: 1px solid #e5e7eb;
     }
 
     .screen-topbar h2 {
-      color: #fff;
+      color: #111827;
       font-size: 18px;
       margin: 0;
       letter-spacing: 0.2px;
@@ -1992,9 +2001,9 @@
       width: 36px;
       height: 36px;
       border-radius: 50%;
-      border: 1px solid rgba(255,255,255,0.24);
-      background: rgba(255,255,255,0.12);
-      color: #fff;
+      border: 1px solid #d1d5db;
+      background: #ffffff;
+      color: #111827;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -2002,17 +2011,17 @@
     }
 
     .settings-hero {
-      background: linear-gradient(136deg, #080809 0%, #17181e 60%, #22242b 100%);
-      color: #fff;
-      border-radius: 20px;
+      background: #ffffff;
+      color: #111827;
+      border-radius: 8px;
       padding: 20px;
       margin-bottom: 14px;
-      border: 1px solid rgba(255,255,255,0.08);
-      box-shadow: 0 14px 26px rgba(2, 6, 23, 0.42);
+      border: 1px solid #e5e7eb;
+      box-shadow: none;
     }
 
     .settings-hero h3 { font-size: 22px; margin-bottom: 8px; }
-    .settings-hero p { color: rgba(255,255,255,0.82); font-size: 13px; }
+    .settings-hero p { color: var(--google-text-secondary); font-size: 13px; }
 
     .settings-list { display: grid; gap: 10px; }
 
@@ -2026,7 +2035,7 @@
       justify-content: space-between;
       padding: 14px;
       cursor: pointer;
-      box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+      box-shadow: none;
     }
 
     .settings-item-left { display: flex; align-items: center; gap: 12px; }
@@ -2046,7 +2055,7 @@
       background: #fff;
       padding: 16px;
       margin-bottom: 12px;
-      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.09);
+      box-shadow: none;
     }
 
     .profile-header { display:flex; align-items:center; gap:12px; margin-bottom:14px; }
@@ -2068,9 +2077,9 @@
       cursor: pointer;
     }
     .activity-tab.active {
-      background: #101114;
+      background: #cd040b;
       color: #fff;
-      border-color: #101114;
+      border-color: #cd040b;
     }
 
     .activity-bars { display:grid; gap:10px; margin: 8px 0 12px; }
@@ -2773,20 +2782,6 @@
           <p>7) Contacto: Para consultas de privacidad o soporte, utiliza la sección Soporte dentro de la aplicación.</p>
         </div>
       </div>
-      <div class="legal-card">
-        <h3>Política de privacidad</h3>
-        <div class="legal-text" id="privacyText">
-          <p>Recopilamos información básica para operar el servicio: correo de acceso, identificador de cuenta, país seleccionado, preferencias de interés, y datos técnicos de conexión.</p>
-          <p>1) Finalidad: Usamos datos para autenticar, conectar usuarios, moderar contenido, atender soporte y mejorar rendimiento.</p>
-          <p>2) Seguridad: Aplicamos medidas técnicas y organizativas razonables para proteger tu información. Aun así, ningún sistema es completamente invulnerable.</p>
-          <p>3) Conservación: Conservamos datos por el tiempo necesario para cumplir finalidades de seguridad, continuidad del servicio y obligaciones legales.</p>
-          <p>4) Reportes y soporte: Si envías una incidencia, almacenamos su contenido y la respuesta del equipo. Las respuestas pueden mostrarse en tu sección de notificaciones.</p>
-          <p>5) Compartición: No vendemos datos personales. Solo compartimos información cuando sea necesario para operar la plataforma, cumplir la ley o responder a requerimientos legítimos.</p>
-          <p>6) Tus derechos: Puedes solicitar actualización de datos de perfil o, cuando aplique, eliminación de cuenta conforme a normativa local.</p>
-          <p>7) Contacto: Para consultas de privacidad o soporte, utiliza la sección Soporte dentro de la aplicación.</p>
-        </div>
-      </div>
-      <button class="btn btn-outline" onclick="goToScreen('settingsScreen')">Volver</button>
     </div>
   </div>
 
