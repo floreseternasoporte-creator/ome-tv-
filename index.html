@@ -14,9 +14,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-database-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-analytics-compat.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.20.0/dist/tf.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3/dist/coco-ssd.min.js"></script>
-  <style>
+      <style>
     /* ====================== ESTILO MODERNO TIPO VERIZON ====================== */
     :root {
       --google-blue: #cd040b;
@@ -274,7 +272,6 @@
       .screen-content {
         padding: 64px 20px 30px;
         justify-content: flex-start;
-        padding-top: 62px;
       }
 
       #authMethodScreen .screen-content,
@@ -1700,43 +1697,6 @@
       transform: translateY(-1px);
     }
 
-    .body-warning-indicator {
-      position: fixed;
-      top: 24px;
-      left: 50%;
-      transform: translateX(-50%) translateY(-20px);
-      background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
-      color: white;
-      padding: 14px 22px;
-      border-radius: 14px;
-      box-shadow: 0 12px 26px rgba(0, 0, 0, 0.28);
-      z-index: 20000;
-      display: none;
-      align-items: center;
-      gap: 12px;
-      max-width: 560px;
-      width: calc(100% - 32px);
-      opacity: 0;
-      transition: all 0.25s ease;
-    }
-
-    .body-warning-indicator.active {
-      display: flex;
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-
-    .body-warning-indicator i {
-      font-size: 20px;
-      animation: warningPulse 1s ease infinite;
-    }
-
-    .body-warning-text {
-      font-size: 14px;
-      line-height: 1.35;
-      font-weight: 600;
-    }
-
     /* ====================== COUNTRY SEARCH DROPDOWN ====================== */
     .country-dropdown {
       position: relative;
@@ -2042,9 +2002,16 @@
 
     .settings-item-left { display: flex; align-items: center; gap: 12px; }
     .settings-item-left i {
-      width: 36px; height: 36px; border-radius: 50%;
+      width: 38px; height: 38px; border-radius: 12px;
       display: inline-flex; align-items: center; justify-content: center;
       background: #fff1f2; color: var(--primary-color);
+      font-size: 16px;
+    }
+    .settings-item-left span {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.1px;
+      color: #111827;
     }
 
     .profile-summary-card,
@@ -2625,13 +2592,6 @@
 
   <!-- INDICADOR DE ADVERTENCIA - PANTALLA COMPLETA -->
 
-  <div class="body-warning-indicator" id="bodyWarningIndicator">
-    <i class="fa-solid fa-triangle-exclamation"></i>
-    <div class="body-warning-text" id="bodyWarningText">
-      Moderación visual activa. Evita mostrar contenido corporal explícito para continuar usando la plataforma.
-    </div>
-  </div>
-
   <div class="offense-warning-indicator" id="warningIndicator">
     <div class="warning-content">
       <div class="warning-icon">
@@ -2663,8 +2623,8 @@
     </div>
     <div class="settings-screen-content">
       <div class="settings-hero">
-        <h3>Panel Verizon</h3>
-        <p>Control total de tu cuenta, actividad, soporte y legal desde pantalla completa.</p>
+        <h3>Configuración</h3>
+        <p>Administra tu cuenta, actividad, notificaciones, soporte y legal.</p>
       </div>
       <div class="settings-list">
         <button class="settings-item" onclick="goToScreen('activityScreen')">
@@ -2718,7 +2678,7 @@
     </div>
     <div class="settings-screen-content">
       <div class="activity-card">
-        <div class="activity-live">Actualizando en tiempo real</div>
+
         <div class="activity-tabs">
           <button class="activity-tab active" data-metric="connections" onclick="selectActivityMetric('connections')">Conexiones</button>
           <button class="activity-tab" data-metric="minutes" onclick="selectActivityMetric('minutes')">Minutos</button>
@@ -3113,17 +3073,6 @@
     let isListening = false;
     let authObserverReady = false;
     let offenseCount = 0;
-    let bodyDetectionState = {
-      running: false,
-      rafId: null,
-      canvas: null,
-      ctx: null,
-      detector: null,
-      streamSessionId: null,
-      violationCooldownUntil: 0,
-      warningHideTimeout: null,
-      lastFrameAt: 0
-    };
 
     // Lista de palabras ofensivas - se puede expandir
     const OFFENSIVE_WORDS = [
@@ -3263,7 +3212,6 @@
         // Iniciar monitoreo de voz para detectar ofensas
         setTimeout(() => {
           startSpeechMonitoring();
-          startBodyMonitoring();
         }, 2000);
       } else {
         document.querySelector('.account-status-icon').style.display = 'none';
@@ -4304,145 +4252,13 @@
       setInterval(updateCountdown, 1000);
     }
 
-    async function ensureBodyDetector() {
-      if (bodyDetectionState.detector) return bodyDetectionState.detector;
-      if (!window.cocoSsd || !window.tf) {
-        console.warn('Detector visual no disponible en este navegador');
-        return null;
-      }
-
-      try {
-        await tf.ready();
-        bodyDetectionState.detector = await cocoSsd.load({ base: 'lite_mobilenet_v2' });
-        console.log('✅ Detector visual cargado');
-        return bodyDetectionState.detector;
-      } catch (error) {
-        console.error('❌ No se pudo cargar el detector visual:', error);
-        return null;
-      }
-    }
-
-    function getBodyWarningText(severityScore) {
-      if (severityScore >= 0.8) {
-        return '⚠️ Riesgo alto detectado: reduce contenido corporal explícito inmediatamente.';
-      }
-      if (severityScore >= 0.65) {
-        return '⚠️ Riesgo medio detectado: ajusta encuadre y vestimenta para evitar sanciones.';
-      }
-      return '⚠️ Riesgo visual detectado: evita exposición de torso/cuerpo para continuar.';
-    }
-
-    function showBodyWarning(message) {
-      const indicator = document.getElementById('bodyWarningIndicator');
-      const text = document.getElementById('bodyWarningText');
-      if (!indicator || !text) return;
-
-      text.textContent = message;
-      indicator.classList.add('active');
-
-      clearTimeout(bodyDetectionState.warningHideTimeout);
-      bodyDetectionState.warningHideTimeout = setTimeout(() => {
-        indicator.classList.remove('active');
-      }, 5000);
-    }
-
-    function normalizeBodyRisk(predictions) {
-      if (!predictions || predictions.length === 0) return 0;
-
-      const video = document.getElementById('localVideo');
-      const videoArea = Math.max((video?.videoWidth || 1) * (video?.videoHeight || 1), 1);
-
-      let score = 0;
-      for (const pred of predictions) {
-        const label = (pred.class || '').toLowerCase();
-        const [x, y, width, height] = pred.bbox || [0, 0, 0, 0];
-        const areaRatio = Math.max((width * height) / videoArea, 0);
-
-        if (label === 'person') score += pred.score * (0.45 + areaRatio * 1.8);
-        if (label === 'cell phone') score += pred.score * 0.08;
-        if (label === 'sports ball') score += pred.score * 0.03;
-      }
-
-      return Math.min(score, 1);
-    }
-
-    async function persistBodyDetectionEvent(severityScore, predictions) {
-      if (!currentUser || !currentCallId) return;
-
-      const eventPayload = {
-        uid: currentUser.uid,
-        callId: currentCallId,
-        severityScore: Number(severityScore.toFixed(3)),
-        labels: predictions.map(pred => pred.class),
-        createdAt: firebase.database.ServerValue.TIMESTAMP,
-        source: 'realtime-body-detector-v1'
-      };
-
-      try {
-        await database.ref(`moderation/bodyDetections/${currentUser.uid}`).push(eventPayload);
-        await database.ref(`calls/${currentCallId}/moderation/body/${currentUser.uid}`).set(eventPayload);
-      } catch (error) {
-        console.error('❌ Error guardando detección corporal en Firebase:', error);
-      }
-    }
-
-    async function processBodyFrame() {
-      if (!bodyDetectionState.running || !localStream) return;
-
-      const now = Date.now();
-      if (now - bodyDetectionState.lastFrameAt < 650) {
-        bodyDetectionState.rafId = requestAnimationFrame(processBodyFrame);
-        return;
-      }
-      bodyDetectionState.lastFrameAt = now;
-
-      const localVideo = document.getElementById('localVideo');
-      if (!localVideo || localVideo.readyState < 2) {
-        bodyDetectionState.rafId = requestAnimationFrame(processBodyFrame);
-        return;
-      }
-
-      const detector = await ensureBodyDetector();
-      if (!detector) {
-        bodyDetectionState.rafId = requestAnimationFrame(processBodyFrame);
-        return;
-      }
-
-      try {
-        const predictions = await detector.detect(localVideo, 12, 0.35);
-        const severity = normalizeBodyRisk(predictions);
-
-        if (severity >= 0.55 && Date.now() > bodyDetectionState.violationCooldownUntil) {
-          bodyDetectionState.violationCooldownUntil = Date.now() + 8000;
-          showBodyWarning(getBodyWarningText(severity));
-          await persistBodyDetectionEvent(severity, predictions);
-        }
-      } catch (error) {
-        console.error('❌ Error analizando frame corporal:', error);
-      }
-
-      bodyDetectionState.rafId = requestAnimationFrame(processBodyFrame);
-    }
-
-    async function startBodyMonitoring() {
-      if (bodyDetectionState.running) return;
-      bodyDetectionState.running = true;
-      bodyDetectionState.streamSessionId = `${currentUser?.uid || 'anon'}-${Date.now()}`;
-      bodyDetectionState.lastFrameAt = 0;
-      bodyDetectionState.violationCooldownUntil = 0;
-      await processBodyFrame();
+    function startBodyMonitoring() {
+      // Detección corporal desactivada por solicitud del producto.
+      return;
     }
 
     function stopBodyMonitoring() {
-      bodyDetectionState.running = false;
-      bodyDetectionState.streamSessionId = null;
-      if (bodyDetectionState.rafId) {
-        cancelAnimationFrame(bodyDetectionState.rafId);
-        bodyDetectionState.rafId = null;
-      }
-      clearTimeout(bodyDetectionState.warningHideTimeout);
-      const indicator = document.getElementById('bodyWarningIndicator');
-      indicator?.classList.remove('active');
+      return;
     }
 
     /* ====================== WEBRTC ====================== */
@@ -4479,6 +4295,9 @@
         alert("No se pudo acceder a la cámara/micrófono. Verifica los permisos.");
         return false;
       }
+      localStream = null;
+      const localVideo = document.getElementById('localVideo');
+      if(localVideo) localVideo.srcObject = null;
     }
 
     function stopLocalStream(){
