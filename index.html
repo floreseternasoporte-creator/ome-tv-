@@ -252,7 +252,6 @@
       .screen-content {
         padding: 64px 20px 30px;
         justify-content: flex-start;
-        padding-top: 62px;
       }
 
       #loginScreen .screen-content,
@@ -1988,6 +1987,12 @@
               </select>
             </div>
           </div>
+          <div class="form-group">
+            <label for="interestsInput">Intereses (estilo Omegle)</label>
+            <div class="input-group">
+              <input type="text" id="interestsInput" placeholder="Ej: música, anime, gaming, deportes">
+            </div>
+          </div>
           <button type="button" class="btn btn-primary mt-4" onclick="updateProfileAndConnect()">Conectar ahora</button>
         </div>
       </div>
@@ -3068,6 +3073,21 @@
         throw error;
       }
     }
+    function normalizeInterests(rawText = '') {
+      return rawText
+        .split(',')
+        .map(v => v.trim().toLowerCase())
+        .filter(Boolean)
+        .filter((v, i, arr) => arr.indexOf(v) === i)
+        .slice(0, 8);
+    }
+
+    function hasSharedInterests(a = [], b = []) {
+      if(!a.length || !b.length) return false;
+      const set = new Set(a);
+      return b.some(item => set.has(item));
+    }
+
     // Esta función ya no es necesaria, se maneja en validateBirthDate
     async function updateProfileAndConnect(){
       try {
@@ -3084,9 +3104,12 @@
           return;
         }
 
-        // Actualizar solo el país
+        const interestsInput = document.getElementById('interestsInput');
+        const interests = normalizeInterests(interestsInput ? interestsInput.value : '');
+
         const updateData = {
           country: selectedCountry,
+          interests,
           lastUpdated: firebase.database.ServerValue.TIMESTAMP
         };
 
@@ -3096,6 +3119,7 @@
 
         // Actualizar perfil local
         currentProfile.country = selectedCountry;
+        currentProfile.interests = updateData.interests;
 
         console.log("País actualizado, conectando...");
         goToScreen('videoCallScreen');
@@ -3403,6 +3427,7 @@
         avatar_url: currentProfile.avatar_url,
         country: currentProfile.country,
         birthDate: currentProfile.birthDate,
+        interests: Array.isArray(currentProfile.interests) ? currentProfile.interests : [],
         timestamp: firebase.database.ServerValue.TIMESTAMP,
         status: 'available'
       });
@@ -3418,11 +3443,18 @@
         console.log("🔍 Buscando usuarios online...");
         const snapshot = await database.ref('onlineUsers').once('value');
         const online = snapshot.val() || {};
-        const candidates = Object.entries(online)
-          .filter(([uid, data]) => uid !== currentUser.uid && data && data.status === 'available')
-          .map(([uid]) => uid);
+        const myInterests = Array.isArray(currentProfile?.interests) ? currentProfile.interests : [];
+        const availableEntries = Object.entries(online)
+          .filter(([uid, data]) => uid !== currentUser.uid && data && data.status === 'available');
 
-        console.log("👥 Usuarios online disponibles:", candidates.length);
+        const preferred = myInterests.length
+          ? availableEntries.filter(([, data]) => hasSharedInterests(myInterests, data.interests || []))
+          : [];
+
+        const pool = preferred.length ? preferred : availableEntries;
+        const candidates = pool.map(([uid]) => uid);
+
+        console.log("👥 Usuarios online disponibles:", candidates.length, "| coincidencias:", preferred.length);
 
         if(candidates.length === 0){
           console.log("⏳ Nadie disponible, reintentando en 2.5s...");
@@ -3944,6 +3976,9 @@
         alert("No se pudo acceder a la cámara/micrófono. Verifica los permisos.");
         return false;
       }
+      localStream = null;
+      const localVideo = document.getElementById('localVideo');
+      if(localVideo) localVideo.srcObject = null;
     }
 
     function stopLocalStream(){
