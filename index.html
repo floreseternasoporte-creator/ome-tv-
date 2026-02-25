@@ -252,7 +252,6 @@
       .screen-content {
         padding: 64px 20px 30px;
         justify-content: flex-start;
-        padding-top: 62px;
       }
 
       #loginScreen .screen-content,
@@ -2765,8 +2764,8 @@
 
         initEmojiCarousel();
         showConnecting();
-        await startLocalStream();
-        if(!localStream){
+        const streamReady = await startLocalStream();
+        if(!streamReady || !localStream){
           hideConnecting();
           return;
         }
@@ -2777,13 +2776,20 @@
           startBodyMonitoring();
         }, 2000);
       } else {
-        // Ocultar iconos de moderación en otras pantallas
         document.querySelector('.account-status-icon').style.display = 'none';
         document.querySelector('.report-icon').style.display = 'none';
 
-        // Detener monitoreo si salimos de la videollamada
         stopSpeechMonitoring();
         stopBodyMonitoring();
+
+        if(window.isInVideoSession){
+          window.isInVideoSession = false;
+          await cleanupCurrentCall(true);
+          stopLocalStream();
+          if(currentUser){
+            database.ref('onlineUsers/' + currentUser.uid).remove().catch(()=>{});
+          }
+        }
       }
     }
     function toggleForm(formType) {
@@ -2937,6 +2943,9 @@
             goToScreen('profileSetupScreen');
           });
       } else {
+        window.isInVideoSession = false;
+        cleanupCurrentCall(true).catch(()=>{});
+        stopLocalStream();
         currentUser = null;
         currentProfile = null;
         if(authObserverReady) {
@@ -3345,11 +3354,21 @@
       if(currentCallId){
         const callIdToCleanup = currentCallId;
         currentCallId = null;
+
+        await database.ref(`calls/${callIdToCleanup}/presence/${currentUser?.uid || ''}`).remove().catch(()=>{});
+
         if(removeCallNode){
+          const partsSnap = await database.ref(`calls/${callIdToCleanup}/participants`).once('value').catch(()=>null);
+          const parts = partsSnap && partsSnap.val ? (partsSnap.val() || {}) : {};
           await database.ref('calls/' + callIdToCleanup).remove().catch(()=>{});
+          const otherUid = (parts.caller === currentUser?.uid) ? parts.callee : parts.caller;
+          if(otherUid){
+            await database.ref('onlineUsers/' + otherUid + '/status').set('available').catch(()=>{});
+          }
         }
       }
 
+      remoteUidGlobal = null;
       pendingIncomingCallId = null;
 
       if(currentUser && window.isInVideoSession){
@@ -3426,18 +3445,27 @@
       currentCallId = callId;
       console.log("📞 Creando llamada:", callId);
 
-      await database.ref('onlineUsers/' + currentUser.uid + '/status').set('busy').catch(()=>{});
-      await database.ref('calls/' + callId).set({
-        participants: {
-          caller: currentUser.uid,
-          callee: remoteUid
-        },
-        createdAt: firebase.database.ServerValue.TIMESTAMP
-      });
-      await database.ref(`calls/${callId}/presence/${currentUser.uid}`).set(true);
-      database.ref(`calls/${callId}/presence/${currentUser.uid}`).onDisconnect().remove();
+      try {
+        await database.ref('onlineUsers/' + currentUser.uid + '/status').set('busy').catch(()=>{});
+        await database.ref('calls/' + callId).set({
+          participants: {
+            caller: currentUser.uid,
+            callee: remoteUid
+          },
+          createdAt: firebase.database.ServerValue.TIMESTAMP
+        });
+        await database.ref(`calls/${callId}/presence/${currentUser.uid}`).set(true);
+        database.ref(`calls/${callId}/presence/${currentUser.uid}`).onDisconnect().remove();
 
-      startWebRTC(callId, true);
+        startWebRTC(callId, true);
+      } catch(err){
+        console.error('❌ Error creando llamada:', err);
+        await database.ref('onlineUsers/' + currentUser.uid + '/status').set('available').catch(()=>{});
+        await database.ref('onlineUsers/' + remoteUid + '/status').set('available').catch(()=>{});
+        await database.ref('calls/' + callId).remove().catch(()=>{});
+        currentCallId = null;
+        scheduleFindRandomUser(1200);
+      }
     }
     database.ref('calls').on('child_added', snapshot => {
       const callId = snapshot.key;
@@ -3456,6 +3484,9 @@
           }
           if(!localStream){
             console.warn('⚠️ No hay stream local para aceptar llamada entrante');
+            database.ref('onlineUsers/' + currentUser.uid + '/status').set('available').catch(()=>{});
+            database.ref('onlineUsers/' + caller + '/status').set('available').catch(()=>{});
+            database.ref('calls/' + callId).remove().catch(()=>{});
             pendingIncomingCallId = null;
             return;
           }
@@ -3854,6 +3885,13 @@
     /* ====================== WEBRTC ====================== */
     async function startLocalStream(){
       try {
+        if(localStream && localStream.getTracks().some(track => track.readyState === 'live')){
+          const localVideo = document.getElementById('localVideo');
+          localVideo.srcObject = localStream;
+          await localVideo.play().catch(()=>{});
+          return true;
+        }
+
         localStream = await navigator.mediaDevices.getUserMedia({
           video: {
             width: { ideal: 1280 },
@@ -3867,15 +3905,28 @@
           }
         });
 
-        // Mostrar video local
         const localVideo = document.getElementById('localVideo');
         localVideo.srcObject = localStream;
         await localVideo.play();
         console.log("✅ Video local iniciado");
+        return true;
       } catch(error){
         console.error("❌ Error accediendo a cámara y micrófono:", error);
+        localStream = null;
         alert("No se pudo acceder a la cámara/micrófono. Verifica los permisos.");
+        return false;
       }
+    }
+
+    function stopLocalStream(){
+      if(localStream){
+        localStream.getTracks().forEach(track => {
+          try { track.stop(); } catch(e) {}
+        });
+      }
+      localStream = null;
+      const localVideo = document.getElementById('localVideo');
+      if(localVideo) localVideo.srcObject = null;
     }
     function startWebRTC(callId, isCaller){
       peerConnection = new RTCPeerConnection(configuration);
@@ -4084,6 +4135,7 @@
     }
 
     window.addEventListener('beforeunload', () => {
+      stopLocalStream();
       if(currentUser){
         database.ref(`onlineUsers/${currentUser.uid}`).remove();
       }
