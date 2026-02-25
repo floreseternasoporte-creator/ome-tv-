@@ -2740,7 +2740,7 @@
     });
 
     /* ====================== MANEJO DE PANTALLAS ====================== */
-    function goToScreen(screenId) {
+    async function goToScreen(screenId) {
       // Prevenir cambios de pantalla no autorizados
       if (!screenId || typeof screenId !== 'string') return;
 
@@ -2762,8 +2762,12 @@
         document.querySelector('.report-icon').style.display = 'flex';
 
         initEmojiCarousel();
-        startLocalStream();
         showConnecting();
+        await startLocalStream();
+        if(!localStream){
+          hideConnecting();
+          return;
+        }
         startMatching();
         // Iniciar monitoreo de voz para detectar ofensas
         setTimeout(() => {
@@ -3381,7 +3385,7 @@
         const snapshot = await database.ref('onlineUsers').once('value');
         const online = snapshot.val() || {};
         const candidates = Object.entries(online)
-          .filter(([uid, data]) => uid !== currentUser.uid && data && data.status !== 'busy')
+          .filter(([uid, data]) => uid !== currentUser.uid && data && data.status === 'available')
           .map(([uid]) => uid);
 
         console.log("👥 Usuarios online disponibles:", candidates.length);
@@ -3402,8 +3406,14 @@
     }
 
     async function createCall(remoteUid){
-      const remoteOnline = await database.ref('onlineUsers/' + remoteUid).once('value');
-      if(!remoteOnline.exists()){
+      const remoteStatusRef = database.ref('onlineUsers/' + remoteUid + '/status');
+      const lockResult = await remoteStatusRef.transaction((status) => {
+        if(status === 'available') return 'ringing';
+        return; // abort
+      });
+
+      if(!lockResult.committed){
+        console.log('⛔ Usuario remoto ya no está disponible, reintentando...');
         scheduleFindRandomUser(500);
         return;
       }
@@ -3434,6 +3444,7 @@
         if(currentCallId && currentCallId !== callId) return;
         currentCallId = callId;
         database.ref('onlineUsers/' + currentUser.uid + '/status').set('busy').catch(()=>{});
+        database.ref('onlineUsers/' + caller + '/status').set('busy').catch(()=>{});
         database.ref(`calls/${callId}/presence/${currentUser.uid}`).set(true);
         database.ref(`calls/${callId}/presence/${currentUser.uid}`).onDisconnect().remove();
         startWebRTC(callId, false);
@@ -3895,23 +3906,21 @@
       peerConnection.onicecandidate = event => {
         if(event.candidate){
           console.log("🧊 Enviando ICE candidate");
-          database.ref(`calls/${callId}/iceCandidates/${currentUser.uid}`).push(JSON.stringify(event.candidate));
+          database.ref(`calls/${callId}/iceCandidates`).push({ from: currentUser.uid, candidate: JSON.stringify(event.candidate) });
         }
       };
 
       currentIceCandidatesRef = database.ref(`calls/${callId}/iceCandidates`);
       currentIceCandidatesRef.on('child_added', snapshot => {
-        const userUid = snapshot.key;
-        if(userUid !== currentUser.uid){
-          snapshot.forEach(candidateSnap => {
-            const candidateData = candidateSnap.val();
-            if(candidateData){
-              const candidate = new RTCIceCandidate(JSON.parse(candidateData));
-              peerConnection.addIceCandidate(candidate)
-                .then(() => console.log("✅ ICE candidate agregado"))
-                .catch(e => console.error("❌ Error agregando ICE candidate:", e));
-            }
-          });
+        const candidatePayload = snapshot.val();
+        if(!candidatePayload || candidatePayload.from === currentUser.uid || !candidatePayload.candidate) return;
+        try {
+          const candidate = new RTCIceCandidate(JSON.parse(candidatePayload.candidate));
+          peerConnection.addIceCandidate(candidate)
+            .then(() => console.log("✅ ICE candidate agregado"))
+            .catch(e => console.error("❌ Error agregando ICE candidate:", e));
+        } catch(e){
+          console.error('❌ ICE candidate inválido:', e);
         }
       });
 
