@@ -274,6 +274,7 @@
       .screen-content {
         padding: 64px 20px 30px;
         justify-content: flex-start;
+        padding-top: 62px;
       }
 
       #authMethodScreen .screen-content,
@@ -1971,7 +1972,7 @@
       max-width: none;
       min-height: 100vh;
       margin: 0;
-      padding: calc(72px + env(safe-area-inset-top)) 16px 28px;
+      padding: calc(64px + env(safe-area-inset-top)) 0 0;
       background: #ffffff;
     }
 
@@ -2013,10 +2014,10 @@
     .settings-hero {
       background: #ffffff;
       color: #111827;
-      border-radius: 8px;
-      padding: 20px;
-      margin-bottom: 14px;
-      border: 1px solid #e5e7eb;
+      border-radius: 0;
+      padding: 18px 16px;
+      margin-bottom: 0;
+      border: none;
       box-shadow: none;
     }
 
@@ -2027,15 +2028,16 @@
 
     .settings-item {
       width: 100%;
-      border: 1px solid #e4e7ed;
-      border-radius: 14px;
+      border: none;
+      border-radius: 0;
       background: #fff;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 14px;
+      padding: 16px;
       cursor: pointer;
       box-shadow: none;
+      border-top: 1px solid #eceff3;
     }
 
     .settings-item-left { display: flex; align-items: center; gap: 12px; }
@@ -2050,12 +2052,13 @@
     .legal-card,
     .notifications-card,
     .support-card {
-      border: 1px solid #e3e7ee;
-      border-radius: 16px;
+      border: none;
+      border-radius: 0;
       background: #fff;
       padding: 16px;
-      margin-bottom: 12px;
+      margin-bottom: 0;
       box-shadow: none;
+      border-top: 1px solid #eceff3;
     }
 
     .profile-header { display:flex; align-items:center; gap:12px; margin-bottom:14px; }
