@@ -183,6 +183,7 @@
       box-sizing: border-box;
     }
 
+    #authMethodScreen .screen-content,
     #loginScreen .screen-content,
     #registerScreen .screen-content,
     #forgotPasswordScreen .screen-content,
@@ -193,6 +194,7 @@
       padding-bottom: 42px;
     }
 
+    #authMethodScreen .screen-content > div:not(.logo):not(.auth-terms),
     #loginScreen form,
     #registerScreen form,
     #forgotPasswordScreen form,
@@ -206,6 +208,7 @@
     }
 
 
+    #authMethodScreen .logo,
     #loginScreen .logo,
     #registerScreen .logo,
     #forgotPasswordScreen .logo,
@@ -214,6 +217,7 @@
       margin-bottom: 34px;
     }
 
+    #authMethodScreen .screen-content > div:not(.logo):not(.auth-terms),
     #loginScreen form,
     #registerScreen form,
     #forgotPasswordScreen form,
@@ -234,6 +238,7 @@
     }
 
     /* Fondo blanco completo para pantallas de auth */
+    #authMethodScreen,
     #loginScreen,
     #registerScreen,
     #forgotPasswordScreen,
@@ -254,6 +259,7 @@
         justify-content: flex-start;
       }
 
+      #authMethodScreen .screen-content,
       #loginScreen .screen-content,
       #registerScreen .screen-content,
       #forgotPasswordScreen .screen-content,
@@ -273,6 +279,7 @@
       }
 
 
+      #authMethodScreen .logo,
       #loginScreen .logo,
       #registerScreen .logo,
       #forgotPasswordScreen .logo,
@@ -281,6 +288,7 @@
         margin-bottom: 22px;
       }
 
+      #authMethodScreen .screen-content > div:not(.logo):not(.auth-terms),
       #loginScreen form,
       #registerScreen form,
       #forgotPasswordScreen form,
@@ -396,6 +404,62 @@
     .btn-outline:hover {
       background-color: var(--google-hover);
       border-color: var(--google-gray);
+    }
+
+    .auth-methods {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      width: 100%;
+      text-align: left;
+    }
+    .auth-method-btn {
+      width: 100%;
+      min-height: 54px;
+      border-radius: 16px;
+      border: 1px solid var(--border-color);
+      background: #fff;
+      color: var(--google-text);
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 12px;
+      padding: 14px 16px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.05);
+    }
+    .auth-method-btn i {
+      font-size: 18px;
+      width: 20px;
+      text-align: center;
+    }
+    .auth-method-btn.email {
+      border-color: #cd040b33;
+    }
+    .auth-method-btn.email i {
+      color: #cd040b;
+    }
+    .auth-method-btn.disabled {
+      background: #f3f4f6;
+      color: #9ca3af;
+      border-color: #e5e7eb;
+      cursor: not-allowed;
+      box-shadow: none;
+      pointer-events: none;
+    }
+    .auth-terms {
+      margin-top: 18px;
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--google-text-secondary);
+      text-align: center;
+    }
+    .auth-terms a {
+      color: #cd040b;
+      text-decoration: underline;
+      font-weight: 600;
     }
     .links {
       margin: 20px 0;
@@ -1677,6 +1741,7 @@
         margin-top: 0;
       }
 
+      #authMethodScreen .screen-content,
       #loginScreen .screen-content,
       #registerScreen .screen-content,
       #forgotPasswordScreen .screen-content,
@@ -1839,7 +1904,30 @@
 
   <div class="container">
     <!-- PANTALLAS: LOGIN, REGISTRO, RECUPERAR, PERFIL, FECHA NACIMIENTO, PAÍS, VIDEOLLAMADA, BLOQUEADO -->
-    <div class="screen active" id="loginScreen">
+    <div class="screen active" id="authMethodScreen">
+      <div class="screen-content">
+        <div class="logo">
+          <h1>BealyChat</h1>
+        </div>
+        <div class="auth-methods">
+          <button type="button" class="auth-method-btn email" onclick="goToScreen('loginScreen')">
+            <i class="fa-solid fa-envelope"></i>
+            <span>Email</span>
+          </button>
+          <button type="button" class="auth-method-btn disabled">
+            <i class="fa-brands fa-google"></i>
+            <span>Google (próximamente)</span>
+          </button>
+          <button type="button" class="auth-method-btn disabled">
+            <i class="fa-brands fa-facebook-f"></i>
+            <span>Facebook (próximamente)</span>
+          </button>
+        </div>
+        <p class="auth-terms">Al continuar, aceptas nuestros <a href="#">Términos de servicio</a> y <a href="#">Política de privacidad</a>.</p>
+      </div>
+    </div>
+
+    <div class="screen" id="loginScreen">
       <div class="screen-content">
         <div class="logo">
           <h1>BealyChat</h1>
@@ -1936,7 +2024,7 @@
             </div>
           </div>
           <button type="button" class="btn btn-primary">Enviar enlace de recuperación</button>
-          <button type="button" class="btn btn-outline mt-3" onclick="goToScreen('loginScreen')">Volver a iniciar sesión</button>
+          <button type="button" class="btn btn-outline mt-3" onclick="goToScreen('authMethodScreen')">Volver</button>
         </form>
       </div>
     </div>
@@ -2958,7 +3046,7 @@
         currentUser = null;
         currentProfile = null;
         if(authObserverReady) {
-          goToScreen('loginScreen');
+          goToScreen('authMethodScreen');
         }
       }
     });
@@ -3980,20 +4068,6 @@
         alert("No se pudo acceder a la cámara/micrófono. Verifica los permisos.");
         return false;
       }
-      localStream = null;
-      const localVideo = document.getElementById('localVideo');
-      if(localVideo) localVideo.srcObject = null;
-    }
-
-    function stopLocalStream(){
-      if(localStream){
-        localStream.getTracks().forEach(track => {
-          try { track.stop(); } catch(e) {}
-        });
-      }
-      localStream = null;
-      const localVideo = document.getElementById('localVideo');
-      if(localVideo) localVideo.srcObject = null;
     }
 
     function stopLocalStream(){
