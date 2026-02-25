@@ -2,6 +2,9 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4653147807800151" crossorigin="anonymous"></script>
   <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,viewport-fit=cover">
   <title>BealyChat - Videollamadas Aleatorias</title>
@@ -11,40 +14,42 @@
   <script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-database-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-analytics-compat.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.20.0/dist/tf.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3/dist/coco-ssd.min.js"></script>
-  <style>
-    /* ====================== ESTILOS TIPO GOOGLE ====================== */
+      <style>
+    /* ====================== ESTILO MODERNO TIPO VERIZON ====================== */
     :root {
-      --google-blue: #1a73e8;
-      --google-blue-hover: #1765cc;
-      --google-blue-active: #1557b0;
-      --google-red: #d93025;
-      --google-green: #1e8e3e;
-      --google-gray: #5f6368;
-      --google-border: #dadce0;
+      --google-blue: #cd040b;
+      --google-blue-hover: #b10008;
+      --google-blue-active: #930007;
+      --google-red: #cd040b;
+      --google-green: #08875d;
+      --google-gray: #6b7280;
+      --google-border: #d9dce1;
       --google-bg: #ffffff;
-      --google-text: #202124;
-      --google-text-secondary: #5f6368;
-      --google-hover: #f1f3f4;
-      --google-focus: #e8f0fe;
-      
+      --google-text: #121417;
+      --google-text-secondary: #4b5563;
+      --google-hover: #f3f4f6;
+      --google-focus: #fff1f2;
+
       /* Variables unificadas */
-      --primary-color: #1a73e8;
-      --secondary-color: #1a73e8; 
-      --background: #ffffff;
+      --primary-color: #cd040b;
+      --secondary-color: #ef4444;
+      --background: #f4f5f7;
       --card-bg: #ffffff;
-      --light-text: #202124;
-      --gray-text: #5f6368;
-      --border-color: #dadce0;
-      --hover-bg: #f1f3f4;
-      --danger-color: #d93025;
-      --success-color: #1e8e3e;
+      --light-text: #121417;
+      --gray-text: #6b7280;
+      --border-color: #d9dce1;
+      --hover-bg: #f3f4f6;
+      --danger-color: #dc2626;
+      --success-color: #08875d;
+      --verizon-black: #000000;
     }
     html, body {
       margin: 0;
       padding: 0;
-      background-color: #f5f5f5;
+      background:
+        radial-gradient(circle at top right, rgba(205, 4, 11, 0.10), transparent 38%),
+        radial-gradient(circle at bottom left, rgba(17, 24, 39, 0.07), transparent 40%),
+        var(--background);
       color: var(--google-text);
       overflow-x: hidden;
       touch-action: manipulation;
@@ -65,6 +70,11 @@
       font-family: 'Google Sans', 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
       margin: 0;
       padding: 0;
+    }
+
+    ::selection {
+      background: rgba(205, 4, 11, 0.4);
+      color: #fff;
     }
     .container {
       width: 100vw;
@@ -88,14 +98,16 @@
       pointer-events: none;
       display: none; /* Oculta por defecto, se muestra en videoCallScreen */
     }
-    
+
     /* Solo mostrar watermark en video call screen */
     #videoCallScreen .watermark {
       display: block;
     }
     /* Íconos de estado de cuenta y reporte estilo Google */
     .account-status-icon,
-    .report-icon {
+    .report-icon,
+    .profile-icon,
+    .config-icon {
       position: fixed;
       width: 48px;
       height: 48px;
@@ -111,26 +123,38 @@
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
       transition: all 0.2s ease;
     }
-    
+
     .account-status-icon {
       top: calc(16px + env(safe-area-inset-top));
     }
-    
+
     .report-icon {
       top: calc(76px + env(safe-area-inset-top));
     }
 
     .account-status-icon:hover,
-    .report-icon:hover {
+    .report-icon:hover,
+    .profile-icon:hover,
+    .config-icon:hover {
       background-color: rgba(255, 255, 255, 1);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
       transform: scale(1.05);
     }
 
     .account-status-icon i,
-    .report-icon i {
+    .report-icon i,
+    .profile-icon i,
+    .config-icon i {
       color: var(--google-text);
       font-size: 20px;
+    }
+
+    .profile-icon {
+      top: calc(136px + env(safe-area-inset-top));
+    }
+
+    .config-icon {
+      top: calc(196px + env(safe-area-inset-top));
     }
     .screen {
       width: 100vw;
@@ -138,7 +162,7 @@
       position: fixed;
       top: 0;
       left: 0;
-      background-color: #f5f5f5;
+      background-color: var(--background);
       transition: transform 0.3s ease;
       overflow-y: auto;
       overflow-x: hidden;
@@ -146,7 +170,7 @@
       pointer-events: none;
       -webkit-overflow-scrolling: touch;
     }
-    
+
     /* Fondo oscuro solo para videollamada */
     #videoCallScreen {
       background-color: #000000;
@@ -163,9 +187,9 @@
     }
     .screen-content {
       width: 100%;
-      max-width: 450px;
+      max-width: 520px;
       margin: 0 auto;
-      padding: 60px 40px;
+      padding: 86px 32px 44px;
       text-align: center;
       min-height: 100vh;
       display: flex;
@@ -173,8 +197,63 @@
       justify-content: flex-start;
       box-sizing: border-box;
     }
-    
+
+    #authMethodScreen .screen-content,
+    #loginScreen .screen-content,
+    #registerScreen .screen-content,
+    #forgotPasswordScreen .screen-content,
+    #profileSetupScreen .screen-content,
+    #countryScreen .screen-content {
+      justify-content: center;
+      padding-top: clamp(84px, 14vh, 138px);
+      padding-bottom: 42px;
+    }
+
+    #authMethodScreen .auth-methods,
+    #loginScreen form,
+    #registerScreen form,
+    #forgotPasswordScreen form,
+    #profileSetupScreen .screen-content > div:not(.logo),
+    #countryScreen .screen-content > div:not(.logo) {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 22px 20px;
+      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+    }
+
+
+    #authMethodScreen .logo,
+    #loginScreen .logo,
+    #registerScreen .logo,
+    #forgotPasswordScreen .logo,
+    #profileSetupScreen .logo,
+    #countryScreen .logo {
+      margin-bottom: 34px;
+    }
+
+    #authMethodScreen .screen-content > div:not(.logo):not(.auth-terms),
+    #loginScreen form,
+    #registerScreen form,
+    #forgotPasswordScreen form,
+    #profileSetupScreen .screen-content > div:not(.logo),
+    #countryScreen .screen-content > div:not(.logo) {
+      margin-top: 4px;
+    }
+
+    #loginScreen .links,
+    #forgotPasswordScreen .links {
+      margin-top: 18px;
+      margin-bottom: 0;
+    }
+
+    #loginScreen .screen-content > div:last-child,
+    #registerScreen .screen-content > div:last-child {
+      margin-top: 20px;
+    }
+
     /* Fondo blanco completo para pantallas de auth */
+    #authMethodScreen,
     #loginScreen,
     #registerScreen,
     #forgotPasswordScreen,
@@ -182,41 +261,72 @@
     #countryScreen {
       background-color: var(--google-bg);
     }
-    
+
     @media (max-width: 768px) {
       .screen-content {
-        padding: 40px 24px;
+        padding: 64px 20px 30px;
       }
     }
-    
+
     @media (max-width: 768px) {
       .screen-content {
-        padding: 40px 24px;
+        padding: 64px 20px 30px;
         justify-content: flex-start;
       }
-      
+
+      #authMethodScreen .screen-content,
+      #loginScreen .screen-content,
+      #registerScreen .screen-content,
+      #forgotPasswordScreen .screen-content,
+      #profileSetupScreen .screen-content,
+      #countryScreen .screen-content {
+        justify-content: flex-start;
+        padding-top: 62px;
+      }
+
       .logo {
-        margin-bottom: 32px;
+        margin-bottom: 18px;
         margin-top: 0;
       }
-      
+
       .form-group {
         margin-bottom: 16px;
       }
+
+
+      #authMethodScreen .logo,
+      #loginScreen .logo,
+      #registerScreen .logo,
+      #forgotPasswordScreen .logo,
+      #profileSetupScreen .logo,
+      #countryScreen .logo {
+        margin-bottom: 22px;
+      }
+
+      #authMethodScreen .screen-content > div:not(.logo):not(.auth-terms),
+      #loginScreen form,
+      #registerScreen form,
+      #forgotPasswordScreen form,
+      #profileSetupScreen .screen-content > div:not(.logo),
+      #countryScreen .screen-content > div:not(.logo) {
+        padding: 18px 16px;
+      }
     }
     .logo {
-      margin-bottom: 48px;
+      margin-bottom: 28px;
       margin-top: 0;
     }
     .logo h1 {
-      font-size: 28px;
+      font-size: 32px;
       color: var(--google-text);
-      font-weight: 500;
-      letter-spacing: -0.5px;
+      font-weight: 700;
+      letter-spacing: -0.65px;
       margin-bottom: 0;
+      text-transform: uppercase;
+      font-family: 'Inter', 'Segoe UI', 'Roboto', Arial, sans-serif;
     }
     .logo p {
-      font-size: 16px;
+      font-size: 15px;
       margin-bottom: 0;
       color: var(--google-text-secondary);
       font-weight: 400;
@@ -246,7 +356,7 @@
     input, select {
       width: 100%;
       padding: 13px 15px;
-      border-radius: 4px;
+      border-radius: 14px;
       border: 1px solid var(--google-border);
       background-color: var(--google-bg);
       color: var(--google-text);
@@ -260,40 +370,42 @@
     }
     input:focus, select:focus {
       border-color: var(--google-blue);
-      border-width: 2px;
-      padding: 12px 14px;
+      border-width: 1px;
       background-color: var(--google-focus);
-      box-shadow: 0 1px 6px rgba(26, 115, 232, 0.3);
+      box-shadow: 0 0 0 3px rgba(205, 4, 11, 0.2);
     }
     input::placeholder {
       color: var(--google-text-secondary);
     }
-    
+
     /* Ocultar iconos en inputs */
     .input-group i {
       display: none;
     }
     .btn {
       width: 100%;
-      padding: 10px 24px;
+      padding: 12px 24px;
       border: none;
-      border-radius: 4px;
+      border-radius: 14px;
       font-size: 14px;
-      font-weight: 500;
+      font-weight: 700;
       cursor: pointer;
       transition: all 0.2s ease;
       text-align: center;
       margin-top: 24px;
       min-height: 40px;
-      letter-spacing: 0.25px;
+      letter-spacing: 0.2px;
     }
     .btn-primary {
-      background-color: var(--google-blue);
+      background: linear-gradient(145deg, var(--google-blue), var(--secondary-color));
       color: white;
+      box-shadow: 0 12px 22px rgba(205, 4, 11, 0.24);
+      border: 1px solid rgba(0, 0, 0, 0.06);
     }
     .btn-primary:hover {
-      background-color: var(--google-blue-hover);
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+      background: linear-gradient(135deg, var(--google-blue-hover), var(--google-blue));
+      box-shadow: 0 12px 24px rgba(205, 4, 11, 0.3);
+      transform: translateY(-1px);
     }
     .btn-primary:active {
       background-color: var(--google-blue-active);
@@ -301,11 +413,132 @@
     .btn-outline {
       background-color: transparent;
       border: 1px solid var(--google-border);
-      color: var(--google-blue);
+      color: var(--google-text);
+      box-shadow: inset 0 0 0 1px rgba(205, 4, 11, 0.1);
     }
     .btn-outline:hover {
       background-color: var(--google-hover);
       border-color: var(--google-gray);
+    }
+
+    .auth-methods {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      width: 100%;
+      text-align: left;
+    }
+    .auth-method-btn {
+      width: 100%;
+      min-height: 54px;
+      border-radius: 16px;
+      border: 1px solid var(--border-color);
+      background: #fff;
+      color: var(--google-text);
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 12px;
+      padding: 14px 16px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.05);
+    }
+    .auth-method-btn i {
+      font-size: 18px;
+      width: 20px;
+      text-align: center;
+    }
+    .auth-method-btn.email {
+      border-color: #cd040b33;
+    }
+    .auth-method-btn.email i {
+      color: #cd040b;
+    }
+    .auth-method-btn.disabled {
+      background: #f3f4f6;
+      color: #9ca3af;
+      border-color: #e5e7eb;
+      cursor: not-allowed;
+      box-shadow: none;
+      pointer-events: none;
+    }
+    .auth-terms {
+      margin-top: auto;
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--google-text-secondary);
+      text-align: center;
+    }
+    .auth-terms a {
+      color: #cd040b;
+      text-decoration: underline;
+      font-weight: 600;
+    }
+
+    #authMethodScreen .screen-content {
+      justify-content: flex-start;
+      padding-top: clamp(72px, 10vh, 110px);
+      padding-bottom: 20px;
+    }
+
+    .auth-method-title {
+      font-size: 13px;
+      color: var(--google-text-secondary);
+      margin-bottom: 12px;
+      text-align: left;
+    }
+
+    .auth-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 14px;
+      padding: 4px;
+      border-radius: 14px;
+      background: #f3f4f6;
+    }
+
+    .auth-tab-btn {
+      border: none;
+      border-radius: 10px;
+      padding: 10px 8px;
+      font-size: 14px;
+      font-weight: 700;
+      background: transparent;
+      color: var(--google-text-secondary);
+      cursor: pointer;
+    }
+
+    .auth-tab-btn.active {
+      background: #fff;
+      color: var(--google-text);
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.08);
+    }
+
+
+    #loginScreen .screen-content,
+    #registerScreen .screen-content {
+      justify-content: flex-start;
+      padding-top: clamp(76px, 11vh, 120px);
+    }
+
+    #loginScreen form,
+    #registerScreen form {
+      margin-top: 16px;
+    }
+
+    #loginScreen .links {
+      margin-top: auto;
+      padding-top: 14px;
+      margin-bottom: 0;
+    }
+
+    @media (max-width: 768px) {
+      #authMethodScreen .screen-content {
+        padding-top: 56px;
+      }
     }
     .links {
       margin: 20px 0;
@@ -513,7 +746,7 @@
     .emoji-btn {
       border: 1px solid var(--border-color);
       background: #fff;
-      border-radius: 999px;
+      border-radius: 14px;
       min-width: 36px;
       height: 36px;
       font-size: 18px;
@@ -535,7 +768,7 @@
       top: 50%;
       transform: translateY(-50%);
       color: white;
-      font-size: 30px;
+      font-size: 32px;
       z-index: 10;
       animation: pulse 2s infinite;
     }
@@ -587,7 +820,7 @@
       margin-left: auto;
       padding: 5px 15px;
       border: none;
-      border-radius: 12px;
+      border-radius: 14px;
       background-color: var(--primary-color);
       color: #fff;
       font-size: 12px;
@@ -624,9 +857,9 @@
     /* Indicador de conexión, movido hacia arriba */
     .connecting {
       position: absolute;
-      top: 0; 
-      left: 0; 
-      width: 100%; 
+      top: 0;
+      left: 0;
+      width: 100%;
       height: 100%;
       display: flex;
       align-items: flex-start;
@@ -676,7 +909,7 @@
       margin: 0;
     }
 
-    
+
 
     /* ====================== PANTALLA DE CUENTA BLOQUEADA ====================== */
     .blocked-screen {
@@ -844,6 +1077,7 @@
       font-size: 16px;
       font-weight: 500;
       color: var(--google-text);
+      box-shadow: inset 0 0 0 1px rgba(205, 4, 11, 0.1);
     }
     .report-user-info .user-details p {
       margin: 4px 0 0 0;
@@ -986,7 +1220,7 @@
       min-height: 20px;
       color: var(--google-text-secondary);
     }
-    
+
     /* Animaciones para mensajes de reporte */
     .report-success-message,
     .report-error-message {
@@ -998,91 +1232,91 @@
       border-radius: 8px;
       margin-top: 16px;
     }
-    
+
     .report-success-message {
       background: #e6f4ea;
       border: 1px solid #34a853;
     }
-    
+
     .report-success-message i {
       font-size: 48px;
       color: #34a853;
       animation: successPulse 0.6s ease;
     }
-    
+
     .report-success-message p:first-of-type {
       font-weight: 500;
       color: var(--google-text);
       margin: 0;
       font-size: 16px;
     }
-    
+
     .report-success-message p:last-of-type {
       color: var(--google-text-secondary);
       margin: 0;
       font-size: 14px;
     }
-    
+
     .report-error-message {
       background: #fce8e6;
       border: 1px solid #ea4335;
     }
-    
+
     .report-error-message i {
       font-size: 48px;
       color: #ea4335;
       animation: errorShake 0.5s ease;
     }
-    
+
     .report-error-message p {
       color: var(--google-text);
       margin: 0;
       font-size: 14px;
     }
-    
+
     @keyframes successPulse {
       0% { transform: scale(0.8); opacity: 0; }
       50% { transform: scale(1.1); }
       100% { transform: scale(1); opacity: 1; }
     }
-    
+
     @keyframes errorShake {
       0%, 100% { transform: translateX(0); }
       25% { transform: translateX(-5px); }
       75% { transform: translateX(5px); }
     }
-    
+
     /* Animaciones para opciones de reporte */
     .report-option {
       transition: all 0.2s ease;
     }
-    
+
     .report-option:hover {
       transform: translateY(-1px);
     }
-    
+
     /* Animación del botón de reporte */
     .btn-report {
       transition: all 0.2s ease;
     }
-    
+
     .btn-report:not(:disabled):hover {
       transform: translateY(-1px);
     }
-    
+
     .btn-report .fa-spinner {
       animation: spin 1s linear infinite;
     }
-    
+
     .btn-report .fa-check {
       animation: checkmark 0.6s ease;
     }
-    
+
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-    
+
     @keyframes checkmark {
       0% { transform: scale(0); }
       50% { transform: scale(1.2); }
@@ -1171,10 +1405,11 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
-      padding: 80px 24px 24px;
+      justify-content: center;
+      padding: clamp(78px, 14vh, 140px) 24px 40px;
       position: relative;
       height: 100%;
+      gap: 10px;
     }
     .scan-circle {
       width: 120px;
@@ -1237,11 +1472,11 @@
       display: block;
     }
     @keyframes slideUpFullscreen {
-      from { 
+      from {
         transform: translateY(100%);
         opacity: 0;
       }
-      to { 
+      to {
         transform: translateY(0);
         opacity: 1;
       }
@@ -1366,7 +1601,7 @@
     .offense-detected-word {
       background: rgba(244, 33, 46, 0.1);
       border: 1px solid rgba(244, 33, 46, 0.3);
-      border-radius: 12px;
+      border-radius: 14px;
       padding: 16px 20px;
       margin: 24px 0;
       color: var(--danger-color);
@@ -1391,11 +1626,11 @@
       flex-direction: column;
     }
     @keyframes warningSlideUp {
-      from { 
+      from {
         transform: translateY(100%);
         opacity: 0;
       }
-      to { 
+      to {
         transform: translateY(0);
         opacity: 1;
       }
@@ -1462,43 +1697,6 @@
       transform: translateY(-1px);
     }
 
-    .body-warning-indicator {
-      position: fixed;
-      top: 24px;
-      left: 50%;
-      transform: translateX(-50%) translateY(-20px);
-      background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%);
-      color: white;
-      padding: 14px 22px;
-      border-radius: 14px;
-      box-shadow: 0 12px 26px rgba(0, 0, 0, 0.28);
-      z-index: 20000;
-      display: none;
-      align-items: center;
-      gap: 12px;
-      max-width: 560px;
-      width: calc(100% - 32px);
-      opacity: 0;
-      transition: all 0.25s ease;
-    }
-
-    .body-warning-indicator.active {
-      display: flex;
-      opacity: 1;
-      transform: translateX(-50%) translateY(0);
-    }
-
-    .body-warning-indicator i {
-      font-size: 20px;
-      animation: warningPulse 1s ease infinite;
-    }
-
-    .body-warning-text {
-      font-size: 14px;
-      line-height: 1.35;
-      font-weight: 600;
-    }
-
     /* ====================== COUNTRY SEARCH DROPDOWN ====================== */
     .country-dropdown {
       position: relative;
@@ -1544,7 +1742,7 @@
         padding-right: max(10px, env(safe-area-inset-right));
       }
     }
-    
+
     @media (max-width: 480px) {
       .logo h1 {
         font-size: 26px;
@@ -1552,46 +1750,49 @@
         margin-top: 0;
         padding-top: 0;
       }
-      
+
       .logo {
         margin-top: 0;
         margin-bottom: 8px;
         padding-top: 0;
       }
-      
+
       .logo p {
         margin-top: 0;
         margin-bottom: 3px;
         padding-top: 0;
       }
-      
+
       .form-group {
         margin-bottom: 8px;
         margin-top: 0;
       }
-      
+
       .social-login {
         margin-bottom: 8px;
         margin-top: 0;
       }
-      
+
       input, select {
         font-size: 16px; /* Previene zoom en iOS */
-        padding: 10px 10px 10px 35px;
+        padding: 11px 12px;
       }
-      
+
       .screen-content {
-        padding: 0 10px;
-        padding-top: 0;
+        padding: 54px 14px 22px;
         margin-top: 0;
       }
-      
-      .screen-content > *:first-child {
-        margin-top: 0 !important;
-        padding-top: 0 !important;
+
+      #authMethodScreen .screen-content,
+      #loginScreen .screen-content,
+      #registerScreen .screen-content,
+      #forgotPasswordScreen .screen-content,
+      #profileSetupScreen .screen-content,
+      #countryScreen .screen-content {
+        padding-top: 58px;
       }
     }
-    
+
     /* Prevenir problemas de altura en móviles */
     @media (max-height: 600px) {
       .screen-content {
@@ -1599,39 +1800,39 @@
         justify-content: flex-start;
         padding-top: 40px;
       }
-      
+
       .logo {
         margin-top: 0;
         margin-bottom: 16px;
       }
-      
+
       .form-group {
         margin-bottom: 12px;
       }
     }
-    
+
     /* Ajuste específico para pantallas muy pequeñas */
     @media (max-height: 500px) {
       .logo h1 {
         font-size: 22px;
         margin-bottom: 4px;
       }
-      
+
       .logo p {
         font-size: 14px;
         margin-bottom: 0;
       }
-      
+
       .logo {
         margin-top: 0;
         margin-bottom: 12px;
       }
-      
+
       .screen-content {
         padding-top: 20px;
       }
     }
-    
+
 
 
     /* ====================== NUEVA PANTALLA DE SOPORTE (INCIDENCIAS) ====================== */
@@ -1715,13 +1916,209 @@
       color: blue;
       font-size: 14px;
     }
+
+
+    #settingsScreen,
+    #profileScreen,
+    #activityScreen,
+    #notificationsScreen,
+    #legalScreen,
+    #supportScreen {
+      background: #ffffff;
+    }
+
+    .settings-screen-content {
+      width: 100%;
+      max-width: none;
+      min-height: 100vh;
+      margin: 0;
+      padding: calc(64px + env(safe-area-inset-top)) 0 0;
+      background: #ffffff;
+    }
+
+    .screen-topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1200;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: calc(12px + env(safe-area-inset-top)) 16px 12px;
+      background: #ffffff;
+      backdrop-filter: none;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .screen-topbar h2 {
+      color: #111827;
+      font-size: 18px;
+      margin: 0;
+      letter-spacing: 0.2px;
+    }
+
+    .screen-close-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid #d1d5db;
+      background: #ffffff;
+      color: #111827;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .settings-hero {
+      background: #ffffff;
+      color: #111827;
+      border-radius: 0;
+      padding: 18px 16px;
+      margin-bottom: 0;
+      border: none;
+      box-shadow: none;
+    }
+
+    .settings-hero h3 { font-size: 22px; margin-bottom: 8px; }
+    .settings-hero p { color: var(--google-text-secondary); font-size: 13px; }
+
+    .settings-list { display: grid; gap: 10px; }
+
+    .settings-item {
+      width: 100%;
+      border: none;
+      border-radius: 0;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px;
+      cursor: pointer;
+      box-shadow: none;
+      border-top: 1px solid #eceff3;
+    }
+
+    .settings-item-left { display: flex; align-items: center; gap: 12px; }
+    .settings-item-left i {
+      width: 38px; height: 38px; border-radius: 12px;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: #fff1f2; color: var(--primary-color);
+      font-size: 16px;
+    }
+    .settings-item-left span {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.1px;
+      color: #111827;
+    }
+
+    .profile-summary-card,
+    .activity-card,
+    .legal-card,
+    .notifications-card,
+    .support-card {
+      border: none;
+      border-radius: 0;
+      background: #fff;
+      padding: 16px;
+      margin-bottom: 0;
+      box-shadow: none;
+      border-top: 1px solid #eceff3;
+    }
+
+    .profile-header { display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+    .profile-header img { width:68px; height:68px; border-radius:50%; object-fit:cover; border:3px solid #fff; box-shadow: 0 4px 14px rgba(0,0,0,0.2); }
+
+    .kpi-grid { display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .kpi { border-radius:12px; border:1px solid #eceff3; padding:10px; background:#fafafa; }
+    .kpi strong { display:block; font-size:20px; margin-top:4px; }
+
+    .activity-tabs { display:flex; gap:8px; overflow-x:auto; padding-bottom:6px; margin-bottom:10px; }
+    .activity-tab {
+      border: 1px solid #d8dbe3;
+      background: #fff;
+      color: #1f2937;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 12px;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+    .activity-tab.active {
+      background: #cd040b;
+      color: #fff;
+      border-color: #cd040b;
+    }
+
+    .activity-chart-card {
+      margin: 10px 0 14px;
+      border: 1px solid #e8edf4;
+      border-radius: 10px;
+      background: #fcfdff;
+      padding: 10px;
+    }
+    .activity-chart-head {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-size:12px;
+      margin-bottom: 8px;
+      color:#334155;
+    }
+    .activity-chart-value {
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      color:#b91c1c;
+      background:#fff1f2;
+      border:1px solid #fecdd3;
+      padding:2px 8px;
+      border-radius:999px;
+    }
+    .activity-chart-wrap {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background:#fff;
+      border:1px solid #e7ecf3;
+      border-radius:8px;
+      overflow:hidden;
+    }
+    .activity-chart-wrap svg { width:100%; height:100%; display:block; }
+    .activity-chart-xlabels {
+      display:grid;
+      grid-template-columns: repeat(7, 1fr);
+      margin-top: 6px;
+      font-size: 10px;
+      color:#64748b;
+      text-align:center;
+    }
+    .activity-scrubber {
+      width: 100%;
+      margin-top: 8px;
+      accent-color: #cd040b;
+    }
+
+    .country-pill { display:flex; align-items:center; justify-content:space-between; font-size:13px; border-radius:10px; padding:8px 10px; background:#f8fafc; margin-bottom:8px; border:1px solid #edf2f7; }
+    .activity-live { display:flex; align-items:center; gap:8px; color:#059669; font-size:13px; margin-bottom:10px; }
+    .activity-live::before { content:""; width:8px; height:8px; border-radius:50%; background:#10b981; box-shadow: 0 0 0 6px rgba(16,185,129,.14); }
+
+    .legal-text {
+      max-height: 56vh;
+      overflow-y: auto;
+      line-height: 1.62;
+      color: var(--google-text-secondary);
+      font-size: 13px;
+      padding-right: 4px;
+    }
+
   </style>
 </head>
 <body>
   <!-- La marca de agua se mostrará únicamente en el videoCallScreen -->
   <div class="watermark">BealyChat</div>
   <!-- Ícono de Estado de Cuenta (solo en videollamada) -->
-  <div class="account-status-icon" 
+  <div class="account-status-icon"
        onclick="openAccountStatusScreen()"
        style="display: none;">
     <i class="fa-solid fa-user-shield"></i>
@@ -1731,24 +2128,86 @@
        style="display: none;">
     <i class="fa-solid fa-flag"></i>
   </div>
+  <div class="profile-icon" onclick="openProfileScreen()"
+       style="display: none;">
+    <i class="fa-solid fa-user"></i>
+  </div>
+  <div class="config-icon" onclick="openConfigScreen()"
+       style="display: none;">
+    <i class="fa-solid fa-gear"></i>
+  </div>
 
   <!-- Google AdSense Ad Unit -->
   <ins class="adsbygoogle"
        style="display:block"
        data-ad-client="ca-pub-4653147807800151"
-       data-ad-slot="YOUR_AD_SLOT_ID"
+       data-ad-slot="1234567890"
        data-ad-format="auto"
        data-full-width-responsive="true"></ins>
+
+  <div class="screen" id="supportScreen">
+    <div class="screen-topbar">
+      <h2>Soporte</h2>
+      <button class="screen-close-btn" onclick="goToScreen('settingsScreen')"><i class="fa-solid fa-times"></i></button>
+    </div>
+    <div class="settings-screen-content">
+      <div class="support-card">
+        <p style="margin-bottom:10px;color:var(--gray-text);">Describe tu problema. Te responderemos y la respuesta llegará a Notificaciones.</p>
+        <div class="incidence-list" id="incidenceList"></div>
+        <button class="btn-new-incidence" onclick="toggleNewIncidenceForm()">
+          <i class="fa-solid fa-plus"></i> Nueva Consulta
+        </button>
+        <div class="new-incidence-form" id="newIncidenceForm" style="display:none;">
+          <h3>Crear Nueva Consulta</h3>
+          <p>Describe tu problema o pregunta (mínimo 11 caracteres)</p>
+          <textarea id="incidenceDescription" placeholder="¿En qué podemos ayudarte?"></textarea>
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <p id="charCounter" style="color:var(--fb-gray);">0/11</p>
+            <button class="btn-new-incidence" onclick="submitIncidence()">Enviar Consulta</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script>
        (adsbygoogle = window.adsbygoogle || []).push({});
   </script>
 
   <div class="container">
     <!-- PANTALLAS: LOGIN, REGISTRO, RECUPERAR, PERFIL, FECHA NACIMIENTO, PAÍS, VIDEOLLAMADA, BLOQUEADO -->
-    <div class="screen active" id="loginScreen">
+    <div class="screen active" id="authMethodScreen">
       <div class="screen-content">
         <div class="logo">
           <h1>BealyChat</h1>
+        </div>
+        <p class="auth-method-title">Elige cómo quieres continuar</p>
+        <div class="auth-methods">
+          <button type="button" class="auth-method-btn email" onclick="goToScreen('loginScreen')">
+            <i class="fa-solid fa-envelope"></i>
+            <span>Email</span>
+          </button>
+          <button type="button" class="auth-method-btn disabled">
+            <i class="fa-brands fa-google"></i>
+            <span>Google (próximamente)</span>
+          </button>
+          <button type="button" class="auth-method-btn disabled">
+            <i class="fa-brands fa-facebook-f"></i>
+            <span>Facebook (próximamente)</span>
+          </button>
+        </div>
+        <p class="auth-terms">Al continuar, aceptas nuestros <a href="#">Términos de servicio</a> y <a href="#">Política de privacidad</a>.</p>
+      </div>
+    </div>
+
+    <div class="screen" id="loginScreen">
+      <div class="screen-content">
+        <div class="logo">
+          <h1>BealyChat</h1>
+        </div>
+        <div class="auth-tabs">
+          <button type="button" class="auth-tab-btn active">Iniciar sesión</button>
+          <button type="button" class="auth-tab-btn" onclick="goToScreen('registerScreen')">Registrarse</button>
         </div>
         <form id="loginForm">
           <div class="form-group">
@@ -1770,10 +2229,7 @@
         <div class="links">
           <a href="#" onclick="toggleForm('forgotPasswordForm')">¿Olvidaste tu contraseña?</a>
         </div>
-        
-        <div>
-          <p>¿No tienes una cuenta? <a href="#" onclick="toggleForm('registerForm')" style="color: var(--secondary-color);">Regístrate</a></p>
-        </div>
+
       </div>
     </div>
 
@@ -1781,6 +2237,10 @@
       <div class="screen-content">
         <div class="logo">
           <h1>BealyChat</h1>
+        </div>
+        <div class="auth-tabs">
+          <button type="button" class="auth-tab-btn" onclick="goToScreen('loginScreen')">Iniciar sesión</button>
+          <button type="button" class="auth-tab-btn active">Registrarse</button>
         </div>
         <form id="registerForm">
           <div class="form-group">
@@ -1795,7 +2255,7 @@
             <div class="input-group" style="position: relative;">
               <i class="fa-solid fa-lock"></i>
               <input type="password" id="registerPassword" placeholder="Crea una contraseña" required>
-              <img id="passwordMonkey" src="https://images.emojiterra.com/google/noto-emoji/animated-emoji/1f648.gif" 
+              <img id="passwordMonkey" src="https://images.emojiterra.com/google/noto-emoji/animated-emoji/1f648.gif"
                    style="display: none; position: absolute; top: -20px; right: 10px; width: 30px;">
             </div>
           </div>
@@ -1804,7 +2264,7 @@
             <div class="input-group" style="position: relative;">
               <i class="fa-solid fa-lock"></i>
               <input type="password" id="confirmPassword" placeholder="Confirma tu contraseña" required>
-              <img id="passwordMonkeyConfirm" src="https://images.emojiterra.com/google/noto-emoji/animated-emoji/1f648.gif" 
+              <img id="passwordMonkeyConfirm" src="https://images.emojiterra.com/google/noto-emoji/animated-emoji/1f648.gif"
                    style="display: none; position: absolute; top: -20px; right: 10px; width: 30px;">
             </div>
           </div>
@@ -1821,10 +2281,7 @@
           </div>
           <button type="button" class="btn btn-primary" onclick="registerUser()">Registrarse</button>
         </form>
-        
-        <div>
-          <p>¿Ya tienes una cuenta? <a href="#" onclick="goToScreen('loginScreen')" style="color: var(--secondary-color);">Inicia sesión</a></p>
-        </div>
+
       </div>
     </div>
 
@@ -1842,7 +2299,7 @@
             </div>
           </div>
           <button type="button" class="btn btn-primary">Enviar enlace de recuperación</button>
-          <button type="button" class="btn btn-outline mt-3" onclick="goToScreen('loginScreen')">Volver a iniciar sesión</button>
+          <button type="button" class="btn btn-outline mt-3" onclick="goToScreen('authMethodScreen')">Volver al inicio</button>
         </form>
       </div>
     </div>
@@ -1870,7 +2327,7 @@
       </div>
     </div>
 
-    
+
 
     <div class="screen" id="countryScreen">
       <div class="screen-content">
@@ -1891,6 +2348,12 @@
                 <option value="CN">China</option>
                 <option value="OT">Otro</option>
               </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="interestsInput">Intereses (estilo Omegle)</label>
+            <div class="input-group">
+              <input type="text" id="interestsInput" placeholder="Ej: música, anime, gaming, deportes">
             </div>
           </div>
           <button type="button" class="btn btn-primary mt-4" onclick="updateProfileAndConnect()">Conectar ahora</button>
@@ -1924,10 +2387,14 @@
           </div>
         </div>
         <div class="video-controls">
-          <div class="control-btn" onclick="toggleAudio()">
+          <div class="control-btn" onclick="toggleAudio()" title="Micrófono">
             <i class="fa-solid fa-microphone-slash" id="micIcon"></i>
           </div>
+          <div class="control-btn" onclick="restartCall()" title="Siguiente usuario">
+            <i class="fa-solid fa-forward"></i>
+          </div>
         </div>
+        <div class="swipe-hint" id="swipeHint">⇆</div>
 
         <div class="chat-panel" id="chatPanel">
           <div class="emoji-carousel" id="emojiCarousel"></div>
@@ -1937,7 +2404,7 @@
           </div>
           <div class="chat-messages" id="chatMessages"></div>
         </div>
-        
+
       </div>
     </div>
 
@@ -1953,7 +2420,7 @@
       </div>
     </div>
 
-    
+
   </div>
 
   <!-- MODAL FULL SCREEN: EDITAR PERFIL -->
@@ -2125,7 +2592,7 @@
         </button>
         <h1>Cuenta Suspendida</h1>
       </div>
-      
+
       <div class="offense-main-content">
         <div class="offense-icon">
           <i class="fa-solid fa-shield-halved"></i>
@@ -2133,7 +2600,7 @@
         <h2 class="offense-title">Cuenta Bloqueada</h2>
         <h3 class="offense-subtitle">Moderación Automática Activada</h3>
         <p class="offense-description">
-          Nuestros sistemas de moderación automática han detectado contenido inapropiado o lenguaje ofensivo en tu transmisión. 
+          Nuestros sistemas de moderación automática han detectado contenido inapropiado o lenguaje ofensivo en tu transmisión.
           Tu cuenta ha sido bloqueada temporalmente para mantener un ambiente seguro para todos los usuarios.
         </p>
         <div class="offense-detected-word" id="detectedWord">
@@ -2146,7 +2613,7 @@
           </div>
         </div>
         <p class="offense-description">
-          Puedes apelar esta decisión contactando a nuestro equipo de soporte. 
+          Puedes apelar esta decisión contactando a nuestro equipo de soporte.
           Recuerda seguir nuestras pautas de la comunidad para evitar futuras restricciones.
         </p>
       </div>
@@ -2155,13 +2622,6 @@
 
   <!-- INDICADOR DE ADVERTENCIA - PANTALLA COMPLETA -->
 
-  <div class="body-warning-indicator" id="bodyWarningIndicator">
-    <i class="fa-solid fa-triangle-exclamation"></i>
-    <div class="body-warning-text" id="bodyWarningText">
-      Moderación visual activa. Evita mostrar contenido corporal explícito para continuar usando la plataforma.
-    </div>
-  </div>
-
   <div class="offense-warning-indicator" id="warningIndicator">
     <div class="warning-content">
       <div class="warning-icon">
@@ -2169,14 +2629,14 @@
       </div>
       <h2 class="warning-title">Lenguaje Inapropiado Detectado</h2>
       <p class="warning-message">
-        Nuestro sistema ha detectado lenguaje ofensivo en tu transmisión. 
+        Nuestro sistema ha detectado lenguaje ofensivo en tu transmisión.
         Este es tu <span id="warningCount">1</span> de 3 advertencias.
       </p>
       <div class="warning-word" id="warningWordDisplay">
         Palabra detectada: "ejemplo"
       </div>
       <p class="warning-message">
-        Por favor, mantén un lenguaje apropiado. Si recibes 3 advertencias, 
+        Por favor, mantén un lenguaje apropiado. Si recibes 3 advertencias,
         tu cuenta será bloqueada temporalmente.
       </p>
       <button class="warning-dismiss-btn" onclick="dismissWarning()">
@@ -2185,51 +2645,160 @@
     </div>
   </div>
 
-  <!-- NUEVA PANTALLA: SOPORTE / INCIDENCIAS -->
-  <div class="screen" id="supportScreen">
-      <div class="support-container">
-        <div class="support-header">
-          <h2>Centro de Ayuda</h2>
-          <button class="btn-outline" onclick="goToScreen('settingsScreen')" style="border:none;background:none;">
-            <i class="fa-solid fa-times" style="font-size: 24px;"></i>
-          </button>
-        </div>
+  <!-- SECCIONES DE CONFIGURACIÓN / PERFIL / ACTIVIDAD / NOTIFICACIONES / LEGAL -->
+  <div class="screen" id="settingsScreen">
+    <div class="screen-topbar">
+      <h2>Configuración</h2>
+      <button class="screen-close-btn" onclick="goToScreen('videoCallScreen')"><i class="fa-solid fa-times"></i></button>
+    </div>
+    <div class="settings-screen-content">
+      <div class="settings-hero">
+        <h3>Configuración</h3>
+        <p>Administra tu cuenta, actividad, notificaciones, soporte y legal.</p>
+      </div>
+      <div class="settings-list">
+        <button class="settings-item" onclick="goToScreen('activityScreen')">
+          <span class="settings-item-left"><i class="fa-solid fa-chart-line"></i><span>Tu actividad</span></span>
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+        <button class="settings-item" onclick="goToScreen('notificationsScreen')">
+          <span class="settings-item-left"><i class="fa-solid fa-bell"></i><span>Notificaciones</span></span>
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+        <button class="settings-item" onclick="openSupportScreen()">
+          <span class="settings-item-left"><i class="fa-solid fa-headset"></i><span>Soporte</span></span>
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+        <button class="settings-item" onclick="goToScreen('legalScreen')">
+          <span class="settings-item-left"><i class="fa-solid fa-scale-balanced"></i><span>Legal</span></span>
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
 
-        <div class="support-content">
-          <div class="incidence-list" id="incidenceList"></div>
-          <button class="btn-new-incidence" onclick="toggleNewIncidenceForm()">
-            <i class="fa-solid fa-plus"></i> Nueva Consulta
-          </button>
-
-          <div class="new-incidence-form" id="newIncidenceForm" style="display:none;">
-            <h3>Crear Nueva Consulta</h3>
-            <p>Describe tu problema o pregunta (mínimo 11 caracteres)</p>
-            <textarea 
-              id="incidenceDescription" 
-              placeholder="¿En qué podemos ayudarte?"
-            ></textarea>
-            <div style="display:flex;justify-content:space-between;align-items:center;">
-              <p id="charCounter" style="color:var(--fb-gray);">0/11</p>
-              <button class="btn-new-incidence" onclick="submitIncidence()">
-                Enviar Consulta
-              </button>
-            </div>
+  <div class="screen" id="profileScreen">
+    <div class="screen-topbar">
+      <h2>Perfil</h2>
+      <button class="screen-close-btn" onclick="goToScreen('videoCallScreen')"><i class="fa-solid fa-times"></i></button>
+    </div>
+    <div class="settings-screen-content">
+      <div class="profile-summary-card">
+        <div class="profile-header">
+          <img id="profileScreenAvatar" src="https://cdn-icons-png.flaticon.com/512/3237/3237472.png" alt="avatar">
+          <div>
+            <h3 id="profileScreenName">Usuario</h3>
+            <p id="profileScreenCountry">País no definido</p>
           </div>
+        </div>
+        <div class="kpi-grid">
+          <div class="kpi"><span>Conexiones</span><strong id="profileTotalConnections">0</strong></div>
+          <div class="kpi"><span>Interacciones</span><strong id="profileTotalInteractions">0</strong></div>
+          <div class="kpi"><span>Seguidores</span><strong id="profileFollowers">0</strong></div>
+          <div class="kpi"><span>Reportes</span><strong id="profileReports">0</strong></div>
         </div>
       </div>
     </div>
+  </div>
+
+  <div class="screen" id="activityScreen">
+    <div class="screen-topbar">
+      <h2>Tu actividad</h2>
+      <button class="screen-close-btn" onclick="goToScreen('settingsScreen')"><i class="fa-solid fa-times"></i></button>
+    </div>
+    <div class="settings-screen-content">
+      <div class="activity-card">
+
+        <div class="activity-tabs">
+          <button class="activity-tab active" data-metric="connections" onclick="selectActivityMetric('connections')">Conexiones</button>
+          <button class="activity-tab" data-metric="minutes" onclick="selectActivityMetric('minutes')">Minutos</button>
+          <button class="activity-tab" data-metric="interactions" onclick="selectActivityMetric('interactions')">Interacción</button>
+        </div>
+        <div class="kpi-grid" style="margin-bottom:12px;">
+          <div class="kpi"><span>Usuarios conectados</span><strong id="activityConnectionsCount">0</strong></div>
+          <div class="kpi"><span>Tiempo total</span><strong id="activityMinutes">0m</strong></div>
+        </div>
+        <div class="activity-chart-card">
+          <div class="activity-chart-head">
+            <span id="activityChartMetricLabel">Conexiones</span>
+            <strong class="activity-chart-value" id="activityChartPointValue">0</strong>
+          </div>
+          <div class="activity-chart-wrap">
+            <svg id="activityChartSvg" viewBox="0 0 320 180" preserveAspectRatio="none"></svg>
+          </div>
+          <div class="activity-chart-xlabels" id="activityChartXLabels"></div>
+          <input id="activityScrubber" class="activity-scrubber" type="range" min="0" max="6" value="6" oninput="updateActivityScrubber(this.value)">
+        </div>
+        <h4 style="margin-bottom:8px;">Países con los que has conectado</h4>
+        <div id="activityCountryList"></div>
+        <h4 style="margin:12px 0 8px;">Nivel de interacción</h4>
+        <p id="activityInteractionLabel">Aún sin suficiente información.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="notificationsScreen">
+    <div class="screen-topbar">
+      <h2>Notificaciones</h2>
+      <button class="screen-close-btn" onclick="goToScreen('settingsScreen')"><i class="fa-solid fa-times"></i></button>
+    </div>
+    <div class="settings-screen-content">
+      <div class="notifications-card">
+        <p style="margin:8px 0 12px;">Aquí llegarán notificaciones del sistema y respuestas de soporte.</p>
+        <div id="notificationsList">
+          <p style="color:var(--gray-text);">Sin notificaciones por ahora.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="legalScreen">
+    <div class="screen-topbar">
+      <h2>Legal</h2>
+      <button class="screen-close-btn" onclick="goToScreen('settingsScreen')"><i class="fa-solid fa-times"></i></button>
+    </div>
+    <div class="settings-screen-content">
+      <div class="legal-card">
+        <h3>Términos de servicio</h3>
+        <div class="legal-text" id="termsText">
+          <p>Bienvenido a BealyChat. Al utilizar la plataforma, aceptas mantener una conducta respetuosa, no compartir contenido ilegal, y cumplir con la mayoría de edad aplicable en tu jurisdicción.</p>
+          <p>1) Uso permitido: BealyChat es una plataforma de videochat aleatorio para socializar. Está prohibido usar la app para acoso, fraude, spam, explotación, extorsión, distribución de malware o cualquier actividad ilícita.</p>
+          <p>2) Moderación y seguridad: Nos reservamos el derecho de aplicar advertencias, suspensiones temporales o bloqueos permanentes cuando se detecte comportamiento que incumpla estas reglas. Los procesos pueden incluir revisión automática y reportes de usuarios.</p>
+          <p>3) Contenido del usuario: Eres responsable del contenido que compartes (texto, audio, video, imagen, nombre de usuario y foto de perfil). No publiques información sensible de terceros sin consentimiento.</p>
+          <p>4) Edad mínima: Solo usuarios con edad legal permitida pueden utilizar BealyChat. Las cuentas que infrinjan este requisito pueden ser suspendidas inmediatamente.</p>
+          <p>5) Disponibilidad del servicio: Intentamos mantener la plataforma operativa 24/7; sin embargo, puede haber interrupciones por mantenimiento, incidentes técnicos o causas externas.</p>
+          <p>6) Propiedad intelectual: El software, diseño y marca de BealyChat pertenecen a sus titulares. No está permitido copiar, revender o explotar el servicio sin autorización.</p>
+          <p>7) Limitación de responsabilidad: BealyChat ofrece la plataforma "tal cual". No garantizamos que todas las interacciones entre usuarios sean adecuadas. Usa el servicio bajo tu propio criterio y reporta cualquier abuso.</p>
+          <p>8) Cambios de términos: Podemos actualizar estos términos. El uso continuo después de cambios implica aceptación de la nueva versión.</p>
+        </div>
+      </div>
+      <div class="legal-card">
+        <h3>Política de privacidad</h3>
+        <div class="legal-text" id="privacyText">
+          <p>Recopilamos información básica para operar el servicio: correo de acceso, identificador de cuenta, país seleccionado, preferencias de interés, y datos técnicos de conexión.</p>
+          <p>1) Finalidad: Usamos datos para autenticar, conectar usuarios, moderar contenido, atender soporte y mejorar rendimiento.</p>
+          <p>2) Seguridad: Aplicamos medidas técnicas y organizativas razonables para proteger tu información. Aun así, ningún sistema es completamente invulnerable.</p>
+          <p>3) Conservación: Conservamos datos por el tiempo necesario para cumplir finalidades de seguridad, continuidad del servicio y obligaciones legales.</p>
+          <p>4) Reportes y soporte: Si envías una incidencia, almacenamos su contenido y la respuesta del equipo. Las respuestas pueden mostrarse en tu sección de notificaciones.</p>
+          <p>5) Compartición: No vendemos datos personales. Solo compartimos información cuando sea necesario para operar la plataforma, cumplir la ley o responder a requerimientos legítimos.</p>
+          <p>6) Tus derechos: Puedes solicitar actualización de datos de perfil o, cuando aplique, eliminación de cuenta conforme a normativa local.</p>
+          <p>7) Contacto: Para consultas de privacidad o soporte, utiliza la sección Soporte dentro de la aplicación.</p>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <script>
     /* ====================== INICIALIZAR FIREBASE ====================== */
     const firebaseConfig = {
-      apiKey: "AIzaSyCFQ_geG0HIv2EZ-bfKc97TJNtf2sdqPzc",
-      authDomain: "clack-koder.firebaseapp.com",
-      databaseURL: "https://clack-koder-default-rtdb.firebaseio.com",
-      projectId: "clack-koder",
-      storageBucket: "clack-koder.firebasestorage.app",
-      messagingSenderId: "478151254938",
-      appId: "1:478151254938:web:e2c00e3a5426bd192b9023",
-      measurementId: "G-P29ME5Z3S1"
+      apiKey: "AIzaSyC9v2qp6zGtmvsFiOknlmTHnN6zZY1RLcI",
+      authDomain: "ggggg-f2508.firebaseapp.com",
+      databaseURL: "https://ggggg-f2508-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "ggggg-f2508",
+      storageBucket: "ggggg-f2508.firebasestorage.app",
+      messagingSenderId: "120837533638",
+      appId: "1:120837533638:web:6720ebd1367f3acf9f4cc7",
+      measurementId: "G-E2JX3ZGG5K"
     };
     firebase.initializeApp(firebaseConfig);
     firebase.analytics();
@@ -2250,7 +2819,19 @@
     /* ====================== VARIABLES GLOBALES ====================== */
     let currentUser = null;
     let currentProfile = null;
-    
+    let activityListenersBound = false;
+    let profileStats = {
+      connections: 0,
+      interactions: 0,
+      minutes: 0,
+      reports: 0,
+      followers: 0,
+      countries: {}
+    };
+    let activeCallConnectedAt = null;
+    let activeCallConnectionLogged = false;
+    let currentRemoteCountry = '';
+
     // Lista completa de países con sus códigos y banderas
     const COUNTRIES = [
       { code: 'AD', name: 'Andorra', flag: '🇦🇩' },
@@ -2516,32 +3097,31 @@
     let currentCallMessagesRef = null;
     let currentParticipantsRef = null;
     let currentPresenceRef = null;
+    let currentIceCandidatesRef = null;
+    let currentOfferRef = null;
+    let currentAnswerRef = null;
+    let currentRemoteProfileRef = null;
     let reconnectingInProgress = false;
+    let matchingRetryTimer = null;
+    let connectWatchdogTimer = null;
+    let pendingChatQueue = [];
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let pendingIncomingCallId = null;
+    let callsRef = null;
+    let callsChildAddedHandler = null;
     let isListening = false;
     let authObserverReady = false;
     let offenseCount = 0;
-    let bodyDetectionState = {
-      running: false,
-      rafId: null,
-      canvas: null,
-      ctx: null,
-      detector: null,
-      streamSessionId: null,
-      violationCooldownUntil: 0,
-      warningHideTimeout: null,
-      lastFrameAt: 0
-    };
-    
+
     // Lista de palabras ofensivas - se puede expandir
     const OFFENSIVE_WORDS = [
-      'feo', 'horrible', 'pato', 'pinga', 'idiota', 'estúpido', 'tonto', 
-      'imbécil', 'pendejo', 'cabrón', 'puto', 'perra', 'zorra', 
-      'maldito', 'jodido', 'coño', 'carajo', 'mierda', 'cagada',
-      'ugly', 'stupid', 'idiot', 'bitch', 'fuck', 'shit', 'damn',
-      'asshole', 'motherfucker', 'bastard', 'whore', 'slut'
+      'pinga', 'pendejo', 'cabrón', 'puto', 'perra', 'zorra',
+      'coño', 'carajo', 'mierda', 'cagada',
+      'bitch', 'fuck', 'shit', 'asshole', 'motherfucker', 'bastard', 'whore', 'slut'
     ];
-    
-    const OFFENSE_THRESHOLD = 3; // Número de ofensas antes del bloqueo
+
+    const OFFENSE_THRESHOLD = 5; // Número de ofensas antes del bloqueo
     const QUICK_EMOJIS = ['😀','😂','😍','😎','🔥','👍','👏','😮','🥳','💯','👋','❤️'];
     const BLOCK_DURATION_DAYS = 3;
 
@@ -2562,7 +3142,7 @@
     function showCountryList() {
       const dropdown = document.getElementById('countryDropdown');
       const list = document.getElementById('countryList');
-      
+
       // Mostrar todos los países inicialmente
       let html = '';
       COUNTRIES.forEach(country => {
@@ -2573,7 +3153,7 @@
           </div>
         `;
       });
-      
+
       list.innerHTML = html;
       dropdown.style.display = 'block';
     }
@@ -2583,17 +3163,17 @@
       const searchTerm = searchInput.value.toLowerCase();
       const dropdown = document.getElementById('countryDropdown');
       const list = document.getElementById('countryList');
-      
+
       if(searchTerm.length === 0) {
         dropdown.style.display = 'none';
         return;
       }
-      
-      const filteredCountries = COUNTRIES.filter(country => 
+
+      const filteredCountries = COUNTRIES.filter(country =>
         country.name.toLowerCase().includes(searchTerm) ||
         country.code.toLowerCase().includes(searchTerm)
       );
-      
+
       let html = '';
       if(filteredCountries.length > 0) {
         filteredCountries.forEach(country => {
@@ -2607,7 +3187,7 @@
       } else {
         html = '<div class="country-item">No se encontraron países</div>';
       }
-      
+
       list.innerHTML = html;
       dropdown.style.display = 'block';
     }
@@ -2616,7 +3196,7 @@
       const searchInput = document.getElementById('registerCountrySearch');
       const hiddenInput = document.getElementById('registerCountry');
       const dropdown = document.getElementById('countryDropdown');
-      
+
       searchInput.value = `${flag} ${name}`;
       hiddenInput.value = code;
       dropdown.style.display = 'none';
@@ -2626,23 +3206,23 @@
     document.addEventListener('click', function(event) {
       const dropdown = document.getElementById('countryDropdown');
       const searchInput = document.getElementById('registerCountrySearch');
-      
+
       if(dropdown && !dropdown.contains(event.target) && event.target !== searchInput) {
         dropdown.style.display = 'none';
       }
     });
 
     /* ====================== MANEJO DE PANTALLAS ====================== */
-    function goToScreen(screenId) {
+    async function goToScreen(screenId) {
       // Prevenir cambios de pantalla no autorizados
       if (!screenId || typeof screenId !== 'string') return;
-      
+
       document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
       const targetScreen = document.getElementById(screenId);
       if (!targetScreen) return;
-      
+
       targetScreen.classList.add('active');
-      
+
       // La marca de agua se maneja automáticamente con CSS
       // Auto-detectar país si es la screen "countryScreen"
       if(screenId === 'countryScreen'){
@@ -2650,27 +3230,46 @@
       }
       // Si es videoCallScreen, iniciamos streaming + matching
       if(screenId === 'videoCallScreen'){
+        if(window.isInVideoSession && currentCallId){
+          return;
+        }
         // Mostrar iconos de moderación solo en videollamada
         document.querySelector('.account-status-icon').style.display = 'flex';
         document.querySelector('.report-icon').style.display = 'flex';
-        
+        document.querySelector('.profile-icon').style.display = 'flex';
+        document.querySelector('.config-icon').style.display = 'flex';
+
+        bindRealtimeActivity();
+        hydrateProfileWidgets();
         initEmojiCarousel();
-        startLocalStream();
         showConnecting();
+        const streamReady = await startLocalStream();
+        if(!streamReady || !localStream){
+          hideConnecting();
+          return;
+        }
         startMatching();
         // Iniciar monitoreo de voz para detectar ofensas
         setTimeout(() => {
           startSpeechMonitoring();
-          startBodyMonitoring();
         }, 2000);
       } else {
-        // Ocultar iconos de moderación en otras pantallas
         document.querySelector('.account-status-icon').style.display = 'none';
         document.querySelector('.report-icon').style.display = 'none';
-        
-        // Detener monitoreo si salimos de la videollamada
+        document.querySelector('.profile-icon').style.display = 'none';
+        document.querySelector('.config-icon').style.display = 'none';
+
         stopSpeechMonitoring();
         stopBodyMonitoring();
+
+        if(window.isInVideoSession){
+          window.isInVideoSession = false;
+          await cleanupCurrentCall(true);
+          stopLocalStream();
+          if(currentUser){
+            database.ref('onlineUsers/' + currentUser.uid).remove().catch(()=>{});
+          }
+        }
       }
     }
     function toggleForm(formType) {
@@ -2773,7 +3372,7 @@
     }
 
     // Observador de autenticación (para corregir que no pida reconfigurar el perfil si ya está completo)
-    auth.onAuthStateChanged(user => {
+    auth.onAuthStateChanged(async user => {
       if(user){
         currentUser = user;
         console.log("Usuario autenticado:", user.uid);
@@ -2782,7 +3381,9 @@
             if(snapshot.exists()){
               currentProfile = snapshot.val();
               console.log("Perfil cargado:", currentProfile);
-              
+              bindRealtimeActivity();
+              hydrateProfileWidgets();
+
               // Chequeo si está bloqueado
               if(currentProfile.blockedUntil){
                 const now = new Date();
@@ -2798,7 +3399,7 @@
                   return;
                 }
               }
-              
+
               // Si ya tiene todos los datos necesarios, ir directo a videollamada
               if(currentProfile.username && currentProfile.country){
                 console.log("Perfil completo, yendo a videollamada");
@@ -2824,10 +3425,15 @@
             goToScreen('profileSetupScreen');
           });
       } else {
+        window.isInVideoSession = false;
+        await cleanupCurrentCall(true).catch(()=>{});
+        stopLocalStream();
         currentUser = null;
         currentProfile = null;
+        activityListenersBound = false;
+        profileStats = { connections: 0, interactions: 0, minutes: 0, reports: 0, followers: 0, countries: {} };
         if(authObserverReady) {
-          goToScreen('loginScreen');
+          goToScreen('authMethodScreen');
         }
       }
     });
@@ -2900,36 +3506,36 @@
       if(!currentUser){
         throw new Error("No hay usuario autenticado");
       }
-      
+
       // Asegurar que currentProfile existe
       if(!currentProfile) currentProfile = {};
-      
+
       // Solo actualizar campos que existen y tienen valores válidos
       const updates = {};
-      
+
       if(currentProfile.username && currentProfile.username.trim() !== "") {
         updates.username = currentProfile.username.trim();
       }
-      
+
       if(currentProfile.birthDate) {
         updates.birthDate = currentProfile.birthDate;
       }
-      
+
       if(currentProfile.country) {
         updates.country = currentProfile.country;
       }
-      
+
       if(currentProfile.avatar_url) {
         updates.avatar_url = currentProfile.avatar_url;
       }
-      
+
       // Mantener campos existentes
       updates.followersCount = currentProfile.followersCount || 0;
       updates.verified = currentProfile.verified || false;
       updates.lastUpdated = firebase.database.ServerValue.TIMESTAMP;
-      
+
       console.log("Actualizando perfil con:", updates);
-      
+
       try {
         await database.ref('profiles/' + currentUser.uid).update(updates);
         // Actualizar el perfil local
@@ -2940,38 +3546,57 @@
         throw error;
       }
     }
+    function normalizeInterests(rawText = '') {
+      return rawText
+        .split(',')
+        .map(v => v.trim().toLowerCase())
+        .filter(Boolean)
+        .filter((v, i, arr) => arr.indexOf(v) === i)
+        .slice(0, 8);
+    }
+
+    function hasSharedInterests(a = [], b = []) {
+      if(!a.length || !b.length) return false;
+      const set = new Set(a);
+      return b.some(item => set.has(item));
+    }
+
     // Esta función ya no es necesaria, se maneja en validateBirthDate
     async function updateProfileAndConnect(){
       try {
         const countrySelect = document.getElementById('country');
         const selectedCountry = countrySelect ? countrySelect.value : "";
-        
+
         if(!selectedCountry){
           alert("Por favor selecciona tu país");
           return;
         }
-        
+
         if(!currentProfile) {
           alert("Error: Perfil no encontrado");
           return;
         }
-        
-        // Actualizar solo el país
+
+        const interestsInput = document.getElementById('interestsInput');
+        const interests = normalizeInterests(interestsInput ? interestsInput.value : '');
+
         const updateData = {
           country: selectedCountry,
+          interests,
           lastUpdated: firebase.database.ServerValue.TIMESTAMP
         };
-        
+
         console.log("Actualizando país:", updateData);
-        
+
         await database.ref('profiles/' + currentUser.uid).update(updateData);
-        
+
         // Actualizar perfil local
         currentProfile.country = selectedCountry;
-        
+        currentProfile.interests = updateData.interests;
+
         console.log("País actualizado, conectando...");
         goToScreen('videoCallScreen');
-        
+
       } catch(error){
         console.error("Error al actualizar país:", error);
         alert("Error al actualizar el perfil: " + error.message);
@@ -3004,7 +3629,7 @@
       const continueBtn = document.getElementById('profileContinueBtn');
       const usernameInput = document.getElementById('username');
       const username = usernameInput ? usernameInput.value.trim() : "";
-      
+
       if(!username || username.length < 2){
         alert("Ingresa un nombre de usuario válido (mínimo 2 caracteres)");
         return;
@@ -3014,12 +3639,12 @@
         alert('Espera un momento, todavía se está procesando la foto.');
         return;
       }
-      
+
       if(!currentUser) {
         alert("Error: Usuario no autenticado");
         return;
       }
-      
+
       try {
         isSavingProfile = true;
         if(continueBtn){
@@ -3036,12 +3661,12 @@
           createdAt: firebase.database.ServerValue.TIMESTAMP,
           lastUpdated: firebase.database.ServerValue.TIMESTAMP
         };
-        
+
         // Si ya tenemos el país del registro, incluirlo
         if(window.tempRegistrationCountry) {
           profileData.country = window.tempRegistrationCountry;
         }
-        
+
         // Manejar avatar
         if(pendingAvatarDataUrl && pendingAvatarDataUrl.startsWith('data:')) {
           profileData.avatar_url = pendingAvatarDataUrl;
@@ -3053,24 +3678,24 @@
             profileData.avatar_url = "https://cdn-icons-png.flaticon.com/512/3237/3237472.png";
           }
         }
-        
+
         console.log("Guardando perfil:", profileData);
-        
+
         // Guardar directamente en Firebase
         await database.ref('profiles/' + currentUser.uid).set(profileData);
-        
+
         // Actualizar perfil local
         currentProfile = profileData;
-        
+
         console.log("Perfil guardado exitosamente");
-        
+
         // Si ya tiene país, ir directo a videollamada, sino a selección de país
         if(profileData.country) {
           goToScreen('videoCallScreen');
         } else {
           goToScreen('countryScreen');
         }
-        
+
       } catch(error) {
         console.error("Error saving profile:", error);
         alert("Error al guardar el perfil: " + error.message);
@@ -3141,28 +3766,55 @@
     }
 
     async function sendChatMessage(overrideText = '', isEmoji = false) {
-      if(!currentCallId || !currentUser) {
-        if(!overrideText) alert('Aún no estás conectado con otro usuario.');
-        return;
-      }
       const input = document.getElementById('chatInput');
       const raw = overrideText || (input ? input.value : '');
       const text = raw.trim();
       if(!text) return;
+
       const payload = {
-        senderUid: currentUser.uid,
+        senderUid: currentUser?.uid || '',
         text,
         type: isEmoji ? 'emoji' : 'text',
         createdAt: firebase.database.ServerValue.TIMESTAMP,
         expiresAt: Date.now() + 60000
       };
+
+      if(!currentCallId || !currentUser) {
+        if(!overrideText) alert('Aún no estás conectado con otro usuario.');
+        return;
+      }
+
       try {
         await database.ref(`calls/${currentCallId}/messages`).push(payload);
         if(input && !overrideText) input.value = '';
+        incrementAnalytics({ interactions: 1 }).catch(() => {});
       } catch (err) {
-        console.error('Error enviando mensaje:', err);
-        if(!overrideText) alert('No se pudo enviar el mensaje');
+        console.error('Error enviando mensaje, se reintentará:', err);
+        pendingChatQueue.push(payload);
+        if(input && !overrideText) input.value = '';
       }
+    }
+
+    async function flushPendingChatQueue(){
+      if(!currentCallId || !pendingChatQueue.length) return;
+      const queue = [...pendingChatQueue];
+      pendingChatQueue = [];
+      for(const msg of queue){
+        try {
+          await database.ref(`calls/${currentCallId}/messages`).push(msg);
+        } catch(err){
+          console.error('No se pudo reenviar mensaje en cola:', err);
+          pendingChatQueue.unshift(msg);
+          break;
+        }
+      }
+    }
+
+    function scheduleFindRandomUser(delay = 3000){
+      if(matchingRetryTimer) clearTimeout(matchingRetryTimer);
+      matchingRetryTimer = setTimeout(() => {
+        findRandomUser();
+      }, delay);
     }
 
     function autoNextPartner(reason = 'auto') {
@@ -3175,20 +3827,32 @@
         setTimeout(() => {
           reconnectingInProgress = false;
           findRandomUser();
-        }, 1200);
+        }, 900);
       });
     }
 
     async function cleanupCurrentCall(removeCallNode = false) {
+      await finalizeCallAnalytics();
+      activeCallConnectionLogged = false;
+      if(matchingRetryTimer){ clearTimeout(matchingRetryTimer); matchingRetryTimer = null; }
+      if(connectWatchdogTimer){ clearTimeout(connectWatchdogTimer); connectWatchdogTimer = null; }
+
       try {
         if(peerConnection){ peerConnection.close(); }
       } catch(e) {}
       peerConnection = null;
       remoteStream = null;
-      document.getElementById('remoteVideo').srcObject = null;
+      const remoteVideoEl = document.getElementById('remoteVideo');
+      if(remoteVideoEl) remoteVideoEl.srcObject = null;
+
       if(currentCallMessagesRef){ currentCallMessagesRef.off(); currentCallMessagesRef = null; }
       if(currentParticipantsRef){ currentParticipantsRef.off(); currentParticipantsRef = null; }
       if(currentPresenceRef){ currentPresenceRef.off(); currentPresenceRef = null; }
+      if(currentIceCandidatesRef){ currentIceCandidatesRef.off(); currentIceCandidatesRef = null; }
+      if(currentOfferRef){ currentOfferRef.off(); currentOfferRef = null; }
+      if(currentAnswerRef){ currentAnswerRef.off(); currentAnswerRef = null; }
+      if(currentRemoteProfileRef){ currentRemoteProfileRef.off(); currentRemoteProfileRef = null; }
+
       if(window.messageCleanupTimer){ clearInterval(window.messageCleanupTimer); window.messageCleanupTimer = null; }
       const chatBox = document.getElementById('chatMessages');
       if(chatBox) chatBox.innerHTML = '';
@@ -3196,83 +3860,204 @@
       if(currentCallId){
         const callIdToCleanup = currentCallId;
         currentCallId = null;
+
+        if(currentUser?.uid){
+          await database.ref(`calls/${callIdToCleanup}/presence/${currentUser.uid}`).remove().catch(()=>{});
+        }
+
         if(removeCallNode){
+          const partsSnap = await database.ref(`calls/${callIdToCleanup}/participants`).once('value').catch(()=>null);
+          const parts = partsSnap && partsSnap.val ? (partsSnap.val() || {}) : {};
           await database.ref('calls/' + callIdToCleanup).remove().catch(()=>{});
+          const otherUid = (parts.caller === currentUser?.uid) ? parts.callee : parts.caller;
+          if(otherUid){
+            await database.ref('onlineUsers/' + otherUid + '/status').set('available').catch(()=>{});
+          }
         }
       }
+
+      pendingChatQueue = [];
+      remoteUidGlobal = null;
+      currentRemoteCountry = '';
+      pendingIncomingCallId = null;
+      unregisterCallsListener();
+
+      if(currentUser && window.isInVideoSession){
+        await database.ref('onlineUsers/' + currentUser.uid + '/status').set('available').catch(()=>{});
+      }
+
       hideConnecting();
     }
 
     /* ====================== PRESENCIA Y MATCHING ====================== */
     async function startMatching(){
-      if(!currentUser || !currentProfile || !currentProfile.username || !currentProfile.avatar_url || !currentProfile.country || !currentProfile.birthDate){
+      if(!currentUser || !currentProfile || !currentProfile.username || !currentProfile.country){
         console.error("❌ Perfil incompleto, no se puede marcar como online");
+        if(!currentProfile || !currentProfile.username){
+          alert('Completa tu perfil (al menos nombre) antes de conectar.');
+          goToScreen('profileSetupScreen');
+        } else if(!currentProfile.country){
+          alert('Selecciona tu país antes de conectar.');
+          goToScreen('countryScreen');
+        }
         return;
       }
-      
+
+      const safeAvatar = currentProfile.avatar_url || 'https://cdn-icons-png.flaticon.com/512/3237/3237472.png';
+      if(!currentProfile.avatar_url){
+        currentProfile.avatar_url = safeAvatar;
+        database.ref('profiles/' + currentUser.uid + '/avatar_url').set(safeAvatar).catch(()=>{});
+      }
+
       console.log("✅ Marcando usuario como online:", currentUser.uid);
       window.isInVideoSession = true;
+      activeCallConnectedAt = null;
+      activeCallConnectionLogged = false;
       const userRef = database.ref('onlineUsers/' + currentUser.uid);
       await userRef.set({
         username: currentProfile.username,
-        avatar_url: currentProfile.avatar_url,
+        avatar_url: safeAvatar,
         country: currentProfile.country,
-        birthDate: currentProfile.birthDate,
-        timestamp: firebase.database.ServerValue.TIMESTAMP
+        birthDate: currentProfile.birthDate || null,
+        interests: Array.isArray(currentProfile.interests) ? currentProfile.interests : [],
+        timestamp: firebase.database.ServerValue.TIMESTAMP,
+        status: 'available'
       });
       userRef.onDisconnect().remove();
-      
-      // Esperar 1 segundo antes de buscar
-      setTimeout(() => {
-        findRandomUser();
-      }, 1000);
+      registerCallsListener();
+
+      scheduleFindRandomUser(800);
     }
-    
+
     async function findRandomUser(){
-      console.log("🔍 Buscando usuarios online...");
-      const snapshot = await database.ref('onlineUsers').once('value');
-      const online = snapshot.val() || {};
-      const uids = Object.keys(online).filter(uid => uid !== currentUser.uid);
-      
-      console.log("👥 Usuarios online:", uids.length);
-      
-      if(uids.length === 0){
-        console.log("⏳ Nadie disponible, reintentando en 3s...");
-        setTimeout(findRandomUser, 3000);
+      if(!currentUser || !window.isInVideoSession || currentCallId) return;
+      try {
+        console.log("🔍 Buscando usuarios online...");
+        const snapshot = await database.ref('onlineUsers').once('value');
+        const online = snapshot.val() || {};
+        const myInterests = Array.isArray(currentProfile?.interests) ? currentProfile.interests : [];
+        const availableEntries = Object.entries(online)
+          .filter(([uid, data]) => uid !== currentUser.uid && data && data.status === 'available');
+
+        const preferred = myInterests.length
+          ? availableEntries.filter(([, data]) => hasSharedInterests(myInterests, data.interests || []))
+          : [];
+
+        const pool = preferred.length ? preferred : availableEntries;
+        const candidates = pool.map(([uid]) => uid);
+
+        console.log("👥 Usuarios online disponibles:", candidates.length, "| coincidencias:", preferred.length);
+
+        if(candidates.length === 0){
+          console.log("⏳ Nadie disponible, reintentando en 2.5s...");
+          scheduleFindRandomUser(2500);
+          return;
+        }
+
+        const randomUid = candidates[Math.floor(Math.random() * candidates.length)];
+        console.log("🎯 Usuario seleccionado:", randomUid);
+        await createCall(randomUid);
+      } catch(err){
+        console.error('❌ Error buscando usuario, retry:', err);
+        scheduleFindRandomUser(3000);
+      }
+    }
+
+
+    function registerCallsListener(){
+      if(callsRef && callsChildAddedHandler) return;
+      callsRef = database.ref('calls');
+      callsChildAddedHandler = snapshot => {
+        const callId = snapshot.key;
+        const callData = snapshot.val();
+        if(!callData || !callData.participants) return;
+        const { caller, callee } = callData.participants;
+        const createdAt = callData.createdAt || 0;
+        if(createdAt && (Date.now() - createdAt) > 45000) return;
+        if(callee === currentUser?.uid){
+          if(!window.isInVideoSession) return;
+          if(currentCallId && currentCallId !== callId) return;
+          if(pendingIncomingCallId && pendingIncomingCallId !== callId) return;
+
+          const acceptIncomingCall = async () => {
+            pendingIncomingCallId = callId;
+            if(!localStream){
+              await startLocalStream();
+            }
+            if(!localStream){
+              console.warn('⚠️ No hay stream local para aceptar llamada entrante');
+              database.ref('onlineUsers/' + currentUser.uid + '/status').set('available').catch(()=>{});
+              database.ref('onlineUsers/' + caller + '/status').set('available').catch(()=>{});
+              database.ref('calls/' + callId).remove().catch(()=>{});
+              pendingIncomingCallId = null;
+              return;
+            }
+
+            currentCallId = callId;
+            database.ref('onlineUsers/' + currentUser.uid + '/status').set('busy').catch(()=>{});
+            database.ref('onlineUsers/' + caller + '/status').set('busy').catch(()=>{});
+            database.ref(`calls/${callId}/presence/${currentUser.uid}`).set(true);
+            database.ref(`calls/${callId}/presence/${currentUser.uid}`).onDisconnect().remove();
+            startWebRTC(callId, false);
+            pendingIncomingCallId = null;
+          };
+
+          acceptIncomingCall().catch(err => {
+            console.error('❌ Error aceptando llamada entrante:', err);
+            pendingIncomingCallId = null;
+          });
+        }
+      };
+      callsRef.on('child_added', callsChildAddedHandler);
+    }
+
+    function unregisterCallsListener(){
+      if(callsRef && callsChildAddedHandler){
+        callsRef.off('child_added', callsChildAddedHandler);
+      }
+      callsRef = null;
+      callsChildAddedHandler = null;
+    }
+
+    async function createCall(remoteUid){
+      const remoteStatusRef = database.ref('onlineUsers/' + remoteUid + '/status');
+      const lockResult = await remoteStatusRef.transaction((status) => {
+        if(status === 'available') return 'ringing';
+        return; // abort
+      });
+
+      if(!lockResult.committed){
+        console.log('⛔ Usuario remoto ya no está disponible, reintentando...');
+        scheduleFindRandomUser(500);
         return;
       }
-      
-      const randomUid = uids[Math.floor(Math.random() * uids.length)];
-      console.log("🎯 Usuario seleccionado:", randomUid);
-      createCall(randomUid);
-    }
-    
-    async function createCall(remoteUid){
+
       const callId = database.ref('calls').push().key;
       currentCallId = callId;
       console.log("📞 Creando llamada:", callId);
-      
-      await database.ref('calls/' + callId + '/participants').set({
-        caller: currentUser.uid,
-        callee: remoteUid
-      });
-      await database.ref(`calls/${callId}/presence/${currentUser.uid}`).set(true);
-      database.ref(`calls/${callId}/presence/${currentUser.uid}`).onDisconnect().remove();
-      
-      startWebRTC(callId, true);
-    }
-    database.ref('calls').on('child_added', snapshot => {
-      const callId = snapshot.key;
-      const callData = snapshot.val();
-      if(!callData || !callData.participants) return;
-      const { caller, callee } = callData.participants;
-      if(callee === currentUser?.uid){
-        currentCallId = callId;
-        database.ref(`calls/${callId}/presence/${currentUser.uid}`).set(true);
+
+      try {
+        await database.ref('onlineUsers/' + currentUser.uid + '/status').set('busy').catch(()=>{});
+        await database.ref('calls/' + callId).set({
+          participants: {
+            caller: currentUser.uid,
+            callee: remoteUid
+          },
+          createdAt: firebase.database.ServerValue.TIMESTAMP
+        });
+        await database.ref(`calls/${callId}/presence/${currentUser.uid}`).set(true);
         database.ref(`calls/${callId}/presence/${currentUser.uid}`).onDisconnect().remove();
-        startWebRTC(callId, false);
+
+        startWebRTC(callId, true);
+      } catch(err){
+        console.error('❌ Error creando llamada:', err);
+        await database.ref('onlineUsers/' + currentUser.uid + '/status').set('available').catch(()=>{});
+        await database.ref('onlineUsers/' + remoteUid + '/status').set('available').catch(()=>{});
+        await database.ref('calls/' + callId).remove().catch(()=>{});
+        currentCallId = null;
+        scheduleFindRandomUser(1200);
       }
-    });
+    }
 
     /* ====================== SISTEMA DE DETECCIÓN DE OFENSAS ====================== */
     function initSpeechRecognition() {
@@ -3283,25 +4068,25 @@
 
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       speechRecognition = new SpeechRecognition();
-      
+
       speechRecognition.continuous = true;
       speechRecognition.interimResults = true;
       speechRecognition.lang = 'es-ES';
-      
+
       speechRecognition.onstart = () => {
         console.log('🎤 Monitoreo de audio iniciado');
         isListening = true;
       };
-      
+
       speechRecognition.onresult = (event) => {
         let finalTranscript = '';
-        
+
         for (let i = event.resultIndex; i < event.results.length; i++) {
           if (event.results[i].isFinal && event.results[i][0].confidence > 0.7) {
             finalTranscript += event.results[i][0].transcript + ' ';
           }
         }
-        
+
         if (finalTranscript.trim() !== '' && finalTranscript.length > 2) {
           console.log('🗣️ Texto detectado:', finalTranscript);
           // Debounce para evitar múltiples detecciones
@@ -3311,7 +4096,7 @@
           }, 500);
         }
       };
-      
+
       speechRecognition.onerror = (event) => {
         console.error('Error en reconocimiento de voz:', event.error);
         if (event.error !== 'no-speech') {
@@ -3320,7 +4105,7 @@
           }, 1000);
         }
       };
-      
+
       speechRecognition.onend = () => {
         console.log('🎤 Reconocimiento de voz terminado');
         if (isListening) {
@@ -3333,7 +4118,7 @@
       if (!speechRecognition) {
         initSpeechRecognition();
       }
-      
+
       if (speechRecognition && !isListening) {
         try {
           speechRecognition.start();
@@ -3355,18 +4140,17 @@
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '')
         .replace(/[^\w\s]/g, ''); // Remover puntuación
-      
+
       const words = normalizedText.split(/\s+/);
-      
+
       for (const word of OFFENSIVE_WORDS) {
         const normalizedWord = word.toLowerCase()
           .normalize('NFD')
           .replace(/[\u0300-\u036f]/g, '');
-        
+
         // Buscar coincidencias exactas en palabras completas
         for (const textWord of words) {
-          if (textWord === normalizedWord || 
-              textWord.includes(normalizedWord) && normalizedWord.length > 3) {
+          if (textWord === normalizedWord) {
             console.log('🚨 Palabra ofensiva detectada:', word);
             handleOffensiveLanguage(word);
             return;
@@ -3377,10 +4161,10 @@
 
     async function handleOffensiveLanguage(detectedWord) {
       offenseCount++;
-      
+
       if (offenseCount < OFFENSE_THRESHOLD) {
         showWarning(detectedWord);
-        
+
         // Registrar la advertencia en Firebase
         if (currentUser) {
           database.ref(`warnings/${currentUser.uid}`).push({
@@ -3399,10 +4183,10 @@
       const indicator = document.getElementById('warningIndicator');
       const wordDisplay = document.getElementById('warningWordDisplay');
       const countDisplay = document.getElementById('warningCount');
-      
+
       wordDisplay.textContent = `Palabra detectada: "${word}"`;
       countDisplay.textContent = offenseCount;
-      
+
       indicator.classList.add('active');
     }
 
@@ -3418,10 +4202,10 @@
 
     async function blockUserForOffense(detectedWord) {
       if (!currentUser) return;
-      
+
       const blockUntil = new Date();
       blockUntil.setDate(blockUntil.getDate() + BLOCK_DURATION_DAYS);
-      
+
       const blockData = {
         blocked: true,
         blockedUntil: blockUntil.toISOString(),
@@ -3429,14 +4213,14 @@
         offenseCount: offenseCount,
         lastOffense: firebase.database.ServerValue.TIMESTAMP
       };
-      
+
       try {
         console.log("🚫 Bloqueando usuario:", currentUser.uid, blockData);
-        
+
         // Actualizar perfil del usuario
         await database.ref(`profiles/${currentUser.uid}`).update(blockData);
         console.log("✅ Perfil actualizado con bloqueo");
-        
+
         // Registrar el bloqueo en nodo separado
         await database.ref(`blocks/${currentUser.uid}`).push({
           reason: blockData.blockReason,
@@ -3447,29 +4231,29 @@
           automatic: true
         });
         console.log("✅ Bloqueo registrado en /blocks");
-        
+
         // Actualizar perfil local
         currentProfile.blocked = true;
         currentProfile.blockedUntil = blockUntil.toISOString();
         currentProfile.blockReason = blockData.blockReason;
-        
+
         // Mostrar modal de bloqueo
         showBlockModal(detectedWord, blockUntil);
-        
+
         // Detener reconocimiento de voz
         stopSpeechMonitoring();
         stopBodyMonitoring();
-        
+
         // Cerrar la llamada actual
         if (peerConnection) {
           peerConnection.close();
         }
-        
+
         // Remover del listado de usuarios online
         await database.ref(`onlineUsers/${currentUser.uid}`).remove();
-        
+
         console.log(`🚫 Usuario bloqueado por ${BLOCK_DURATION_DAYS} días por: "${detectedWord}"`);
-        
+
       } catch (error) {
         console.error('❌ Error bloqueando usuario:', error);
       }
@@ -3478,207 +4262,95 @@
     function showBlockModal(detectedWord, blockUntil) {
       document.getElementById('offensiveWordDisplay').textContent = detectedWord;
       document.getElementById('offenseModal').classList.add('active');
-      
+
       // Iniciar countdown
       startBlockCountdown(blockUntil);
     }
 
     function startBlockCountdown(blockUntil) {
       const countdownElement = document.getElementById('offenseCountdown');
-      
+
       function updateCountdown() {
         const now = new Date().getTime();
         const blockTime = new Date(blockUntil).getTime();
         const distance = blockTime - now;
-        
+
         if (distance > 0) {
           const days = Math.floor(distance / (1000 * 60 * 60 * 24));
           const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
           const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
           const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-          
+
           countdownElement.textContent = `${days} días ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         } else {
           countdownElement.textContent = "Bloqueo expirado";
           // Aquí podrías automaticamente desbloquear al usuario
         }
       }
-      
+
       updateCountdown();
       setInterval(updateCountdown, 1000);
     }
 
-    async function ensureBodyDetector() {
-      if (bodyDetectionState.detector) return bodyDetectionState.detector;
-      if (!window.cocoSsd || !window.tf) {
-        console.warn('Detector visual no disponible en este navegador');
-        return null;
-      }
-
-      try {
-        await tf.ready();
-        bodyDetectionState.detector = await cocoSsd.load({ base: 'lite_mobilenet_v2' });
-        console.log('✅ Detector visual cargado');
-        return bodyDetectionState.detector;
-      } catch (error) {
-        console.error('❌ No se pudo cargar el detector visual:', error);
-        return null;
-      }
-    }
-
-    function getBodyWarningText(severityScore) {
-      if (severityScore >= 0.8) {
-        return '⚠️ Riesgo alto detectado: reduce contenido corporal explícito inmediatamente.';
-      }
-      if (severityScore >= 0.65) {
-        return '⚠️ Riesgo medio detectado: ajusta encuadre y vestimenta para evitar sanciones.';
-      }
-      return '⚠️ Riesgo visual detectado: evita exposición de torso/cuerpo para continuar.';
-    }
-
-    function showBodyWarning(message) {
-      const indicator = document.getElementById('bodyWarningIndicator');
-      const text = document.getElementById('bodyWarningText');
-      if (!indicator || !text) return;
-
-      text.textContent = message;
-      indicator.classList.add('active');
-
-      clearTimeout(bodyDetectionState.warningHideTimeout);
-      bodyDetectionState.warningHideTimeout = setTimeout(() => {
-        indicator.classList.remove('active');
-      }, 5000);
-    }
-
-    function normalizeBodyRisk(predictions) {
-      if (!predictions || predictions.length === 0) return 0;
-
-      const video = document.getElementById('localVideo');
-      const videoArea = Math.max((video?.videoWidth || 1) * (video?.videoHeight || 1), 1);
-
-      let score = 0;
-      for (const pred of predictions) {
-        const label = (pred.class || '').toLowerCase();
-        const [x, y, width, height] = pred.bbox || [0, 0, 0, 0];
-        const areaRatio = Math.max((width * height) / videoArea, 0);
-
-        if (label === 'person') score += pred.score * (0.45 + areaRatio * 1.8);
-        if (label === 'cell phone') score += pred.score * 0.08;
-        if (label === 'sports ball') score += pred.score * 0.03;
-      }
-
-      return Math.min(score, 1);
-    }
-
-    async function persistBodyDetectionEvent(severityScore, predictions) {
-      if (!currentUser || !currentCallId) return;
-
-      const eventPayload = {
-        uid: currentUser.uid,
-        callId: currentCallId,
-        severityScore: Number(severityScore.toFixed(3)),
-        labels: predictions.map(pred => pred.class),
-        createdAt: firebase.database.ServerValue.TIMESTAMP,
-        source: 'realtime-body-detector-v1'
-      };
-
-      try {
-        await database.ref(`moderation/bodyDetections/${currentUser.uid}`).push(eventPayload);
-        await database.ref(`calls/${currentCallId}/moderation/body/${currentUser.uid}`).set(eventPayload);
-      } catch (error) {
-        console.error('❌ Error guardando detección corporal en Firebase:', error);
-      }
-    }
-
-    async function processBodyFrame() {
-      if (!bodyDetectionState.running || !localStream) return;
-
-      const now = Date.now();
-      if (now - bodyDetectionState.lastFrameAt < 650) {
-        bodyDetectionState.rafId = requestAnimationFrame(processBodyFrame);
-        return;
-      }
-      bodyDetectionState.lastFrameAt = now;
-
-      const localVideo = document.getElementById('localVideo');
-      if (!localVideo || localVideo.readyState < 2) {
-        bodyDetectionState.rafId = requestAnimationFrame(processBodyFrame);
-        return;
-      }
-
-      const detector = await ensureBodyDetector();
-      if (!detector) {
-        bodyDetectionState.rafId = requestAnimationFrame(processBodyFrame);
-        return;
-      }
-
-      try {
-        const predictions = await detector.detect(localVideo, 12, 0.35);
-        const severity = normalizeBodyRisk(predictions);
-
-        if (severity >= 0.55 && Date.now() > bodyDetectionState.violationCooldownUntil) {
-          bodyDetectionState.violationCooldownUntil = Date.now() + 8000;
-          showBodyWarning(getBodyWarningText(severity));
-          await persistBodyDetectionEvent(severity, predictions);
-        }
-      } catch (error) {
-        console.error('❌ Error analizando frame corporal:', error);
-      }
-
-      bodyDetectionState.rafId = requestAnimationFrame(processBodyFrame);
-    }
-
-    async function startBodyMonitoring() {
-      if (bodyDetectionState.running) return;
-      bodyDetectionState.running = true;
-      bodyDetectionState.streamSessionId = `${currentUser?.uid || 'anon'}-${Date.now()}`;
-      bodyDetectionState.lastFrameAt = 0;
-      bodyDetectionState.violationCooldownUntil = 0;
-      await processBodyFrame();
+    function startBodyMonitoring() {
+      // Detección corporal desactivada por solicitud del producto.
+      return;
     }
 
     function stopBodyMonitoring() {
-      bodyDetectionState.running = false;
-      bodyDetectionState.streamSessionId = null;
-      if (bodyDetectionState.rafId) {
-        cancelAnimationFrame(bodyDetectionState.rafId);
-        bodyDetectionState.rafId = null;
-      }
-      clearTimeout(bodyDetectionState.warningHideTimeout);
-      const indicator = document.getElementById('bodyWarningIndicator');
-      indicator?.classList.remove('active');
+      return;
     }
 
     /* ====================== WEBRTC ====================== */
     async function startLocalStream(){
       try {
-        localStream = await navigator.mediaDevices.getUserMedia({ 
+        if(localStream && localStream.getTracks().some(track => track.readyState === 'live')){
+          const localVideo = document.getElementById('localVideo');
+          localVideo.srcObject = localStream;
+          await localVideo.play().catch(()=>{});
+          return true;
+        }
+
+        localStream = await navigator.mediaDevices.getUserMedia({
           video: {
             width: { ideal: 1280 },
             height: { ideal: 720 },
             facingMode: "user"
-          }, 
+          },
           audio: {
             echoCancellation: true,
             noiseSuppression: true,
             autoGainControl: true
           }
         });
-        
-        // Mostrar video local
+
         const localVideo = document.getElementById('localVideo');
         localVideo.srcObject = localStream;
         await localVideo.play();
         console.log("✅ Video local iniciado");
+        return true;
       } catch(error){
         console.error("❌ Error accediendo a cámara y micrófono:", error);
+        localStream = null;
         alert("No se pudo acceder a la cámara/micrófono. Verifica los permisos.");
+        return false;
       }
+    }
+
+    function stopLocalStream(){
+      if(localStream){
+        localStream.getTracks().forEach(track => {
+          try { track.stop(); } catch(e) {}
+        });
+      }
+      localStream = null;
+      const localVideo = document.getElementById('localVideo');
+      if(localVideo) localVideo.srcObject = null;
     }
     function startWebRTC(callId, isCaller){
       peerConnection = new RTCPeerConnection(configuration);
       console.log("🔄 Iniciando WebRTC, es caller?", isCaller);
-      
+
       if(localStream){
         localStream.getTracks().forEach(track => {
           peerConnection.addTrack(track, localStream);
@@ -3687,7 +4359,7 @@
       } else {
         console.warn("⚠️ No hay stream local disponible");
       }
-      
+
       // Indicador de conexión
       peerConnection.oniceconnectionstatechange = () => {
         console.log("🔌 ICE Connection State:", peerConnection.iceConnectionState);
@@ -3695,15 +4367,23 @@
         if(peerConnection.iceConnectionState === "connected" || peerConnection.iceConnectionState === "completed"){
           indicator.style.backgroundColor = "green";
           console.log("✅ Conexión establecida");
+          flushPendingChatQueue();
+          if(!activeCallConnectionLogged){
+            activeCallConnectionLogged = true;
+            activeCallConnectedAt = Date.now();
+            incrementAnalytics({ connections: 1, countryName: currentRemoteCountry || 'Sin país' }).catch(() => {});
+          }
         } else if(peerConnection.iceConnectionState === "disconnected" || peerConnection.iceConnectionState === "failed" || peerConnection.iceConnectionState === "closed"){
           indicator.style.backgroundColor = "red";
           console.log("❌ Conexión fallida o desconectada");
+          finalizeCallAnalytics().catch(() => {});
+          activeCallConnectionLogged = false;
           autoNextPartner('ice-' + peerConnection.iceConnectionState);
         } else {
           indicator.style.backgroundColor = "orange";
         }
       };
-      
+
       peerConnection.ontrack = (event) => {
         console.log("📹 Evento ontrack recibido:", event.track.kind);
         const remoteVideo = document.getElementById('remoteVideo');
@@ -3724,33 +4404,33 @@
           hideConnecting();
         }).catch(e => console.error("❌ Error al reproducir video remoto:", e));
       };
-      
+
       peerConnection.onicecandidate = event => {
         if(event.candidate){
           console.log("🧊 Enviando ICE candidate");
-          database.ref(`calls/${callId}/iceCandidates/${currentUser.uid}`).push(JSON.stringify(event.candidate));
+          database.ref(`calls/${callId}/iceCandidates`).push({ from: currentUser.uid, candidate: JSON.stringify(event.candidate) });
         }
       };
-      
-      database.ref(`calls/${callId}/iceCandidates`).on('child_added', snapshot => {
-        const userUid = snapshot.key;
-        if(userUid !== currentUser.uid){
-          snapshot.forEach(candidateSnap => {
-            const candidateData = candidateSnap.val();
-            if(candidateData){
-              const candidate = new RTCIceCandidate(JSON.parse(candidateData));
-              peerConnection.addIceCandidate(candidate)
-                .then(() => console.log("✅ ICE candidate agregado"))
-                .catch(e => console.error("❌ Error agregando ICE candidate:", e));
-            }
-          });
+
+      currentIceCandidatesRef = database.ref(`calls/${callId}/iceCandidates`);
+      currentIceCandidatesRef.on('child_added', snapshot => {
+        const candidatePayload = snapshot.val();
+        if(!candidatePayload || candidatePayload.from === currentUser.uid || !candidatePayload.candidate) return;
+        try {
+          const candidate = new RTCIceCandidate(JSON.parse(candidatePayload.candidate));
+          peerConnection.addIceCandidate(candidate)
+            .then(() => console.log("✅ ICE candidate agregado"))
+            .catch(e => console.error("❌ Error agregando ICE candidate:", e));
+        } catch(e){
+          console.error('❌ ICE candidate inválido:', e);
         }
       });
-      
+
       if(isCaller){
         createOffer(callId);
       } else {
-        database.ref(`calls/${callId}/offer`).on('value', async snapshot => {
+        currentOfferRef = database.ref(`calls/${callId}/offer`);
+        currentOfferRef.on('value', async snapshot => {
           const offerData = snapshot.val();
           if(offerData){
             try {
@@ -3767,8 +4447,9 @@
           }
         });
       }
-      
-      database.ref(`calls/${callId}/answer`).on('value', async snapshot => {
+
+      currentAnswerRef = database.ref(`calls/${callId}/answer`);
+      currentAnswerRef.on('value', async snapshot => {
         const answerData = snapshot.val();
         if(answerData && peerConnection.signalingState === 'have-local-offer'){
           try {
@@ -3780,7 +4461,7 @@
           }
         }
       });
-      
+
       // Cargar info del usuario remoto
       database.ref(`calls/${callId}/participants`).once('value', snap => {
         const parts = snap.val() || {};
@@ -3793,15 +4474,19 @@
           document.getElementById('remoteAvatar').src = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2230%22 height=%2230%22 viewBox=%220 0 30 30%22%3E%3Crect width=%2230%22 height=%2230%22 fill=%22%23e8eaed%22/%3E%3Ccircle cx=%2215%22 cy=%2211%22 r=%225%22 fill=%22%239aa0a6%22/%3E%3Crect x=%227%22 y=%2219%22 width=%2216%22 height=%227%22 rx=%223.5%22 fill=%22%239aa0a6%22/%3E%3C/svg%3E';
           return;
         }
-        database.ref('profiles/' + remoteUid).on('value', userSnap => {
+        if(currentRemoteProfileRef){ currentRemoteProfileRef.off(); }
+        currentRemoteProfileRef = database.ref('profiles/' + remoteUid);
+        currentRemoteProfileRef.on('value', userSnap => {
           if(userSnap.exists()){
             const rProfile = userSnap.val();
             document.getElementById('remoteAvatar').src = rProfile.avatar_url || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2230%22 height=%2230%22 viewBox=%220 0 30 30%22%3E%3Crect width=%2230%22 height=%2230%22 fill=%22%23e8eaed%22/%3E%3Ccircle cx=%2215%22 cy=%2211%22 r=%225%22 fill=%22%239aa0a6%22/%3E%3Crect x=%227%22 y=%2219%22 width=%2216%22 height=%227%22 rx=%223.5%22 fill=%22%239aa0a6%22/%3E%3C/svg%3E';
             let nameText = rProfile.username ? rProfile.username : "";
             document.getElementById('remoteName').textContent = nameText;
+            currentRemoteCountry = rProfile.country || 'Sin país';
           } else {
             document.getElementById('remoteName').textContent = "";
             document.getElementById('remoteAvatar').src = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2230%22 height=%2230%22 viewBox=%220 0 30 30%22%3E%3Crect width=%2230%22 height=%2230%22 fill=%22%23e8eaed%22/%3E%3Ccircle cx=%2215%22 cy=%2211%22 r=%225%22 fill=%22%239aa0a6%22/%3E%3Crect x=%227%22 y=%2219%22 width=%2216%22 height=%227%22 rx=%223.5%22 fill=%22%239aa0a6%22/%3E%3C/svg%3E';
+            currentRemoteCountry = '';
           }
         });
       });
@@ -3815,6 +4500,7 @@
           return;
         }
         renderChatMessage(msg, msg.senderUid === currentUser?.uid);
+        flushPendingChatQueue();
       });
       startMessageCleanup(callId);
 
@@ -3827,6 +4513,16 @@
       });
 
       const callStartedAt = Date.now();
+      if(connectWatchdogTimer) clearTimeout(connectWatchdogTimer);
+      connectWatchdogTimer = setTimeout(() => {
+        if(currentCallId !== callId) return;
+        const state = peerConnection?.iceConnectionState;
+        if(state !== 'connected' && state !== 'completed'){
+          console.warn('⏱️ Timeout de conexión, cambiando de usuario');
+          autoNextPartner('connect-timeout');
+        }
+      }, 18000);
+
       currentPresenceRef = database.ref(`calls/${callId}/presence`);
       currentPresenceRef.on('value', snap => {
         if(currentCallId !== callId) return;
@@ -3834,8 +4530,7 @@
         const count = Object.keys(pres).length;
         const iceState = peerConnection?.iceConnectionState;
         const isConnected = iceState === 'connected' || iceState === 'completed';
-        const graceDone = (Date.now() - callStartedAt) > 8000;
-        if(count < 2 && (isConnected || graceDone)){
+        if(count < 2 && isConnected){
           autoNextPartner('peer-left');
         }
       });
@@ -3864,15 +4559,16 @@
       document.getElementById('micIcon').classList.toggle('fa-microphone');
     }
     function restartCall(){
-      autoNextPartner('manual-compat');
+      autoNextPartner('manual-next');
     }
-    
+
     window.addEventListener('beforeunload', () => {
+      stopLocalStream();
       if(currentUser){
         database.ref(`onlineUsers/${currentUser.uid}`).remove();
       }
-      if(currentCallId){
-        database.ref(`calls/${currentCallId}`).remove();
+      if(currentCallId && currentUser){
+        database.ref(`calls/${currentCallId}/presence/${currentUser.uid}`).remove();
       }
     });
 
@@ -3882,6 +4578,28 @@
         sendChatMessage();
       }
     });
+
+
+    const remoteVideoContainer = document.getElementById('remoteVideoContainer');
+    if(remoteVideoContainer){
+      remoteVideoContainer.addEventListener('touchstart', (e) => {
+        const t = e.changedTouches && e.changedTouches[0];
+        if(!t) return;
+        touchStartX = t.clientX;
+        touchStartY = t.clientY;
+      }, { passive: true });
+
+      remoteVideoContainer.addEventListener('touchend', (e) => {
+        const t = e.changedTouches && e.changedTouches[0];
+        if(!t) return;
+        const dx = t.clientX - touchStartX;
+        const dy = t.clientY - touchStartY;
+        const isHorizontalSwipe = Math.abs(dx) > 85 && Math.abs(dx) > Math.abs(dy) * 1.2;
+        if(isHorizontalSwipe){
+          autoNextPartner('swipe-next');
+        }
+      }, { passive: true });
+    }
 
     document.getElementById('registerPassword').addEventListener('focus', () => {
       document.getElementById('passwordMonkey').style.display = 'block';
@@ -3942,6 +4660,8 @@
       // Ocultar iconos de moderación
       document.querySelector('.account-status-icon').style.display = 'none';
       document.querySelector('.report-icon').style.display = 'none';
+      document.querySelector('.profile-icon').style.display = 'none';
+      document.querySelector('.config-icon').style.display = 'none';
 
       // Obtener información del usuario remoto
       if(remoteUidGlobal) {
@@ -3961,17 +4681,19 @@
     function closeReportModal() {
       document.getElementById('reportModal').classList.remove('active');
       document.getElementById('reportStatus').innerHTML = "";
-      
+
       // Mostrar iconos de moderación nuevamente
       document.querySelector('.account-status-icon').style.display = 'flex';
       document.querySelector('.report-icon').style.display = 'flex';
-      
+      document.querySelector('.profile-icon').style.display = 'flex';
+      document.querySelector('.config-icon').style.display = 'flex';
+
       // Resetear selecciones
       selectedReportOption = null;
       document.querySelectorAll('.report-option').forEach(opt => {
         opt.classList.remove('selected');
       });
-      
+
       // Deshabilitar botón de reportar
       const reportBtn = document.querySelector('.btn-report');
       reportBtn.disabled = true;
@@ -3987,7 +4709,7 @@
         opt.classList.remove('selected');
       });
       event.currentTarget.classList.add('selected');
-      
+
       // Habilitar el botón de reportar
       const reportBtn = document.querySelector('.btn-report');
       reportBtn.disabled = false;
@@ -4009,12 +4731,12 @@
       try {
         const [result] = await client.safeSearchDetection(imageUrl);
         const detections = result.safeSearchAnnotation;
-        
+
         let imageRiskScore = 0;
         if(detections.adult === 'VERY_LIKELY') imageRiskScore += 80;
         if(detections.violence === 'VERY_LIKELY') imageRiskScore += 70;
         if(detections.racy === 'VERY_LIKELY') imageRiskScore += 60;
-        
+
         return imageRiskScore;
       } catch(err) {
         console.error('Error analizando imagen:', err);
@@ -4026,19 +4748,19 @@
     async function analyzeReportHistory(uid) {
       const reportsSnap = await database.ref('reports/' + uid).once('value');
       const reports = reportsSnap.val() || {};
-      
+
       let riskScore = 0;
       let reportCount = 0;
       let recentReports = 0;
       let confirmedReports = 0;
       const now = Date.now();
-      
+
       for(const report of Object.values(reports)) {
         reportCount++;
         if (now - report.timestamp < 7 * 24 * 60 * 60 * 1000) { // Últimos 7 días
           recentReports++;
           const baseScore = RISK_SCORES[report.tipo] || 0;
-          
+
           // Analizar evidencia de imagen si existe
           if(report.evidenceUrl) {
             const imageScore = await analyzeImage(report.evidenceUrl);
@@ -4049,7 +4771,7 @@
           }
         }
       }
-      
+
       // Ajustar score basado en reportes confirmados
       if(confirmedReports > 0) {
         riskScore *= (1 + (confirmedReports / recentReports) * 0.5);
@@ -4066,7 +4788,7 @@
     async function updateAccountStatus(uid, riskAnalysis) {
       const blockThreshold = 70;
       const warningThreshold = 40;
-      
+
       let accountStatus = {
         riskLevel: riskAnalysis.riskScore,
         lastAnalysis: firebase.database.ServerValue.TIMESTAMP
@@ -4099,12 +4821,12 @@
       // Mostrar animación de envío
       const reportBtn = document.querySelector('.btn-report');
       const originalText = reportBtn.innerHTML;
-      
+
       // Deshabilitar el botón y mostrar spinner
       reportBtn.disabled = true;
       reportBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enviando...';
       reportBtn.style.opacity = '0.7';
-      
+
       // Animación de las opciones desapareciendo
       const options = document.querySelectorAll('.report-option');
       options.forEach((option, index) => {
@@ -4129,7 +4851,7 @@
             reportBtn.innerHTML = '<i class="fa-solid fa-check"></i> ¡Enviado!';
             reportBtn.style.background = 'var(--success-color)';
             reportBtn.style.opacity = '1';
-            
+
             // Mostrar mensaje de éxito con animación
             const statusEl = document.getElementById('reportStatus');
             statusEl.innerHTML = `
@@ -4139,18 +4861,18 @@
                 <p>Hemos recibido tu reporte y lo revisaremos pronto.</p>
               </div>
             `;
-            
+
             // Animar la aparición del mensaje
             const successMsg = statusEl.querySelector('.report-success-message');
             successMsg.style.opacity = '0';
             successMsg.style.transform = 'translateY(20px)';
-            
+
             setTimeout(() => {
               successMsg.style.transition = 'all 0.3s ease';
               successMsg.style.opacity = '1';
               successMsg.style.transform = 'translateY(0)';
             }, 100);
-            
+
             // Cerrar modal con animación
             setTimeout(() => {
               closeReportModalWithAnimation();
@@ -4158,11 +4880,11 @@
           })
           .catch(err => {
             console.error("Error en el reporte:", err);
-            
+
             // Animación de error
             reportBtn.innerHTML = '<i class="fa-solid fa-exclamation-triangle"></i> Error';
             reportBtn.style.background = 'var(--danger-color)';
-            
+
             document.getElementById('reportStatus').innerHTML = `
               <div class="report-error-message">
                 <i class="fa-solid fa-exclamation-circle"></i>
@@ -4170,14 +4892,14 @@
                 <p style='color:var(--gray-text);'>Por favor, inténtalo de nuevo</p>
               </div>
             `;
-            
+
             // Restaurar botón después de 3 segundos
             setTimeout(() => {
               reportBtn.disabled = false;
               reportBtn.innerHTML = originalText;
               reportBtn.style.background = 'var(--danger-color)';
               reportBtn.style.opacity = '1';
-              
+
               // Restaurar opciones
               options.forEach((option, index) => {
                 setTimeout(() => {
@@ -4193,26 +4915,26 @@
     function closeReportModalWithAnimation() {
       const modal = document.getElementById('reportModal');
       const content = modal.querySelector('.report-content');
-      
+
       // Animación de salida
       content.style.transform = 'scale(0.95) translateY(20px)';
       content.style.opacity = '0';
       modal.style.opacity = '0';
-      
+
       setTimeout(() => {
         closeReportModal();
-        
+
         // Resetear estilos para próxima vez
         content.style.transform = '';
         content.style.opacity = '';
         modal.style.opacity = '';
-        
+
         const reportBtn = document.querySelector('.btn-report');
         reportBtn.disabled = false;
         reportBtn.innerHTML = 'Reportar';
         reportBtn.style.background = 'var(--danger-color)';
         reportBtn.style.opacity = '1';
-        
+
         // Resetear opciones
         const options = document.querySelectorAll('.report-option');
         options.forEach(option => {
@@ -4257,7 +4979,9 @@
       // Ocultar iconos de moderación
       document.querySelector('.account-status-icon').style.display = 'none';
       document.querySelector('.report-icon').style.display = 'none';
-      
+      document.querySelector('.profile-icon').style.display = 'none';
+      document.querySelector('.config-icon').style.display = 'none';
+
       goToScreen('accountStatusScreen');
       const scanAvatar = document.getElementById('scanAvatar');
       scanAvatar.src = currentProfile.avatar_url || 'https://cdn-icons-png.flaticon.com/512/3237/3237472.png';
@@ -4269,7 +4993,7 @@
     }
     async function checkAccountPenalties() {
       if(!currentUser) return;
-      
+
       let analysisResults = {
         penalties: [],
         riskLevel: 0,
@@ -4438,6 +5162,193 @@
         toggleNewIncidenceForm();
       }).catch(err => {
         console.error("Error creando incidencia:", err);
+      });
+    }
+
+    function openProfileScreen() {
+      hydrateProfileWidgets();
+      goToScreen('profileScreen');
+    }
+
+    function openConfigScreen() {
+      goToScreen('settingsScreen');
+      bindRealtimeActivity();
+    }
+
+    function hydrateProfileWidgets() {
+      if(!currentProfile) return;
+      document.getElementById('profileScreenAvatar').src = currentProfile.avatar_url || 'https://cdn-icons-png.flaticon.com/512/3237/3237472.png';
+      document.getElementById('profileScreenName').textContent = currentProfile.username || 'Usuario';
+      document.getElementById('profileScreenCountry').textContent = currentProfile.country || 'País no definido';
+      renderRealtimeCards();
+    }
+
+    function selectActivityMetric(metric) {
+      document.querySelectorAll('.activity-tab').forEach(tab => {
+        tab.classList.toggle('active', tab.dataset.metric === metric);
+      });
+      renderActivityChart(metric, 6);
+    }
+
+    function renderActivityBars(metric = 'connections') {
+      // Compat alias: mantiene llamadas existentes
+      renderActivityChart(metric);
+    }
+
+    function getActivitySeries(metric = 'connections') {
+      const base = Number(profileStats[metric] || 0);
+      const seed = metric === 'minutes' ? 7 : (metric === 'interactions' ? 5 : 9);
+      const points = Array.from({length: 7}, (_, i) => {
+        const factor = 0.46 + (i * 0.1);
+        const noise = ((i * seed) % 4) * 0.05;
+        return Math.max(0, Math.round(base * factor + (base * noise)));
+      });
+      points[6] = base;
+      return points;
+    }
+
+    function updateActivityScrubber(index) {
+      const metric = document.querySelector('.activity-tab.active')?.dataset.metric || 'connections';
+      renderActivityChart(metric, Number(index));
+    }
+
+    function renderActivityChart(metric = 'connections', selectedIndex = null) {
+      const svg = document.getElementById('activityChartSvg');
+      const labelEl = document.getElementById('activityChartMetricLabel');
+      const valueEl = document.getElementById('activityChartPointValue');
+      const xLabelsEl = document.getElementById('activityChartXLabels');
+      const scrubber = document.getElementById('activityScrubber');
+      if(!svg || !labelEl || !valueEl || !xLabelsEl || !scrubber) return;
+
+      const labelMap = { connections: 'Conexiones', minutes: 'Minutos', interactions: 'Interacciones' };
+      const series = getActivitySeries(metric);
+      const maxY = Math.max(5, ...series);
+      const idx = selectedIndex == null ? Number(scrubber.value || 6) : selectedIndex;
+      scrubber.value = String(idx);
+      labelEl.textContent = labelMap[metric] || 'Métrica';
+      valueEl.textContent = String(series[idx] || 0);
+
+      const W = 320, H = 180;
+      const m = {l:34,r:12,t:12,b:24};
+      const innerW = W-m.l-m.r;
+      const innerH = H-m.t-m.b;
+
+      const x = i => m.l + (i/6)*innerW;
+      const y = v => m.t + innerH - (v/maxY)*innerH;
+
+      const yTicks = [0, 0.25, 0.5, 0.75, 1].map(r => Math.round(maxY*r));
+      const yGuides = yTicks.map(v => `<line x1="${m.l}" y1="${y(v)}" x2="${W-m.r}" y2="${y(v)}" stroke="#e8edf3" stroke-width="1"/><text x="${m.l-6}" y="${y(v)+3}" text-anchor="end" font-size="9" fill="#94a3b8">${v}</text>`).join('');
+      const xTicks = Array.from({length:7}, (_,i)=>`<text x="${x(i)}" y="${H-6}" text-anchor="middle" font-size="9" fill="#94a3b8">${i+1}</text>`).join('');
+      const poly = series.map((v,i)=>`${x(i)},${y(v)}`).join(' ');
+      const activeX = x(idx);
+      const activeY = y(series[idx]||0);
+
+      svg.innerHTML = `
+        <line x1="${m.l}" y1="${m.t}" x2="${m.l}" y2="${H-m.b}" stroke="#cfd8e3" stroke-width="1.2"/>
+        <line x1="${m.l}" y1="${H-m.b}" x2="${W-m.r}" y2="${H-m.b}" stroke="#cfd8e3" stroke-width="1.2"/>
+        ${yGuides}
+        <polyline points="${poly}" fill="none" stroke="#cd040b" stroke-width="2.3"/>
+        ${series.map((v,i)=>`<circle cx="${x(i)}" cy="${y(v)}" r="${i===idx?4.4:2.8}" fill="${i===idx?'#cd040b':'#fca5a5'}"/>`).join('')}
+        <line x1="${activeX}" y1="${m.t}" x2="${activeX}" y2="${H-m.b}" stroke="#fecaca" stroke-width="1" stroke-dasharray="3 2"/>
+        ${xTicks}
+      `;
+
+      const dayLabels = ['D1','D2','D3','D4','D5','D6','Hoy'];
+      xLabelsEl.innerHTML = dayLabels.map((d,i)=>`<span style="font-weight:${i===idx?700:500};color:${i===idx?'#b91c1c':'#64748b'}">${d}</span>`).join('');
+    }
+
+    function renderRealtimeCards() {
+      document.getElementById('profileTotalConnections').textContent = String(profileStats.connections || 0);
+      document.getElementById('profileTotalInteractions').textContent = String(profileStats.interactions || 0);
+      document.getElementById('profileFollowers').textContent = String(profileStats.followers || 0);
+      document.getElementById('profileReports').textContent = String(profileStats.reports || 0);
+
+      document.getElementById('activityConnectionsCount').textContent = String(profileStats.connections || 0);
+      document.getElementById('activityMinutes').textContent = `${profileStats.minutes || 0}m`;
+
+      const countryList = document.getElementById('activityCountryList');
+      const countries = Object.entries(profileStats.countries || {}).sort((a,b) => (b[1]||0) - (a[1]||0));
+      if(!countries.length) {
+        countryList.innerHTML = '<p style="color:var(--gray-text);">Aún no hay conexiones registradas por país.</p>';
+      } else {
+        countryList.innerHTML = countries.slice(0,6).map(([country,count]) => `<div class="country-pill"><span>${country}</span><strong>${count}</strong></div>`).join('');
+      }
+
+      renderActivityChart(document.querySelector('.activity-tab.active')?.dataset.metric || 'connections');
+
+      const interactionLabel = document.getElementById('activityInteractionLabel');
+      if((profileStats.interactions || 0) >= 20) {
+        interactionLabel.textContent = 'Interacción alta: estás conversando de forma frecuente con otros usuarios.';
+      } else if((profileStats.interactions || 0) >= 8) {
+        interactionLabel.textContent = 'Interacción media: tu nivel de actividad es constante.';
+      } else {
+        interactionLabel.textContent = 'Interacción inicial: sigue conectando para desbloquear más estadísticas.';
+      }
+    }
+
+    async function incrementAnalytics(changes = {}) {
+      if(!currentUser) return;
+      const ref = database.ref('analytics/' + currentUser.uid);
+      await ref.transaction(prev => {
+        const base = prev || { connections: 0, interactions: 0, minutes: 0, reports: 0, countries: {} };
+        base.connections = Number(base.connections || 0) + Number(changes.connections || 0);
+        base.interactions = Number(base.interactions || 0) + Number(changes.interactions || 0);
+        base.minutes = Number(base.minutes || 0) + Number(changes.minutes || 0);
+        base.reports = Number(base.reports || 0) + Number(changes.reports || 0);
+        base.countries = base.countries || {};
+        if(changes.countryName){
+          const key = changes.countryName;
+          base.countries[key] = Number(base.countries[key] || 0) + 1;
+        }
+        return base;
+      });
+    }
+
+    async function finalizeCallAnalytics() {
+      if(!activeCallConnectedAt || !currentUser) return;
+      const elapsedMin = Math.max(1, Math.floor((Date.now() - activeCallConnectedAt) / 60000));
+      activeCallConnectedAt = null;
+      try {
+        await incrementAnalytics({ minutes: elapsedMin });
+      } catch(err) {
+        console.warn('No se pudo actualizar minutos de actividad:', err);
+      }
+    }
+
+    function bindRealtimeActivity() {
+      if(!currentUser || activityListenersBound) return;
+      activityListenersBound = true;
+
+      database.ref('analytics/' + currentUser.uid).on('value', snap => {
+        const data = snap.val() || {};
+        profileStats.connections = Number(data.connections || 0);
+        profileStats.interactions = Number(data.interactions || 0);
+        profileStats.minutes = Number(data.minutes || 0);
+        profileStats.reports = Number(data.reports || 0);
+        profileStats.countries = data.countries || {};
+        renderRealtimeCards();
+      });
+
+      database.ref('profiles/' + currentUser.uid + '/followersCount').on('value', snap => {
+        profileStats.followers = Number(snap.val() || 0);
+        renderRealtimeCards();
+      });
+
+      database.ref('incidences/' + currentUser.uid).on('value', snap => {
+        const data = snap.val() || {};
+        const notes = [];
+        Object.keys(data).forEach(key => {
+          const item = data[key] || {};
+          if(item.adminResponse){
+            notes.push(`<div class="country-pill"><span>Soporte</span><strong>${item.adminResponse}</strong></div>`);
+          }
+        });
+        const host = document.getElementById('notificationsList');
+        if(host){
+          host.innerHTML = notes.length
+            ? notes.join('')
+            : '<p style="color:var(--gray-text);">Aquí llegarán notificaciones del sistema.</p>';
+        }
       });
     }
     document.getElementById('incidenceDescription').addEventListener('input', e => {
