@@ -14,37 +14,41 @@
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.20.0/dist/tf.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3/dist/coco-ssd.min.js"></script>
   <style>
-    /* ====================== ESTILOS TIPO GOOGLE ====================== */
+    /* ====================== ESTILO MODERNO TIPO VERIZON ====================== */
     :root {
-      --google-blue: #1a73e8;
-      --google-blue-hover: #1765cc;
-      --google-blue-active: #1557b0;
-      --google-red: #d93025;
-      --google-green: #1e8e3e;
-      --google-gray: #5f6368;
-      --google-border: #dadce0;
+      --google-blue: #cd040b;
+      --google-blue-hover: #b10008;
+      --google-blue-active: #930007;
+      --google-red: #cd040b;
+      --google-green: #08875d;
+      --google-gray: #6b7280;
+      --google-border: #d9dce1;
       --google-bg: #ffffff;
-      --google-text: #202124;
-      --google-text-secondary: #5f6368;
-      --google-hover: #f1f3f4;
-      --google-focus: #e8f0fe;
-      
+      --google-text: #121417;
+      --google-text-secondary: #4b5563;
+      --google-hover: #f3f4f6;
+      --google-focus: #fff1f2;
+
       /* Variables unificadas */
-      --primary-color: #1a73e8;
-      --secondary-color: #1a73e8; 
-      --background: #ffffff;
+      --primary-color: #cd040b;
+      --secondary-color: #ef4444;
+      --background: #f4f5f7;
       --card-bg: #ffffff;
-      --light-text: #202124;
-      --gray-text: #5f6368;
-      --border-color: #dadce0;
-      --hover-bg: #f1f3f4;
-      --danger-color: #d93025;
-      --success-color: #1e8e3e;
+      --light-text: #121417;
+      --gray-text: #6b7280;
+      --border-color: #d9dce1;
+      --hover-bg: #f3f4f6;
+      --danger-color: #dc2626;
+      --success-color: #08875d;
+      --verizon-black: #000000;
     }
     html, body {
       margin: 0;
       padding: 0;
-      background-color: #f5f5f5;
+      background:
+        radial-gradient(circle at top right, rgba(205, 4, 11, 0.10), transparent 38%),
+        radial-gradient(circle at bottom left, rgba(17, 24, 39, 0.07), transparent 40%),
+        var(--background);
       color: var(--google-text);
       overflow-x: hidden;
       touch-action: manipulation;
@@ -65,6 +69,11 @@
       font-family: 'Google Sans', 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
       margin: 0;
       padding: 0;
+    }
+
+    ::selection {
+      background: rgba(205, 4, 11, 0.4);
+      color: #fff;
     }
     .container {
       width: 100vw;
@@ -88,7 +97,7 @@
       pointer-events: none;
       display: none; /* Oculta por defecto, se muestra en videoCallScreen */
     }
-    
+
     /* Solo mostrar watermark en video call screen */
     #videoCallScreen .watermark {
       display: block;
@@ -111,11 +120,11 @@
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
       transition: all 0.2s ease;
     }
-    
+
     .account-status-icon {
       top: calc(16px + env(safe-area-inset-top));
     }
-    
+
     .report-icon {
       top: calc(76px + env(safe-area-inset-top));
     }
@@ -138,7 +147,7 @@
       position: fixed;
       top: 0;
       left: 0;
-      background-color: #f5f5f5;
+      background-color: var(--background);
       transition: transform 0.3s ease;
       overflow-y: auto;
       overflow-x: hidden;
@@ -146,7 +155,7 @@
       pointer-events: none;
       -webkit-overflow-scrolling: touch;
     }
-    
+
     /* Fondo oscuro solo para videollamada */
     #videoCallScreen {
       background-color: #000000;
@@ -163,9 +172,9 @@
     }
     .screen-content {
       width: 100%;
-      max-width: 450px;
+      max-width: 520px;
       margin: 0 auto;
-      padding: 60px 40px;
+      padding: 86px 32px 44px;
       text-align: center;
       min-height: 100vh;
       display: flex;
@@ -173,7 +182,57 @@
       justify-content: flex-start;
       box-sizing: border-box;
     }
-    
+
+    #loginScreen .screen-content,
+    #registerScreen .screen-content,
+    #forgotPasswordScreen .screen-content,
+    #profileSetupScreen .screen-content,
+    #countryScreen .screen-content {
+      justify-content: center;
+      padding-top: clamp(84px, 14vh, 138px);
+      padding-bottom: 42px;
+    }
+
+    #loginScreen form,
+    #registerScreen form,
+    #forgotPasswordScreen form,
+    #profileSetupScreen .screen-content > div:not(.logo),
+    #countryScreen .screen-content > div:not(.logo) {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 22px 20px;
+      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+    }
+
+
+    #loginScreen .logo,
+    #registerScreen .logo,
+    #forgotPasswordScreen .logo,
+    #profileSetupScreen .logo,
+    #countryScreen .logo {
+      margin-bottom: 34px;
+    }
+
+    #loginScreen form,
+    #registerScreen form,
+    #forgotPasswordScreen form,
+    #profileSetupScreen .screen-content > div:not(.logo),
+    #countryScreen .screen-content > div:not(.logo) {
+      margin-top: 4px;
+    }
+
+    #loginScreen .links,
+    #forgotPasswordScreen .links {
+      margin-top: 18px;
+      margin-bottom: 0;
+    }
+
+    #loginScreen .screen-content > div:last-child,
+    #registerScreen .screen-content > div:last-child {
+      margin-top: 20px;
+    }
+
     /* Fondo blanco completo para pantallas de auth */
     #loginScreen,
     #registerScreen,
@@ -182,41 +241,69 @@
     #countryScreen {
       background-color: var(--google-bg);
     }
-    
+
     @media (max-width: 768px) {
       .screen-content {
-        padding: 40px 24px;
+        padding: 64px 20px 30px;
       }
     }
-    
+
     @media (max-width: 768px) {
       .screen-content {
-        padding: 40px 24px;
+        padding: 64px 20px 30px;
         justify-content: flex-start;
       }
-      
+
+      #loginScreen .screen-content,
+      #registerScreen .screen-content,
+      #forgotPasswordScreen .screen-content,
+      #profileSetupScreen .screen-content,
+      #countryScreen .screen-content {
+        justify-content: flex-start;
+        padding-top: 62px;
+      }
+
       .logo {
-        margin-bottom: 32px;
+        margin-bottom: 18px;
         margin-top: 0;
       }
-      
+
       .form-group {
         margin-bottom: 16px;
       }
+
+
+      #loginScreen .logo,
+      #registerScreen .logo,
+      #forgotPasswordScreen .logo,
+      #profileSetupScreen .logo,
+      #countryScreen .logo {
+        margin-bottom: 22px;
+      }
+
+      #loginScreen form,
+      #registerScreen form,
+      #forgotPasswordScreen form,
+      #profileSetupScreen .screen-content > div:not(.logo),
+      #countryScreen .screen-content > div:not(.logo) {
+        padding: 18px 16px;
+      }
     }
     .logo {
-      margin-bottom: 48px;
+      margin-bottom: 28px;
       margin-top: 0;
     }
     .logo h1 {
-      font-size: 28px;
+      font-size: 32px;
       color: var(--google-text);
-      font-weight: 500;
-      letter-spacing: -0.5px;
+      font-weight: 700;
+      letter-spacing: -0.65px;
       margin-bottom: 0;
+      text-transform: uppercase;
+      font-family: 'Inter', 'Segoe UI', 'Roboto', Arial, sans-serif;
     }
     .logo p {
-      font-size: 16px;
+      font-size: 15px;
       margin-bottom: 0;
       color: var(--google-text-secondary);
       font-weight: 400;
@@ -246,7 +333,7 @@
     input, select {
       width: 100%;
       padding: 13px 15px;
-      border-radius: 4px;
+      border-radius: 14px;
       border: 1px solid var(--google-border);
       background-color: var(--google-bg);
       color: var(--google-text);
@@ -260,40 +347,42 @@
     }
     input:focus, select:focus {
       border-color: var(--google-blue);
-      border-width: 2px;
-      padding: 12px 14px;
+      border-width: 1px;
       background-color: var(--google-focus);
-      box-shadow: 0 1px 6px rgba(26, 115, 232, 0.3);
+      box-shadow: 0 0 0 3px rgba(205, 4, 11, 0.2);
     }
     input::placeholder {
       color: var(--google-text-secondary);
     }
-    
+
     /* Ocultar iconos en inputs */
     .input-group i {
       display: none;
     }
     .btn {
       width: 100%;
-      padding: 10px 24px;
+      padding: 12px 24px;
       border: none;
-      border-radius: 4px;
+      border-radius: 14px;
       font-size: 14px;
-      font-weight: 500;
+      font-weight: 700;
       cursor: pointer;
       transition: all 0.2s ease;
       text-align: center;
       margin-top: 24px;
       min-height: 40px;
-      letter-spacing: 0.25px;
+      letter-spacing: 0.2px;
     }
     .btn-primary {
-      background-color: var(--google-blue);
+      background: linear-gradient(145deg, var(--google-blue), var(--secondary-color));
       color: white;
+      box-shadow: 0 12px 22px rgba(205, 4, 11, 0.24);
+      border: 1px solid rgba(0, 0, 0, 0.06);
     }
     .btn-primary:hover {
-      background-color: var(--google-blue-hover);
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+      background: linear-gradient(135deg, var(--google-blue-hover), var(--google-blue));
+      box-shadow: 0 12px 24px rgba(205, 4, 11, 0.3);
+      transform: translateY(-1px);
     }
     .btn-primary:active {
       background-color: var(--google-blue-active);
@@ -301,7 +390,8 @@
     .btn-outline {
       background-color: transparent;
       border: 1px solid var(--google-border);
-      color: var(--google-blue);
+      color: var(--google-text);
+      box-shadow: inset 0 0 0 1px rgba(205, 4, 11, 0.1);
     }
     .btn-outline:hover {
       background-color: var(--google-hover);
@@ -513,7 +603,7 @@
     .emoji-btn {
       border: 1px solid var(--border-color);
       background: #fff;
-      border-radius: 999px;
+      border-radius: 14px;
       min-width: 36px;
       height: 36px;
       font-size: 18px;
@@ -535,7 +625,7 @@
       top: 50%;
       transform: translateY(-50%);
       color: white;
-      font-size: 30px;
+      font-size: 32px;
       z-index: 10;
       animation: pulse 2s infinite;
     }
@@ -587,7 +677,7 @@
       margin-left: auto;
       padding: 5px 15px;
       border: none;
-      border-radius: 12px;
+      border-radius: 14px;
       background-color: var(--primary-color);
       color: #fff;
       font-size: 12px;
@@ -624,9 +714,9 @@
     /* Indicador de conexión, movido hacia arriba */
     .connecting {
       position: absolute;
-      top: 0; 
-      left: 0; 
-      width: 100%; 
+      top: 0;
+      left: 0;
+      width: 100%;
       height: 100%;
       display: flex;
       align-items: flex-start;
@@ -676,7 +766,7 @@
       margin: 0;
     }
 
-    
+
 
     /* ====================== PANTALLA DE CUENTA BLOQUEADA ====================== */
     .blocked-screen {
@@ -844,6 +934,7 @@
       font-size: 16px;
       font-weight: 500;
       color: var(--google-text);
+      box-shadow: inset 0 0 0 1px rgba(205, 4, 11, 0.1);
     }
     .report-user-info .user-details p {
       margin: 4px 0 0 0;
@@ -986,7 +1077,7 @@
       min-height: 20px;
       color: var(--google-text-secondary);
     }
-    
+
     /* Animaciones para mensajes de reporte */
     .report-success-message,
     .report-error-message {
@@ -998,91 +1089,91 @@
       border-radius: 8px;
       margin-top: 16px;
     }
-    
+
     .report-success-message {
       background: #e6f4ea;
       border: 1px solid #34a853;
     }
-    
+
     .report-success-message i {
       font-size: 48px;
       color: #34a853;
       animation: successPulse 0.6s ease;
     }
-    
+
     .report-success-message p:first-of-type {
       font-weight: 500;
       color: var(--google-text);
       margin: 0;
       font-size: 16px;
     }
-    
+
     .report-success-message p:last-of-type {
       color: var(--google-text-secondary);
       margin: 0;
       font-size: 14px;
     }
-    
+
     .report-error-message {
       background: #fce8e6;
       border: 1px solid #ea4335;
     }
-    
+
     .report-error-message i {
       font-size: 48px;
       color: #ea4335;
       animation: errorShake 0.5s ease;
     }
-    
+
     .report-error-message p {
       color: var(--google-text);
       margin: 0;
       font-size: 14px;
     }
-    
+
     @keyframes successPulse {
       0% { transform: scale(0.8); opacity: 0; }
       50% { transform: scale(1.1); }
       100% { transform: scale(1); opacity: 1; }
     }
-    
+
     @keyframes errorShake {
       0%, 100% { transform: translateX(0); }
       25% { transform: translateX(-5px); }
       75% { transform: translateX(5px); }
     }
-    
+
     /* Animaciones para opciones de reporte */
     .report-option {
       transition: all 0.2s ease;
     }
-    
+
     .report-option:hover {
       transform: translateY(-1px);
     }
-    
+
     /* Animación del botón de reporte */
     .btn-report {
       transition: all 0.2s ease;
     }
-    
+
     .btn-report:not(:disabled):hover {
       transform: translateY(-1px);
     }
-    
+
     .btn-report .fa-spinner {
       animation: spin 1s linear infinite;
     }
-    
+
     .btn-report .fa-check {
       animation: checkmark 0.6s ease;
     }
-    
+
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-    
+
     @keyframes checkmark {
       0% { transform: scale(0); }
       50% { transform: scale(1.2); }
@@ -1171,10 +1262,11 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
-      padding: 80px 24px 24px;
+      justify-content: center;
+      padding: clamp(78px, 14vh, 140px) 24px 40px;
       position: relative;
       height: 100%;
+      gap: 10px;
     }
     .scan-circle {
       width: 120px;
@@ -1237,11 +1329,11 @@
       display: block;
     }
     @keyframes slideUpFullscreen {
-      from { 
+      from {
         transform: translateY(100%);
         opacity: 0;
       }
-      to { 
+      to {
         transform: translateY(0);
         opacity: 1;
       }
@@ -1366,7 +1458,7 @@
     .offense-detected-word {
       background: rgba(244, 33, 46, 0.1);
       border: 1px solid rgba(244, 33, 46, 0.3);
-      border-radius: 12px;
+      border-radius: 14px;
       padding: 16px 20px;
       margin: 24px 0;
       color: var(--danger-color);
@@ -1391,11 +1483,11 @@
       flex-direction: column;
     }
     @keyframes warningSlideUp {
-      from { 
+      from {
         transform: translateY(100%);
         opacity: 0;
       }
-      to { 
+      to {
         transform: translateY(0);
         opacity: 1;
       }
@@ -1544,7 +1636,7 @@
         padding-right: max(10px, env(safe-area-inset-right));
       }
     }
-    
+
     @media (max-width: 480px) {
       .logo h1 {
         font-size: 26px;
@@ -1552,46 +1644,48 @@
         margin-top: 0;
         padding-top: 0;
       }
-      
+
       .logo {
         margin-top: 0;
         margin-bottom: 8px;
         padding-top: 0;
       }
-      
+
       .logo p {
         margin-top: 0;
         margin-bottom: 3px;
         padding-top: 0;
       }
-      
+
       .form-group {
         margin-bottom: 8px;
         margin-top: 0;
       }
-      
+
       .social-login {
         margin-bottom: 8px;
         margin-top: 0;
       }
-      
+
       input, select {
         font-size: 16px; /* Previene zoom en iOS */
-        padding: 10px 10px 10px 35px;
+        padding: 11px 12px;
       }
-      
+
       .screen-content {
-        padding: 0 10px;
-        padding-top: 0;
+        padding: 54px 14px 22px;
         margin-top: 0;
       }
-      
-      .screen-content > *:first-child {
-        margin-top: 0 !important;
-        padding-top: 0 !important;
+
+      #loginScreen .screen-content,
+      #registerScreen .screen-content,
+      #forgotPasswordScreen .screen-content,
+      #profileSetupScreen .screen-content,
+      #countryScreen .screen-content {
+        padding-top: 58px;
       }
     }
-    
+
     /* Prevenir problemas de altura en móviles */
     @media (max-height: 600px) {
       .screen-content {
@@ -1599,39 +1693,39 @@
         justify-content: flex-start;
         padding-top: 40px;
       }
-      
+
       .logo {
         margin-top: 0;
         margin-bottom: 16px;
       }
-      
+
       .form-group {
         margin-bottom: 12px;
       }
     }
-    
+
     /* Ajuste específico para pantallas muy pequeñas */
     @media (max-height: 500px) {
       .logo h1 {
         font-size: 22px;
         margin-bottom: 4px;
       }
-      
+
       .logo p {
         font-size: 14px;
         margin-bottom: 0;
       }
-      
+
       .logo {
         margin-top: 0;
         margin-bottom: 12px;
       }
-      
+
       .screen-content {
         padding-top: 20px;
       }
     }
-    
+
 
 
     /* ====================== NUEVA PANTALLA DE SOPORTE (INCIDENCIAS) ====================== */
@@ -1721,7 +1815,7 @@
   <!-- La marca de agua se mostrará únicamente en el videoCallScreen -->
   <div class="watermark">BealyChat</div>
   <!-- Ícono de Estado de Cuenta (solo en videollamada) -->
-  <div class="account-status-icon" 
+  <div class="account-status-icon"
        onclick="openAccountStatusScreen()"
        style="display: none;">
     <i class="fa-solid fa-user-shield"></i>
@@ -1770,7 +1864,7 @@
         <div class="links">
           <a href="#" onclick="toggleForm('forgotPasswordForm')">¿Olvidaste tu contraseña?</a>
         </div>
-        
+
         <div>
           <p>¿No tienes una cuenta? <a href="#" onclick="toggleForm('registerForm')" style="color: var(--secondary-color);">Regístrate</a></p>
         </div>
@@ -1795,7 +1889,7 @@
             <div class="input-group" style="position: relative;">
               <i class="fa-solid fa-lock"></i>
               <input type="password" id="registerPassword" placeholder="Crea una contraseña" required>
-              <img id="passwordMonkey" src="https://images.emojiterra.com/google/noto-emoji/animated-emoji/1f648.gif" 
+              <img id="passwordMonkey" src="https://images.emojiterra.com/google/noto-emoji/animated-emoji/1f648.gif"
                    style="display: none; position: absolute; top: -20px; right: 10px; width: 30px;">
             </div>
           </div>
@@ -1804,7 +1898,7 @@
             <div class="input-group" style="position: relative;">
               <i class="fa-solid fa-lock"></i>
               <input type="password" id="confirmPassword" placeholder="Confirma tu contraseña" required>
-              <img id="passwordMonkeyConfirm" src="https://images.emojiterra.com/google/noto-emoji/animated-emoji/1f648.gif" 
+              <img id="passwordMonkeyConfirm" src="https://images.emojiterra.com/google/noto-emoji/animated-emoji/1f648.gif"
                    style="display: none; position: absolute; top: -20px; right: 10px; width: 30px;">
             </div>
           </div>
@@ -1821,7 +1915,7 @@
           </div>
           <button type="button" class="btn btn-primary" onclick="registerUser()">Registrarse</button>
         </form>
-        
+
         <div>
           <p>¿Ya tienes una cuenta? <a href="#" onclick="goToScreen('loginScreen')" style="color: var(--secondary-color);">Inicia sesión</a></p>
         </div>
@@ -1870,7 +1964,7 @@
       </div>
     </div>
 
-    
+
 
     <div class="screen" id="countryScreen">
       <div class="screen-content">
@@ -1924,10 +2018,14 @@
           </div>
         </div>
         <div class="video-controls">
-          <div class="control-btn" onclick="toggleAudio()">
+          <div class="control-btn" onclick="toggleAudio()" title="Micrófono">
             <i class="fa-solid fa-microphone-slash" id="micIcon"></i>
           </div>
+          <div class="control-btn" onclick="restartCall()" title="Siguiente usuario">
+            <i class="fa-solid fa-forward"></i>
+          </div>
         </div>
+        <div class="swipe-hint" id="swipeHint">⇆</div>
 
         <div class="chat-panel" id="chatPanel">
           <div class="emoji-carousel" id="emojiCarousel"></div>
@@ -1937,7 +2035,7 @@
           </div>
           <div class="chat-messages" id="chatMessages"></div>
         </div>
-        
+
       </div>
     </div>
 
@@ -1953,7 +2051,7 @@
       </div>
     </div>
 
-    
+
   </div>
 
   <!-- MODAL FULL SCREEN: EDITAR PERFIL -->
@@ -2125,7 +2223,7 @@
         </button>
         <h1>Cuenta Suspendida</h1>
       </div>
-      
+
       <div class="offense-main-content">
         <div class="offense-icon">
           <i class="fa-solid fa-shield-halved"></i>
@@ -2133,7 +2231,7 @@
         <h2 class="offense-title">Cuenta Bloqueada</h2>
         <h3 class="offense-subtitle">Moderación Automática Activada</h3>
         <p class="offense-description">
-          Nuestros sistemas de moderación automática han detectado contenido inapropiado o lenguaje ofensivo en tu transmisión. 
+          Nuestros sistemas de moderación automática han detectado contenido inapropiado o lenguaje ofensivo en tu transmisión.
           Tu cuenta ha sido bloqueada temporalmente para mantener un ambiente seguro para todos los usuarios.
         </p>
         <div class="offense-detected-word" id="detectedWord">
@@ -2146,7 +2244,7 @@
           </div>
         </div>
         <p class="offense-description">
-          Puedes apelar esta decisión contactando a nuestro equipo de soporte. 
+          Puedes apelar esta decisión contactando a nuestro equipo de soporte.
           Recuerda seguir nuestras pautas de la comunidad para evitar futuras restricciones.
         </p>
       </div>
@@ -2169,14 +2267,14 @@
       </div>
       <h2 class="warning-title">Lenguaje Inapropiado Detectado</h2>
       <p class="warning-message">
-        Nuestro sistema ha detectado lenguaje ofensivo en tu transmisión. 
+        Nuestro sistema ha detectado lenguaje ofensivo en tu transmisión.
         Este es tu <span id="warningCount">1</span> de 3 advertencias.
       </p>
       <div class="warning-word" id="warningWordDisplay">
         Palabra detectada: "ejemplo"
       </div>
       <p class="warning-message">
-        Por favor, mantén un lenguaje apropiado. Si recibes 3 advertencias, 
+        Por favor, mantén un lenguaje apropiado. Si recibes 3 advertencias,
         tu cuenta será bloqueada temporalmente.
       </p>
       <button class="warning-dismiss-btn" onclick="dismissWarning()">
@@ -2204,8 +2302,8 @@
           <div class="new-incidence-form" id="newIncidenceForm" style="display:none;">
             <h3>Crear Nueva Consulta</h3>
             <p>Describe tu problema o pregunta (mínimo 11 caracteres)</p>
-            <textarea 
-              id="incidenceDescription" 
+            <textarea
+              id="incidenceDescription"
               placeholder="¿En qué podemos ayudarte?"
             ></textarea>
             <div style="display:flex;justify-content:space-between;align-items:center;">
@@ -2250,7 +2348,7 @@
     /* ====================== VARIABLES GLOBALES ====================== */
     let currentUser = null;
     let currentProfile = null;
-    
+
     // Lista completa de países con sus códigos y banderas
     const COUNTRIES = [
       { code: 'AD', name: 'Andorra', flag: '🇦🇩' },
@@ -2516,7 +2614,16 @@
     let currentCallMessagesRef = null;
     let currentParticipantsRef = null;
     let currentPresenceRef = null;
+    let currentIceCandidatesRef = null;
+    let currentOfferRef = null;
+    let currentAnswerRef = null;
+    let currentRemoteProfileRef = null;
     let reconnectingInProgress = false;
+    let matchingRetryTimer = null;
+    let connectWatchdogTimer = null;
+    let pendingChatQueue = [];
+    let touchStartX = 0;
+    let touchStartY = 0;
     let isListening = false;
     let authObserverReady = false;
     let offenseCount = 0;
@@ -2531,16 +2638,16 @@
       warningHideTimeout: null,
       lastFrameAt: 0
     };
-    
+
     // Lista de palabras ofensivas - se puede expandir
     const OFFENSIVE_WORDS = [
-      'feo', 'horrible', 'pato', 'pinga', 'idiota', 'estúpido', 'tonto', 
-      'imbécil', 'pendejo', 'cabrón', 'puto', 'perra', 'zorra', 
+      'feo', 'horrible', 'pato', 'pinga', 'idiota', 'estúpido', 'tonto',
+      'imbécil', 'pendejo', 'cabrón', 'puto', 'perra', 'zorra',
       'maldito', 'jodido', 'coño', 'carajo', 'mierda', 'cagada',
       'ugly', 'stupid', 'idiot', 'bitch', 'fuck', 'shit', 'damn',
       'asshole', 'motherfucker', 'bastard', 'whore', 'slut'
     ];
-    
+
     const OFFENSE_THRESHOLD = 3; // Número de ofensas antes del bloqueo
     const QUICK_EMOJIS = ['😀','😂','😍','😎','🔥','👍','👏','😮','🥳','💯','👋','❤️'];
     const BLOCK_DURATION_DAYS = 3;
@@ -2562,7 +2669,7 @@
     function showCountryList() {
       const dropdown = document.getElementById('countryDropdown');
       const list = document.getElementById('countryList');
-      
+
       // Mostrar todos los países inicialmente
       let html = '';
       COUNTRIES.forEach(country => {
@@ -2573,7 +2680,7 @@
           </div>
         `;
       });
-      
+
       list.innerHTML = html;
       dropdown.style.display = 'block';
     }
@@ -2583,17 +2690,17 @@
       const searchTerm = searchInput.value.toLowerCase();
       const dropdown = document.getElementById('countryDropdown');
       const list = document.getElementById('countryList');
-      
+
       if(searchTerm.length === 0) {
         dropdown.style.display = 'none';
         return;
       }
-      
-      const filteredCountries = COUNTRIES.filter(country => 
+
+      const filteredCountries = COUNTRIES.filter(country =>
         country.name.toLowerCase().includes(searchTerm) ||
         country.code.toLowerCase().includes(searchTerm)
       );
-      
+
       let html = '';
       if(filteredCountries.length > 0) {
         filteredCountries.forEach(country => {
@@ -2607,7 +2714,7 @@
       } else {
         html = '<div class="country-item">No se encontraron países</div>';
       }
-      
+
       list.innerHTML = html;
       dropdown.style.display = 'block';
     }
@@ -2616,7 +2723,7 @@
       const searchInput = document.getElementById('registerCountrySearch');
       const hiddenInput = document.getElementById('registerCountry');
       const dropdown = document.getElementById('countryDropdown');
-      
+
       searchInput.value = `${flag} ${name}`;
       hiddenInput.value = code;
       dropdown.style.display = 'none';
@@ -2626,7 +2733,7 @@
     document.addEventListener('click', function(event) {
       const dropdown = document.getElementById('countryDropdown');
       const searchInput = document.getElementById('registerCountrySearch');
-      
+
       if(dropdown && !dropdown.contains(event.target) && event.target !== searchInput) {
         dropdown.style.display = 'none';
       }
@@ -2636,13 +2743,13 @@
     function goToScreen(screenId) {
       // Prevenir cambios de pantalla no autorizados
       if (!screenId || typeof screenId !== 'string') return;
-      
+
       document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
       const targetScreen = document.getElementById(screenId);
       if (!targetScreen) return;
-      
+
       targetScreen.classList.add('active');
-      
+
       // La marca de agua se maneja automáticamente con CSS
       // Auto-detectar país si es la screen "countryScreen"
       if(screenId === 'countryScreen'){
@@ -2653,7 +2760,7 @@
         // Mostrar iconos de moderación solo en videollamada
         document.querySelector('.account-status-icon').style.display = 'flex';
         document.querySelector('.report-icon').style.display = 'flex';
-        
+
         initEmojiCarousel();
         startLocalStream();
         showConnecting();
@@ -2667,7 +2774,7 @@
         // Ocultar iconos de moderación en otras pantallas
         document.querySelector('.account-status-icon').style.display = 'none';
         document.querySelector('.report-icon').style.display = 'none';
-        
+
         // Detener monitoreo si salimos de la videollamada
         stopSpeechMonitoring();
         stopBodyMonitoring();
@@ -2782,7 +2889,7 @@
             if(snapshot.exists()){
               currentProfile = snapshot.val();
               console.log("Perfil cargado:", currentProfile);
-              
+
               // Chequeo si está bloqueado
               if(currentProfile.blockedUntil){
                 const now = new Date();
@@ -2798,7 +2905,7 @@
                   return;
                 }
               }
-              
+
               // Si ya tiene todos los datos necesarios, ir directo a videollamada
               if(currentProfile.username && currentProfile.country){
                 console.log("Perfil completo, yendo a videollamada");
@@ -2900,36 +3007,36 @@
       if(!currentUser){
         throw new Error("No hay usuario autenticado");
       }
-      
+
       // Asegurar que currentProfile existe
       if(!currentProfile) currentProfile = {};
-      
+
       // Solo actualizar campos que existen y tienen valores válidos
       const updates = {};
-      
+
       if(currentProfile.username && currentProfile.username.trim() !== "") {
         updates.username = currentProfile.username.trim();
       }
-      
+
       if(currentProfile.birthDate) {
         updates.birthDate = currentProfile.birthDate;
       }
-      
+
       if(currentProfile.country) {
         updates.country = currentProfile.country;
       }
-      
+
       if(currentProfile.avatar_url) {
         updates.avatar_url = currentProfile.avatar_url;
       }
-      
+
       // Mantener campos existentes
       updates.followersCount = currentProfile.followersCount || 0;
       updates.verified = currentProfile.verified || false;
       updates.lastUpdated = firebase.database.ServerValue.TIMESTAMP;
-      
+
       console.log("Actualizando perfil con:", updates);
-      
+
       try {
         await database.ref('profiles/' + currentUser.uid).update(updates);
         // Actualizar el perfil local
@@ -2945,33 +3052,33 @@
       try {
         const countrySelect = document.getElementById('country');
         const selectedCountry = countrySelect ? countrySelect.value : "";
-        
+
         if(!selectedCountry){
           alert("Por favor selecciona tu país");
           return;
         }
-        
+
         if(!currentProfile) {
           alert("Error: Perfil no encontrado");
           return;
         }
-        
+
         // Actualizar solo el país
         const updateData = {
           country: selectedCountry,
           lastUpdated: firebase.database.ServerValue.TIMESTAMP
         };
-        
+
         console.log("Actualizando país:", updateData);
-        
+
         await database.ref('profiles/' + currentUser.uid).update(updateData);
-        
+
         // Actualizar perfil local
         currentProfile.country = selectedCountry;
-        
+
         console.log("País actualizado, conectando...");
         goToScreen('videoCallScreen');
-        
+
       } catch(error){
         console.error("Error al actualizar país:", error);
         alert("Error al actualizar el perfil: " + error.message);
@@ -3004,7 +3111,7 @@
       const continueBtn = document.getElementById('profileContinueBtn');
       const usernameInput = document.getElementById('username');
       const username = usernameInput ? usernameInput.value.trim() : "";
-      
+
       if(!username || username.length < 2){
         alert("Ingresa un nombre de usuario válido (mínimo 2 caracteres)");
         return;
@@ -3014,12 +3121,12 @@
         alert('Espera un momento, todavía se está procesando la foto.');
         return;
       }
-      
+
       if(!currentUser) {
         alert("Error: Usuario no autenticado");
         return;
       }
-      
+
       try {
         isSavingProfile = true;
         if(continueBtn){
@@ -3036,12 +3143,12 @@
           createdAt: firebase.database.ServerValue.TIMESTAMP,
           lastUpdated: firebase.database.ServerValue.TIMESTAMP
         };
-        
+
         // Si ya tenemos el país del registro, incluirlo
         if(window.tempRegistrationCountry) {
           profileData.country = window.tempRegistrationCountry;
         }
-        
+
         // Manejar avatar
         if(pendingAvatarDataUrl && pendingAvatarDataUrl.startsWith('data:')) {
           profileData.avatar_url = pendingAvatarDataUrl;
@@ -3053,24 +3160,24 @@
             profileData.avatar_url = "https://cdn-icons-png.flaticon.com/512/3237/3237472.png";
           }
         }
-        
+
         console.log("Guardando perfil:", profileData);
-        
+
         // Guardar directamente en Firebase
         await database.ref('profiles/' + currentUser.uid).set(profileData);
-        
+
         // Actualizar perfil local
         currentProfile = profileData;
-        
+
         console.log("Perfil guardado exitosamente");
-        
+
         // Si ya tiene país, ir directo a videollamada, sino a selección de país
         if(profileData.country) {
           goToScreen('videoCallScreen');
         } else {
           goToScreen('countryScreen');
         }
-        
+
       } catch(error) {
         console.error("Error saving profile:", error);
         alert("Error al guardar el perfil: " + error.message);
@@ -3141,28 +3248,54 @@
     }
 
     async function sendChatMessage(overrideText = '', isEmoji = false) {
-      if(!currentCallId || !currentUser) {
-        if(!overrideText) alert('Aún no estás conectado con otro usuario.');
-        return;
-      }
       const input = document.getElementById('chatInput');
       const raw = overrideText || (input ? input.value : '');
       const text = raw.trim();
       if(!text) return;
+
       const payload = {
-        senderUid: currentUser.uid,
+        senderUid: currentUser?.uid || '',
         text,
         type: isEmoji ? 'emoji' : 'text',
         createdAt: firebase.database.ServerValue.TIMESTAMP,
         expiresAt: Date.now() + 60000
       };
+
+      if(!currentCallId || !currentUser) {
+        if(!overrideText) alert('Aún no estás conectado con otro usuario.');
+        return;
+      }
+
       try {
         await database.ref(`calls/${currentCallId}/messages`).push(payload);
         if(input && !overrideText) input.value = '';
       } catch (err) {
-        console.error('Error enviando mensaje:', err);
-        if(!overrideText) alert('No se pudo enviar el mensaje');
+        console.error('Error enviando mensaje, se reintentará:', err);
+        pendingChatQueue.push(payload);
+        if(input && !overrideText) input.value = '';
       }
+    }
+
+    async function flushPendingChatQueue(){
+      if(!currentCallId || !pendingChatQueue.length) return;
+      const queue = [...pendingChatQueue];
+      pendingChatQueue = [];
+      for(const msg of queue){
+        try {
+          await database.ref(`calls/${currentCallId}/messages`).push(msg);
+        } catch(err){
+          console.error('No se pudo reenviar mensaje en cola:', err);
+          pendingChatQueue.unshift(msg);
+          break;
+        }
+      }
+    }
+
+    function scheduleFindRandomUser(delay = 3000){
+      if(matchingRetryTimer) clearTimeout(matchingRetryTimer);
+      matchingRetryTimer = setTimeout(() => {
+        findRandomUser();
+      }, delay);
     }
 
     function autoNextPartner(reason = 'auto') {
@@ -3175,20 +3308,30 @@
         setTimeout(() => {
           reconnectingInProgress = false;
           findRandomUser();
-        }, 1200);
+        }, 900);
       });
     }
 
     async function cleanupCurrentCall(removeCallNode = false) {
+      if(matchingRetryTimer){ clearTimeout(matchingRetryTimer); matchingRetryTimer = null; }
+      if(connectWatchdogTimer){ clearTimeout(connectWatchdogTimer); connectWatchdogTimer = null; }
+
       try {
         if(peerConnection){ peerConnection.close(); }
       } catch(e) {}
       peerConnection = null;
       remoteStream = null;
-      document.getElementById('remoteVideo').srcObject = null;
+      const remoteVideoEl = document.getElementById('remoteVideo');
+      if(remoteVideoEl) remoteVideoEl.srcObject = null;
+
       if(currentCallMessagesRef){ currentCallMessagesRef.off(); currentCallMessagesRef = null; }
       if(currentParticipantsRef){ currentParticipantsRef.off(); currentParticipantsRef = null; }
       if(currentPresenceRef){ currentPresenceRef.off(); currentPresenceRef = null; }
+      if(currentIceCandidatesRef){ currentIceCandidatesRef.off(); currentIceCandidatesRef = null; }
+      if(currentOfferRef){ currentOfferRef.off(); currentOfferRef = null; }
+      if(currentAnswerRef){ currentAnswerRef.off(); currentAnswerRef = null; }
+      if(currentRemoteProfileRef){ currentRemoteProfileRef.off(); currentRemoteProfileRef = null; }
+
       if(window.messageCleanupTimer){ clearInterval(window.messageCleanupTimer); window.messageCleanupTimer = null; }
       const chatBox = document.getElementById('chatMessages');
       if(chatBox) chatBox.innerHTML = '';
@@ -3200,6 +3343,11 @@
           await database.ref('calls/' + callIdToCleanup).remove().catch(()=>{});
         }
       }
+
+      if(currentUser && window.isInVideoSession){
+        await database.ref('onlineUsers/' + currentUser.uid + '/status').set('available').catch(()=>{});
+      }
+
       hideConnecting();
     }
 
@@ -3209,7 +3357,7 @@
         console.error("❌ Perfil incompleto, no se puede marcar como online");
         return;
       }
-      
+
       console.log("✅ Marcando usuario como online:", currentUser.uid);
       window.isInVideoSession = true;
       const userRef = database.ref('onlineUsers/' + currentUser.uid);
@@ -3218,47 +3366,63 @@
         avatar_url: currentProfile.avatar_url,
         country: currentProfile.country,
         birthDate: currentProfile.birthDate,
-        timestamp: firebase.database.ServerValue.TIMESTAMP
+        timestamp: firebase.database.ServerValue.TIMESTAMP,
+        status: 'available'
       });
       userRef.onDisconnect().remove();
-      
-      // Esperar 1 segundo antes de buscar
-      setTimeout(() => {
-        findRandomUser();
-      }, 1000);
+
+      scheduleFindRandomUser(800);
     }
-    
+
     async function findRandomUser(){
-      console.log("🔍 Buscando usuarios online...");
-      const snapshot = await database.ref('onlineUsers').once('value');
-      const online = snapshot.val() || {};
-      const uids = Object.keys(online).filter(uid => uid !== currentUser.uid);
-      
-      console.log("👥 Usuarios online:", uids.length);
-      
-      if(uids.length === 0){
-        console.log("⏳ Nadie disponible, reintentando en 3s...");
-        setTimeout(findRandomUser, 3000);
+      if(!currentUser || !window.isInVideoSession || currentCallId) return;
+      try {
+        console.log("🔍 Buscando usuarios online...");
+        const snapshot = await database.ref('onlineUsers').once('value');
+        const online = snapshot.val() || {};
+        const candidates = Object.entries(online)
+          .filter(([uid, data]) => uid !== currentUser.uid && data && data.status !== 'busy')
+          .map(([uid]) => uid);
+
+        console.log("👥 Usuarios online disponibles:", candidates.length);
+
+        if(candidates.length === 0){
+          console.log("⏳ Nadie disponible, reintentando en 2.5s...");
+          scheduleFindRandomUser(2500);
+          return;
+        }
+
+        const randomUid = candidates[Math.floor(Math.random() * candidates.length)];
+        console.log("🎯 Usuario seleccionado:", randomUid);
+        await createCall(randomUid);
+      } catch(err){
+        console.error('❌ Error buscando usuario, retry:', err);
+        scheduleFindRandomUser(3000);
+      }
+    }
+
+    async function createCall(remoteUid){
+      const remoteOnline = await database.ref('onlineUsers/' + remoteUid).once('value');
+      if(!remoteOnline.exists()){
+        scheduleFindRandomUser(500);
         return;
       }
-      
-      const randomUid = uids[Math.floor(Math.random() * uids.length)];
-      console.log("🎯 Usuario seleccionado:", randomUid);
-      createCall(randomUid);
-    }
-    
-    async function createCall(remoteUid){
+
       const callId = database.ref('calls').push().key;
       currentCallId = callId;
       console.log("📞 Creando llamada:", callId);
-      
-      await database.ref('calls/' + callId + '/participants').set({
-        caller: currentUser.uid,
-        callee: remoteUid
+
+      await database.ref('onlineUsers/' + currentUser.uid + '/status').set('busy').catch(()=>{});
+      await database.ref('calls/' + callId).set({
+        participants: {
+          caller: currentUser.uid,
+          callee: remoteUid
+        },
+        createdAt: firebase.database.ServerValue.TIMESTAMP
       });
       await database.ref(`calls/${callId}/presence/${currentUser.uid}`).set(true);
       database.ref(`calls/${callId}/presence/${currentUser.uid}`).onDisconnect().remove();
-      
+
       startWebRTC(callId, true);
     }
     database.ref('calls').on('child_added', snapshot => {
@@ -3267,7 +3431,9 @@
       if(!callData || !callData.participants) return;
       const { caller, callee } = callData.participants;
       if(callee === currentUser?.uid){
+        if(currentCallId && currentCallId !== callId) return;
         currentCallId = callId;
+        database.ref('onlineUsers/' + currentUser.uid + '/status').set('busy').catch(()=>{});
         database.ref(`calls/${callId}/presence/${currentUser.uid}`).set(true);
         database.ref(`calls/${callId}/presence/${currentUser.uid}`).onDisconnect().remove();
         startWebRTC(callId, false);
@@ -3283,25 +3449,25 @@
 
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       speechRecognition = new SpeechRecognition();
-      
+
       speechRecognition.continuous = true;
       speechRecognition.interimResults = true;
       speechRecognition.lang = 'es-ES';
-      
+
       speechRecognition.onstart = () => {
         console.log('🎤 Monitoreo de audio iniciado');
         isListening = true;
       };
-      
+
       speechRecognition.onresult = (event) => {
         let finalTranscript = '';
-        
+
         for (let i = event.resultIndex; i < event.results.length; i++) {
           if (event.results[i].isFinal && event.results[i][0].confidence > 0.7) {
             finalTranscript += event.results[i][0].transcript + ' ';
           }
         }
-        
+
         if (finalTranscript.trim() !== '' && finalTranscript.length > 2) {
           console.log('🗣️ Texto detectado:', finalTranscript);
           // Debounce para evitar múltiples detecciones
@@ -3311,7 +3477,7 @@
           }, 500);
         }
       };
-      
+
       speechRecognition.onerror = (event) => {
         console.error('Error en reconocimiento de voz:', event.error);
         if (event.error !== 'no-speech') {
@@ -3320,7 +3486,7 @@
           }, 1000);
         }
       };
-      
+
       speechRecognition.onend = () => {
         console.log('🎤 Reconocimiento de voz terminado');
         if (isListening) {
@@ -3333,7 +3499,7 @@
       if (!speechRecognition) {
         initSpeechRecognition();
       }
-      
+
       if (speechRecognition && !isListening) {
         try {
           speechRecognition.start();
@@ -3355,17 +3521,17 @@
         .normalize('NFD')
         .replace(/[\u0300-\u036f]/g, '')
         .replace(/[^\w\s]/g, ''); // Remover puntuación
-      
+
       const words = normalizedText.split(/\s+/);
-      
+
       for (const word of OFFENSIVE_WORDS) {
         const normalizedWord = word.toLowerCase()
           .normalize('NFD')
           .replace(/[\u0300-\u036f]/g, '');
-        
+
         // Buscar coincidencias exactas en palabras completas
         for (const textWord of words) {
-          if (textWord === normalizedWord || 
+          if (textWord === normalizedWord ||
               textWord.includes(normalizedWord) && normalizedWord.length > 3) {
             console.log('🚨 Palabra ofensiva detectada:', word);
             handleOffensiveLanguage(word);
@@ -3377,10 +3543,10 @@
 
     async function handleOffensiveLanguage(detectedWord) {
       offenseCount++;
-      
+
       if (offenseCount < OFFENSE_THRESHOLD) {
         showWarning(detectedWord);
-        
+
         // Registrar la advertencia en Firebase
         if (currentUser) {
           database.ref(`warnings/${currentUser.uid}`).push({
@@ -3399,10 +3565,10 @@
       const indicator = document.getElementById('warningIndicator');
       const wordDisplay = document.getElementById('warningWordDisplay');
       const countDisplay = document.getElementById('warningCount');
-      
+
       wordDisplay.textContent = `Palabra detectada: "${word}"`;
       countDisplay.textContent = offenseCount;
-      
+
       indicator.classList.add('active');
     }
 
@@ -3418,10 +3584,10 @@
 
     async function blockUserForOffense(detectedWord) {
       if (!currentUser) return;
-      
+
       const blockUntil = new Date();
       blockUntil.setDate(blockUntil.getDate() + BLOCK_DURATION_DAYS);
-      
+
       const blockData = {
         blocked: true,
         blockedUntil: blockUntil.toISOString(),
@@ -3429,14 +3595,14 @@
         offenseCount: offenseCount,
         lastOffense: firebase.database.ServerValue.TIMESTAMP
       };
-      
+
       try {
         console.log("🚫 Bloqueando usuario:", currentUser.uid, blockData);
-        
+
         // Actualizar perfil del usuario
         await database.ref(`profiles/${currentUser.uid}`).update(blockData);
         console.log("✅ Perfil actualizado con bloqueo");
-        
+
         // Registrar el bloqueo en nodo separado
         await database.ref(`blocks/${currentUser.uid}`).push({
           reason: blockData.blockReason,
@@ -3447,29 +3613,29 @@
           automatic: true
         });
         console.log("✅ Bloqueo registrado en /blocks");
-        
+
         // Actualizar perfil local
         currentProfile.blocked = true;
         currentProfile.blockedUntil = blockUntil.toISOString();
         currentProfile.blockReason = blockData.blockReason;
-        
+
         // Mostrar modal de bloqueo
         showBlockModal(detectedWord, blockUntil);
-        
+
         // Detener reconocimiento de voz
         stopSpeechMonitoring();
         stopBodyMonitoring();
-        
+
         // Cerrar la llamada actual
         if (peerConnection) {
           peerConnection.close();
         }
-        
+
         // Remover del listado de usuarios online
         await database.ref(`onlineUsers/${currentUser.uid}`).remove();
-        
+
         console.log(`🚫 Usuario bloqueado por ${BLOCK_DURATION_DAYS} días por: "${detectedWord}"`);
-        
+
       } catch (error) {
         console.error('❌ Error bloqueando usuario:', error);
       }
@@ -3478,32 +3644,32 @@
     function showBlockModal(detectedWord, blockUntil) {
       document.getElementById('offensiveWordDisplay').textContent = detectedWord;
       document.getElementById('offenseModal').classList.add('active');
-      
+
       // Iniciar countdown
       startBlockCountdown(blockUntil);
     }
 
     function startBlockCountdown(blockUntil) {
       const countdownElement = document.getElementById('offenseCountdown');
-      
+
       function updateCountdown() {
         const now = new Date().getTime();
         const blockTime = new Date(blockUntil).getTime();
         const distance = blockTime - now;
-        
+
         if (distance > 0) {
           const days = Math.floor(distance / (1000 * 60 * 60 * 24));
           const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
           const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
           const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-          
+
           countdownElement.textContent = `${days} días ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         } else {
           countdownElement.textContent = "Bloqueo expirado";
           // Aquí podrías automaticamente desbloquear al usuario
         }
       }
-      
+
       updateCountdown();
       setInterval(updateCountdown, 1000);
     }
@@ -3652,19 +3818,19 @@
     /* ====================== WEBRTC ====================== */
     async function startLocalStream(){
       try {
-        localStream = await navigator.mediaDevices.getUserMedia({ 
+        localStream = await navigator.mediaDevices.getUserMedia({
           video: {
             width: { ideal: 1280 },
             height: { ideal: 720 },
             facingMode: "user"
-          }, 
+          },
           audio: {
             echoCancellation: true,
             noiseSuppression: true,
             autoGainControl: true
           }
         });
-        
+
         // Mostrar video local
         const localVideo = document.getElementById('localVideo');
         localVideo.srcObject = localStream;
@@ -3678,7 +3844,7 @@
     function startWebRTC(callId, isCaller){
       peerConnection = new RTCPeerConnection(configuration);
       console.log("🔄 Iniciando WebRTC, es caller?", isCaller);
-      
+
       if(localStream){
         localStream.getTracks().forEach(track => {
           peerConnection.addTrack(track, localStream);
@@ -3687,7 +3853,7 @@
       } else {
         console.warn("⚠️ No hay stream local disponible");
       }
-      
+
       // Indicador de conexión
       peerConnection.oniceconnectionstatechange = () => {
         console.log("🔌 ICE Connection State:", peerConnection.iceConnectionState);
@@ -3695,6 +3861,7 @@
         if(peerConnection.iceConnectionState === "connected" || peerConnection.iceConnectionState === "completed"){
           indicator.style.backgroundColor = "green";
           console.log("✅ Conexión establecida");
+          flushPendingChatQueue();
         } else if(peerConnection.iceConnectionState === "disconnected" || peerConnection.iceConnectionState === "failed" || peerConnection.iceConnectionState === "closed"){
           indicator.style.backgroundColor = "red";
           console.log("❌ Conexión fallida o desconectada");
@@ -3703,7 +3870,7 @@
           indicator.style.backgroundColor = "orange";
         }
       };
-      
+
       peerConnection.ontrack = (event) => {
         console.log("📹 Evento ontrack recibido:", event.track.kind);
         const remoteVideo = document.getElementById('remoteVideo');
@@ -3724,15 +3891,16 @@
           hideConnecting();
         }).catch(e => console.error("❌ Error al reproducir video remoto:", e));
       };
-      
+
       peerConnection.onicecandidate = event => {
         if(event.candidate){
           console.log("🧊 Enviando ICE candidate");
           database.ref(`calls/${callId}/iceCandidates/${currentUser.uid}`).push(JSON.stringify(event.candidate));
         }
       };
-      
-      database.ref(`calls/${callId}/iceCandidates`).on('child_added', snapshot => {
+
+      currentIceCandidatesRef = database.ref(`calls/${callId}/iceCandidates`);
+      currentIceCandidatesRef.on('child_added', snapshot => {
         const userUid = snapshot.key;
         if(userUid !== currentUser.uid){
           snapshot.forEach(candidateSnap => {
@@ -3746,11 +3914,12 @@
           });
         }
       });
-      
+
       if(isCaller){
         createOffer(callId);
       } else {
-        database.ref(`calls/${callId}/offer`).on('value', async snapshot => {
+        currentOfferRef = database.ref(`calls/${callId}/offer`);
+        currentOfferRef.on('value', async snapshot => {
           const offerData = snapshot.val();
           if(offerData){
             try {
@@ -3767,8 +3936,9 @@
           }
         });
       }
-      
-      database.ref(`calls/${callId}/answer`).on('value', async snapshot => {
+
+      currentAnswerRef = database.ref(`calls/${callId}/answer`);
+      currentAnswerRef.on('value', async snapshot => {
         const answerData = snapshot.val();
         if(answerData && peerConnection.signalingState === 'have-local-offer'){
           try {
@@ -3780,7 +3950,7 @@
           }
         }
       });
-      
+
       // Cargar info del usuario remoto
       database.ref(`calls/${callId}/participants`).once('value', snap => {
         const parts = snap.val() || {};
@@ -3793,7 +3963,9 @@
           document.getElementById('remoteAvatar').src = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2230%22 height=%2230%22 viewBox=%220 0 30 30%22%3E%3Crect width=%2230%22 height=%2230%22 fill=%22%23e8eaed%22/%3E%3Ccircle cx=%2215%22 cy=%2211%22 r=%225%22 fill=%22%239aa0a6%22/%3E%3Crect x=%227%22 y=%2219%22 width=%2216%22 height=%227%22 rx=%223.5%22 fill=%22%239aa0a6%22/%3E%3C/svg%3E';
           return;
         }
-        database.ref('profiles/' + remoteUid).on('value', userSnap => {
+        if(currentRemoteProfileRef){ currentRemoteProfileRef.off(); }
+        currentRemoteProfileRef = database.ref('profiles/' + remoteUid);
+        currentRemoteProfileRef.on('value', userSnap => {
           if(userSnap.exists()){
             const rProfile = userSnap.val();
             document.getElementById('remoteAvatar').src = rProfile.avatar_url || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2230%22 height=%2230%22 viewBox=%220 0 30 30%22%3E%3Crect width=%2230%22 height=%2230%22 fill=%22%23e8eaed%22/%3E%3Ccircle cx=%2215%22 cy=%2211%22 r=%225%22 fill=%22%239aa0a6%22/%3E%3Crect x=%227%22 y=%2219%22 width=%2216%22 height=%227%22 rx=%223.5%22 fill=%22%239aa0a6%22/%3E%3C/svg%3E';
@@ -3815,6 +3987,7 @@
           return;
         }
         renderChatMessage(msg, msg.senderUid === currentUser?.uid);
+        flushPendingChatQueue();
       });
       startMessageCleanup(callId);
 
@@ -3827,6 +4000,16 @@
       });
 
       const callStartedAt = Date.now();
+      if(connectWatchdogTimer) clearTimeout(connectWatchdogTimer);
+      connectWatchdogTimer = setTimeout(() => {
+        if(currentCallId !== callId) return;
+        const state = peerConnection?.iceConnectionState;
+        if(state !== 'connected' && state !== 'completed'){
+          console.warn('⏱️ Timeout de conexión, cambiando de usuario');
+          autoNextPartner('connect-timeout');
+        }
+      }, 18000);
+
       currentPresenceRef = database.ref(`calls/${callId}/presence`);
       currentPresenceRef.on('value', snap => {
         if(currentCallId !== callId) return;
@@ -3864,15 +4047,15 @@
       document.getElementById('micIcon').classList.toggle('fa-microphone');
     }
     function restartCall(){
-      autoNextPartner('manual-compat');
+      autoNextPartner('manual-next');
     }
-    
+
     window.addEventListener('beforeunload', () => {
       if(currentUser){
         database.ref(`onlineUsers/${currentUser.uid}`).remove();
       }
       if(currentCallId){
-        database.ref(`calls/${currentCallId}`).remove();
+        database.ref(`calls/${currentCallId}/presence/${currentUser.uid}`).remove();
       }
     });
 
@@ -3882,6 +4065,28 @@
         sendChatMessage();
       }
     });
+
+
+    const remoteVideoContainer = document.getElementById('remoteVideoContainer');
+    if(remoteVideoContainer){
+      remoteVideoContainer.addEventListener('touchstart', (e) => {
+        const t = e.changedTouches && e.changedTouches[0];
+        if(!t) return;
+        touchStartX = t.clientX;
+        touchStartY = t.clientY;
+      }, { passive: true });
+
+      remoteVideoContainer.addEventListener('touchend', (e) => {
+        const t = e.changedTouches && e.changedTouches[0];
+        if(!t) return;
+        const dx = t.clientX - touchStartX;
+        const dy = t.clientY - touchStartY;
+        const isHorizontalSwipe = Math.abs(dx) > 85 && Math.abs(dx) > Math.abs(dy) * 1.2;
+        if(isHorizontalSwipe){
+          autoNextPartner('swipe-next');
+        }
+      }, { passive: true });
+    }
 
     document.getElementById('registerPassword').addEventListener('focus', () => {
       document.getElementById('passwordMonkey').style.display = 'block';
@@ -3961,17 +4166,17 @@
     function closeReportModal() {
       document.getElementById('reportModal').classList.remove('active');
       document.getElementById('reportStatus').innerHTML = "";
-      
+
       // Mostrar iconos de moderación nuevamente
       document.querySelector('.account-status-icon').style.display = 'flex';
       document.querySelector('.report-icon').style.display = 'flex';
-      
+
       // Resetear selecciones
       selectedReportOption = null;
       document.querySelectorAll('.report-option').forEach(opt => {
         opt.classList.remove('selected');
       });
-      
+
       // Deshabilitar botón de reportar
       const reportBtn = document.querySelector('.btn-report');
       reportBtn.disabled = true;
@@ -3987,7 +4192,7 @@
         opt.classList.remove('selected');
       });
       event.currentTarget.classList.add('selected');
-      
+
       // Habilitar el botón de reportar
       const reportBtn = document.querySelector('.btn-report');
       reportBtn.disabled = false;
@@ -4009,12 +4214,12 @@
       try {
         const [result] = await client.safeSearchDetection(imageUrl);
         const detections = result.safeSearchAnnotation;
-        
+
         let imageRiskScore = 0;
         if(detections.adult === 'VERY_LIKELY') imageRiskScore += 80;
         if(detections.violence === 'VERY_LIKELY') imageRiskScore += 70;
         if(detections.racy === 'VERY_LIKELY') imageRiskScore += 60;
-        
+
         return imageRiskScore;
       } catch(err) {
         console.error('Error analizando imagen:', err);
@@ -4026,19 +4231,19 @@
     async function analyzeReportHistory(uid) {
       const reportsSnap = await database.ref('reports/' + uid).once('value');
       const reports = reportsSnap.val() || {};
-      
+
       let riskScore = 0;
       let reportCount = 0;
       let recentReports = 0;
       let confirmedReports = 0;
       const now = Date.now();
-      
+
       for(const report of Object.values(reports)) {
         reportCount++;
         if (now - report.timestamp < 7 * 24 * 60 * 60 * 1000) { // Últimos 7 días
           recentReports++;
           const baseScore = RISK_SCORES[report.tipo] || 0;
-          
+
           // Analizar evidencia de imagen si existe
           if(report.evidenceUrl) {
             const imageScore = await analyzeImage(report.evidenceUrl);
@@ -4049,7 +4254,7 @@
           }
         }
       }
-      
+
       // Ajustar score basado en reportes confirmados
       if(confirmedReports > 0) {
         riskScore *= (1 + (confirmedReports / recentReports) * 0.5);
@@ -4066,7 +4271,7 @@
     async function updateAccountStatus(uid, riskAnalysis) {
       const blockThreshold = 70;
       const warningThreshold = 40;
-      
+
       let accountStatus = {
         riskLevel: riskAnalysis.riskScore,
         lastAnalysis: firebase.database.ServerValue.TIMESTAMP
@@ -4099,12 +4304,12 @@
       // Mostrar animación de envío
       const reportBtn = document.querySelector('.btn-report');
       const originalText = reportBtn.innerHTML;
-      
+
       // Deshabilitar el botón y mostrar spinner
       reportBtn.disabled = true;
       reportBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enviando...';
       reportBtn.style.opacity = '0.7';
-      
+
       // Animación de las opciones desapareciendo
       const options = document.querySelectorAll('.report-option');
       options.forEach((option, index) => {
@@ -4129,7 +4334,7 @@
             reportBtn.innerHTML = '<i class="fa-solid fa-check"></i> ¡Enviado!';
             reportBtn.style.background = 'var(--success-color)';
             reportBtn.style.opacity = '1';
-            
+
             // Mostrar mensaje de éxito con animación
             const statusEl = document.getElementById('reportStatus');
             statusEl.innerHTML = `
@@ -4139,18 +4344,18 @@
                 <p>Hemos recibido tu reporte y lo revisaremos pronto.</p>
               </div>
             `;
-            
+
             // Animar la aparición del mensaje
             const successMsg = statusEl.querySelector('.report-success-message');
             successMsg.style.opacity = '0';
             successMsg.style.transform = 'translateY(20px)';
-            
+
             setTimeout(() => {
               successMsg.style.transition = 'all 0.3s ease';
               successMsg.style.opacity = '1';
               successMsg.style.transform = 'translateY(0)';
             }, 100);
-            
+
             // Cerrar modal con animación
             setTimeout(() => {
               closeReportModalWithAnimation();
@@ -4158,11 +4363,11 @@
           })
           .catch(err => {
             console.error("Error en el reporte:", err);
-            
+
             // Animación de error
             reportBtn.innerHTML = '<i class="fa-solid fa-exclamation-triangle"></i> Error';
             reportBtn.style.background = 'var(--danger-color)';
-            
+
             document.getElementById('reportStatus').innerHTML = `
               <div class="report-error-message">
                 <i class="fa-solid fa-exclamation-circle"></i>
@@ -4170,14 +4375,14 @@
                 <p style='color:var(--gray-text);'>Por favor, inténtalo de nuevo</p>
               </div>
             `;
-            
+
             // Restaurar botón después de 3 segundos
             setTimeout(() => {
               reportBtn.disabled = false;
               reportBtn.innerHTML = originalText;
               reportBtn.style.background = 'var(--danger-color)';
               reportBtn.style.opacity = '1';
-              
+
               // Restaurar opciones
               options.forEach((option, index) => {
                 setTimeout(() => {
@@ -4193,26 +4398,26 @@
     function closeReportModalWithAnimation() {
       const modal = document.getElementById('reportModal');
       const content = modal.querySelector('.report-content');
-      
+
       // Animación de salida
       content.style.transform = 'scale(0.95) translateY(20px)';
       content.style.opacity = '0';
       modal.style.opacity = '0';
-      
+
       setTimeout(() => {
         closeReportModal();
-        
+
         // Resetear estilos para próxima vez
         content.style.transform = '';
         content.style.opacity = '';
         modal.style.opacity = '';
-        
+
         const reportBtn = document.querySelector('.btn-report');
         reportBtn.disabled = false;
         reportBtn.innerHTML = 'Reportar';
         reportBtn.style.background = 'var(--danger-color)';
         reportBtn.style.opacity = '1';
-        
+
         // Resetear opciones
         const options = document.querySelectorAll('.report-option');
         options.forEach(option => {
@@ -4257,7 +4462,7 @@
       // Ocultar iconos de moderación
       document.querySelector('.account-status-icon').style.display = 'none';
       document.querySelector('.report-icon').style.display = 'none';
-      
+
       goToScreen('accountStatusScreen');
       const scanAvatar = document.getElementById('scanAvatar');
       scanAvatar.src = currentProfile.avatar_url || 'https://cdn-icons-png.flaticon.com/512/3237/3237472.png';
@@ -4269,7 +4474,7 @@
     }
     async function checkAccountPenalties() {
       if(!currentUser) return;
-      
+
       let analysisResults = {
         penalties: [],
         riskLevel: 0,
