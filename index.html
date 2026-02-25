@@ -2650,14 +2650,12 @@
 
     // Lista de palabras ofensivas - se puede expandir
     const OFFENSIVE_WORDS = [
-      'feo', 'horrible', 'pato', 'pinga', 'idiota', 'estúpido', 'tonto',
-      'imbécil', 'pendejo', 'cabrón', 'puto', 'perra', 'zorra',
-      'maldito', 'jodido', 'coño', 'carajo', 'mierda', 'cagada',
-      'ugly', 'stupid', 'idiot', 'bitch', 'fuck', 'shit', 'damn',
-      'asshole', 'motherfucker', 'bastard', 'whore', 'slut'
+      'pinga', 'pendejo', 'cabrón', 'puto', 'perra', 'zorra',
+      'coño', 'carajo', 'mierda', 'cagada',
+      'bitch', 'fuck', 'shit', 'asshole', 'motherfucker', 'bastard', 'whore', 'slut'
     ];
 
-    const OFFENSE_THRESHOLD = 3; // Número de ofensas antes del bloqueo
+    const OFFENSE_THRESHOLD = 5; // Número de ofensas antes del bloqueo
     const QUICK_EMOJIS = ['😀','😂','😍','😎','🔥','👍','👏','😮','🥳','💯','👋','❤️'];
     const BLOCK_DURATION_DAYS = 3;
 
@@ -3416,6 +3414,13 @@
     async function startMatching(){
       if(!currentUser || !currentProfile || !currentProfile.username || !currentProfile.avatar_url || !currentProfile.country || !currentProfile.birthDate){
         console.error("❌ Perfil incompleto, no se puede marcar como online");
+        if(!currentProfile || !currentProfile.username || !currentProfile.avatar_url){
+          alert('Completa tu perfil (nombre y foto) antes de conectar.');
+          goToScreen('profileSetupScreen');
+        } else if(!currentProfile.country){
+          alert('Selecciona tu país antes de conectar.');
+          goToScreen('countryScreen');
+        }
         return;
       }
 
@@ -3658,8 +3663,7 @@
 
         // Buscar coincidencias exactas en palabras completas
         for (const textWord of words) {
-          if (textWord === normalizedWord ||
-              textWord.includes(normalizedWord) && normalizedWord.length > 3) {
+          if (textWord === normalizedWord) {
             console.log('🚨 Palabra ofensiva detectada:', word);
             handleOffensiveLanguage(word);
             return;
@@ -3975,6 +3979,17 @@
         localStream = null;
         alert("No se pudo acceder a la cámara/micrófono. Verifica los permisos.");
         return false;
+      }
+      localStream = null;
+      const localVideo = document.getElementById('localVideo');
+      if(localVideo) localVideo.srcObject = null;
+    }
+
+    function stopLocalStream(){
+      if(localStream){
+        localStream.getTracks().forEach(track => {
+          try { track.stop(); } catch(e) {}
+        });
       }
       localStream = null;
       const localVideo = document.getElementById('localVideo');
