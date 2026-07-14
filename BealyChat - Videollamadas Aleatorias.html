@@ -1,0 +1,5374 @@
+<!DOCTYPE html>
+<html lang="es">
+<head><style>
+@font-face {
+  font-family: "Optimistic";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("/fonts/OptimisticAI_VF_Optimized.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Optimistic Mono";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/OptimisticMono_W_TextRegular.woff2") format("woff2");
+}
+:where(html) {
+  font-family: "Optimistic", system-ui, sans-serif;
+}
+:where(code, pre, kbd, samp) {
+  font-family: "Optimistic Mono", ui-monospace, monospace;
+}
+</style>
+  <meta charset="UTF-8">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4653147807800151" crossorigin="anonymous"></script>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,viewport-fit=cover">
+  <title>BealyChat - Videollamadas Aleatorias</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Firebase (compat) -->
+  <script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.21.0/firebase-analytics-compat.js"></script>
+      <style>
+    /* ====================== ESTILO MODERNO TIPO VERIZON ====================== */
+    :root {
+      --google-blue: #cd040b;
+      --google-blue-hover: #b10008;
+      --google-blue-active: #930007;
+      --google-red: #cd040b;
+      --google-green: #08875d;
+      --google-gray: #6b7280;
+      --google-border: #d9dce1;
+      --google-bg: #ffffff;
+      --google-text: #121417;
+      --google-text-secondary: #4b5563;
+      --google-hover: #f3f4f6;
+      --google-focus: #fff1f2;
+
+      /* Variables unificadas */
+      --primary-color: #cd040b;
+      --secondary-color: #ef4444;
+      --background: #f4f5f7;
+      --card-bg: #ffffff;
+      --light-text: #121417;
+      --gray-text: #6b7280;
+      --border-color: #d9dce1;
+      --hover-bg: #f3f4f6;
+      --danger-color: #dc2626;
+      --success-color: #08875d;
+      --verizon-black: #000000;
+    }
+    html, body {
+      margin: 0;
+      padding: 0;
+      background:
+        radial-gradient(circle at top right, rgba(205, 4, 11, 0.10), transparent 38%),
+        radial-gradient(circle at bottom left, rgba(17, 24, 39, 0.07), transparent 40%),
+        var(--background);
+      color: var(--google-text);
+      overflow-x: hidden;
+      touch-action: manipulation;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      width: 100%;
+      height: 100vh;
+      min-height: 100vh;
+      max-height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+    }
+    * {
+      box-sizing: border-box;
+      font-family: 'Google Sans', 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    ::selection {
+      background: rgba(205, 4, 11, 0.4);
+      color: #fff;
+    }
+    .container {
+      width: 100vw;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      overflow: hidden;
+      touch-action: pan-x pan-y;
+      user-select: none;
+    }
+    /* Marca de agua: Solo se mostrará en el videoCallScreen */
+    .watermark {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 18px;
+      font-weight: bold;
+      color: rgba(255, 255, 255, 0.8);
+      z-index: 2000;
+      pointer-events: none;
+      display: none; /* Oculta por defecto, se muestra en videoCallScreen */
+    }
+
+    /* Solo mostrar watermark en video call screen */
+    #videoCallScreen .watermark {
+      display: block;
+    }
+    /* Íconos de estado de cuenta y reporte estilo Google */
+    .account-status-icon,
+    .report-icon,
+    .profile-icon,
+    .config-icon {
+      position: fixed;
+      width: 48px;
+      height: 48px;
+      cursor: pointer;
+      z-index: 1100;
+      right: calc(16px + env(safe-area-inset-right));
+      background-color: rgba(255, 255, 255, 0.95);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+      transition: all 0.2s ease;
+    }
+
+    .account-status-icon {
+      top: calc(16px + env(safe-area-inset-top));
+    }
+
+    .report-icon {
+      top: calc(76px + env(safe-area-inset-top));
+    }
+
+    .account-status-icon:hover,
+    .report-icon:hover,
+    .profile-icon:hover,
+    .config-icon:hover {
+      background-color: rgba(255, 255, 255, 1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      transform: scale(1.05);
+    }
+
+    .account-status-icon i,
+    .report-icon i,
+    .profile-icon i,
+    .config-icon i {
+      color: var(--google-text);
+      font-size: 20px;
+    }
+
+    .profile-icon {
+      top: calc(136px + env(safe-area-inset-top));
+    }
+
+    .config-icon {
+      top: calc(196px + env(safe-area-inset-top));
+    }
+    .screen {
+      width: 100vw;
+      height: 100vh;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background-color: var(--background);
+      transition: transform 0.3s ease;
+      overflow-y: auto;
+      overflow-x: hidden;
+      touch-action: auto;
+      pointer-events: none;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    /* Fondo oscuro solo para videollamada */
+    #videoCallScreen {
+      background-color: #000000;
+    }
+    .screen.active {
+      transform: translateX(0);
+      pointer-events: auto;
+      z-index: 10;
+    }
+    .screen:not(.active) {
+      transform: translateX(100%);
+      pointer-events: none;
+      z-index: 1;
+    }
+    .screen-content {
+      width: 100%;
+      max-width: 520px;
+      margin: 0 auto;
+      padding: 86px 32px 44px;
+      text-align: center;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      box-sizing: border-box;
+    }
+
+    #authMethodScreen .screen-content,
+    #loginScreen .screen-content,
+    #registerScreen .screen-content,
+    #forgotPasswordScreen .screen-content,
+    #profileSetupScreen .screen-content,
+    #countryScreen .screen-content {
+      justify-content: center;
+      padding-top: clamp(84px, 14vh, 138px);
+      padding-bottom: 42px;
+    }
+
+    #authMethodScreen .auth-methods,
+    #loginScreen form,
+    #registerScreen form,
+    #forgotPasswordScreen form,
+    #profileSetupScreen .screen-content > div:not(.logo),
+    #countryScreen .screen-content > div:not(.logo) {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      padding: 22px 20px;
+      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+    }
+
+
+    #authMethodScreen .logo,
+    #loginScreen .logo,
+    #registerScreen .logo,
+    #forgotPasswordScreen .logo,
+    #profileSetupScreen .logo,
+    #countryScreen .logo {
+      margin-bottom: 34px;
+    }
+
+    #authMethodScreen .screen-content > div:not(.logo):not(.auth-terms),
+    #loginScreen form,
+    #registerScreen form,
+    #forgotPasswordScreen form,
+    #profileSetupScreen .screen-content > div:not(.logo),
+    #countryScreen .screen-content > div:not(.logo) {
+      margin-top: 4px;
+    }
+
+    #loginScreen .links,
+    #forgotPasswordScreen .links {
+      margin-top: 18px;
+      margin-bottom: 0;
+    }
+
+    #loginScreen .screen-content > div:last-child,
+    #registerScreen .screen-content > div:last-child {
+      margin-top: 20px;
+    }
+
+    /* Fondo blanco completo para pantallas de auth */
+    #authMethodScreen,
+    #loginScreen,
+    #registerScreen,
+    #forgotPasswordScreen,
+    #profileSetupScreen,
+    #countryScreen {
+      background-color: var(--google-bg);
+    }
+
+    @media (max-width: 768px) {
+      .screen-content {
+        padding: 64px 20px 30px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .screen-content {
+        padding: 64px 20px 30px;
+        justify-content: flex-start;
+      }
+
+      #authMethodScreen .screen-content,
+      #loginScreen .screen-content,
+      #registerScreen .screen-content,
+      #forgotPasswordScreen .screen-content,
+      #profileSetupScreen .screen-content,
+      #countryScreen .screen-content {
+        justify-content: flex-start;
+        padding-top: 62px;
+      }
+
+      .logo {
+        margin-bottom: 18px;
+        margin-top: 0;
+      }
+
+      .form-group {
+        margin-bottom: 16px;
+      }
+
+
+      #authMethodScreen .logo,
+      #loginScreen .logo,
+      #registerScreen .logo,
+      #forgotPasswordScreen .logo,
+      #profileSetupScreen .logo,
+      #countryScreen .logo {
+        margin-bottom: 22px;
+      }
+
+      #authMethodScreen .screen-content > div:not(.logo):not(.auth-terms),
+      #loginScreen form,
+      #registerScreen form,
+      #forgotPasswordScreen form,
+      #profileSetupScreen .screen-content > div:not(.logo),
+      #countryScreen .screen-content > div:not(.logo) {
+        padding: 18px 16px;
+      }
+    }
+    .logo {
+      margin-bottom: 28px;
+      margin-top: 0;
+    }
+    .logo h1 {
+      font-size: 32px;
+      color: var(--google-text);
+      font-weight: 700;
+      letter-spacing: -0.65px;
+      margin-bottom: 0;
+      text-transform: uppercase;
+      font-family: 'Inter', 'Segoe UI', 'Roboto', Arial, sans-serif;
+    }
+    .logo p {
+      font-size: 15px;
+      margin-bottom: 0;
+      color: var(--google-text-secondary);
+      font-weight: 400;
+      margin-top: 8px;
+    }
+    .form-group {
+      margin-bottom: 32px;
+      text-align: left;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--google-text-secondary);
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .input-group {
+      position: relative;
+    }
+    .input-group i {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray-text);
+    }
+    input, select {
+      width: 100%;
+      padding: 13px 15px;
+      border-radius: 14px;
+      border: 1px solid var(--google-border);
+      background-color: var(--google-bg);
+      color: var(--google-text);
+      font-size: 16px;
+      outline: none;
+      transition: all 0.15s ease;
+    }
+    input:hover, select:hover {
+      border-color: var(--google-gray);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    }
+    input:focus, select:focus {
+      border-color: var(--google-blue);
+      border-width: 1px;
+      background-color: var(--google-focus);
+      box-shadow: 0 0 0 3px rgba(205, 4, 11, 0.2);
+    }
+    input::placeholder {
+      color: var(--google-text-secondary);
+    }
+
+    /* Ocultar iconos en inputs */
+    .input-group i {
+      display: none;
+    }
+    .btn {
+      width: 100%;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 14px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+      margin-top: 24px;
+      min-height: 40px;
+      letter-spacing: 0.2px;
+    }
+    .btn-primary {
+      background: linear-gradient(145deg, var(--google-blue), var(--secondary-color));
+      color: white;
+      box-shadow: 0 12px 22px rgba(205, 4, 11, 0.24);
+      border: 1px solid rgba(0, 0, 0, 0.06);
+    }
+    .btn-primary:hover {
+      background: linear-gradient(135deg, var(--google-blue-hover), var(--google-blue));
+      box-shadow: 0 12px 24px rgba(205, 4, 11, 0.3);
+      transform: translateY(-1px);
+    }
+    .btn-primary:active {
+      background-color: var(--google-blue-active);
+    }
+    .btn-outline {
+      background-color: transparent;
+      border: 1px solid var(--google-border);
+      color: var(--google-text);
+      box-shadow: inset 0 0 0 1px rgba(205, 4, 11, 0.1);
+    }
+    .btn-outline:hover {
+      background-color: var(--google-hover);
+      border-color: var(--google-gray);
+    }
+
+    .auth-methods {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      width: 100%;
+      text-align: left;
+    }
+    .auth-method-btn {
+      width: 100%;
+      min-height: 54px;
+      border-radius: 16px;
+      border: 1px solid var(--border-color);
+      background: #fff;
+      color: var(--google-text);
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 12px;
+      padding: 14px 16px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(15, 23, 42, 0.05);
+    }
+    .auth-method-btn i {
+      font-size: 18px;
+      width: 20px;
+      text-align: center;
+    }
+    .auth-method-btn.email {
+      border-color: #cd040b33;
+    }
+    .auth-method-btn.email i {
+      color: #cd040b;
+    }
+    .auth-method-btn.disabled {
+      background: #f3f4f6;
+      color: #9ca3af;
+      border-color: #e5e7eb;
+      cursor: not-allowed;
+      box-shadow: none;
+      pointer-events: none;
+    }
+    .auth-terms {
+      margin-top: auto;
+      font-size: 12px;
+      line-height: 1.5;
+      color: var(--google-text-secondary);
+      text-align: center;
+    }
+    .auth-terms a {
+      color: #cd040b;
+      text-decoration: underline;
+      font-weight: 600;
+    }
+
+    #authMethodScreen .screen-content {
+      justify-content: flex-start;
+      padding-top: clamp(72px, 10vh, 110px);
+      padding-bottom: 20px;
+    }
+
+    .auth-method-title {
+      font-size: 13px;
+      color: var(--google-text-secondary);
+      margin-bottom: 12px;
+      text-align: left;
+    }
+
+    .auth-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 14px;
+      padding: 4px;
+      border-radius: 14px;
+      background: #f3f4f6;
+    }
+
+    .auth-tab-btn {
+      border: none;
+      border-radius: 10px;
+      padding: 10px 8px;
+      font-size: 14px;
+      font-weight: 700;
+      background: transparent;
+      color: var(--google-text-secondary);
+      cursor: pointer;
+    }
+
+    .auth-tab-btn.active {
+      background: #fff;
+      color: var(--google-text);
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.08);
+    }
+
+
+    #loginScreen .screen-content,
+    #registerScreen .screen-content {
+      justify-content: flex-start;
+      padding-top: clamp(76px, 11vh, 120px);
+    }
+
+    #loginScreen form,
+    #registerScreen form {
+      margin-top: 16px;
+    }
+
+    #loginScreen .links {
+      margin-top: auto;
+      padding-top: 14px;
+      margin-bottom: 0;
+    }
+
+    @media (max-width: 768px) {
+      #authMethodScreen .screen-content {
+        padding-top: 56px;
+      }
+    }
+    .links {
+      margin: 20px 0;
+      text-align: center;
+    }
+    .links a {
+      color: var(--google-blue);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    .links a:hover {
+      text-decoration: underline;
+    }
+    a {
+      color: var(--google-blue);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    p {
+      color: var(--google-text);
+      font-size: 14px;
+    }
+    .divider {
+      display: flex;
+      align-items: center;
+      margin: 30px 0;
+    }
+    .divider::before, .divider::after {
+      content: "";
+      flex: 1;
+      height: 1px;
+      background-color: #ddd;
+    }
+    .divider span {
+      margin: 0 15px;
+      color: var(--gray-text);
+      font-size: 14px;
+    }
+    .social-login {
+      display: flex;
+      justify-content: flex-start;
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+    .social-btn {
+      width: 50px;
+      height: 50px;
+      border-radius: 25px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--card-bg);
+      color: var(--light-text);
+      font-size: 20px;
+      border: 1px solid var(--border-color);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .social-btn:hover {
+      background-color: var(--hover-bg);
+      border-color: var(--gray-text);
+    }
+    .avatar-upload {
+      width: 120px;
+      height: 120px;
+      border-radius: 60px;
+      background-color: var(--google-hover);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      position: relative;
+      overflow: hidden;
+      border: 2px dashed var(--google-border);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .avatar-upload:hover {
+      border-color: var(--google-blue);
+      background-color: var(--google-focus);
+    }
+    .avatar-upload i {
+      font-size: 40px;
+      color: var(--gray-text);
+    }
+    .avatar-upload img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+    .footer {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--gray-text);
+    }
+
+    /* ====================== PANTALLA DE VIDEOLLAMADA ====================== */
+    .video-container {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+      background-color: #000;
+    }
+    .video-grid {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      height: 100vh;
+      padding: 0;
+      gap: 0;
+      align-items: center;
+      justify-content: flex-start;
+      background: #000;
+    }
+    .video-container {
+      position: relative;
+      background: #000;
+      width: 100%;
+      max-width: 500px;
+      height: 50vh;
+      overflow: hidden;
+      margin: 0;
+    }
+    .remote-video, .local-video {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      background-color: #000;
+      overflow: hidden;
+    }
+    .remote-video video, .local-video video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      margin: 0;
+      padding: 0;
+    }
+    /* Quitar efecto espejo solo del video local */
+    .local-video video {
+      transform: scaleX(-1);
+    }
+    @media (max-width: 768px) {
+      .video-container {
+        max-width: 100%;
+        height: 50vh;
+      }
+    }
+    /* Controles y swipe */
+    .video-controls {
+      position: fixed;
+      top: calc(16px + env(safe-area-inset-top));
+      left: calc(16px + env(safe-area-inset-left));
+      display: flex;
+      gap: 12px;
+      z-index: 1100;
+      background: transparent;
+      padding: 0;
+      border: none;
+    }
+    .control-btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 9999px;
+      background-color: var(--card-bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--light-text);
+      font-size: 18px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 1px solid var(--border-color);
+    }
+    .control-btn:hover {
+      background-color: var(--hover-bg);
+      border-color: var(--gray-text);
+    }
+
+    .chat-panel {
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 14px;
+      width: min(500px, calc(100vw - 20px));
+      background: rgba(22, 24, 28, 0.75);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 8px;
+      z-index: 1100;
+      backdrop-filter: blur(10px);
+    }
+    .emoji-carousel {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+    .emoji-btn {
+      border: 1px solid var(--border-color);
+      background: #fff;
+      border-radius: 14px;
+      min-width: 36px;
+      height: 36px;
+      font-size: 18px;
+      cursor: pointer;
+    }
+    .chat-input-row { display:flex; gap:8px; }
+    #chatInput {
+      flex:1; border-radius:10px; border:1px solid var(--border-color);
+      padding:8px 10px;
+    }
+    #sendChatBtn {
+      border:none; border-radius:10px; padding:8px 12px; background:var(--google-blue); color:#fff; cursor:pointer;
+    }
+    .chat-messages { max-height:90px; overflow:auto; margin-top:8px; color:#fff; font-size:13px; }
+    .chat-message { margin-bottom:4px; }
+    .swipe-hint {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: white;
+      font-size: 32px;
+      z-index: 10;
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0% { opacity: 0.5; }
+      50% { opacity: 1; }
+      100% { opacity: 0.5; }
+    }
+    /* Caja de información del usuario remoto con indicador de conexión */
+    .user-info {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      background-color: rgba(22, 24, 28, 0.8);
+      padding: 12px 16px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      z-index: 10;
+      border: 1px solid var(--border-color);
+      backdrop-filter: blur(12px);
+    }
+    @media (max-width: 768px) {
+      .user-info {
+        top: 10px;
+        left: 10px;
+        right: 10px;
+        padding: 8px 12px;
+        gap: 8px;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        width: calc(100% - 20px);
+      }
+      .user-info span {
+        font-size: 12px !important;
+      }
+    }
+    .user-info img {
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .user-info span {
+      font-size: 14px;
+      font-weight: bold;
+    }
+    /* Botón "Seguir" con animación */
+    .user-info .follow-btn {
+      margin-left: auto;
+      padding: 5px 15px;
+      border: none;
+      border-radius: 14px;
+      background-color: var(--primary-color);
+      color: #fff;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.3s;
+    }
+    @media (max-width: 768px) {
+      .user-info .follow-btn {
+        padding: 6px 20px;
+        font-size: 14px;
+        margin-left: 0;
+        flex: 0 0 auto;
+      }
+    }
+    .user-info .follow-btn:hover {
+      transform: scale(1.05);
+    }
+    /* Icono verificado */
+    .verified-badge {
+      width: 16px;
+      height: 16px;
+      margin-left: 5px;
+      vertical-align: middle;
+    }
+    /* Indicador de conexión: Círculo al lado del nombre */
+    .connection-indicator {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: green;
+      display: inline-block;
+      margin-left: 5px;
+    }
+    /* Indicador de conexión, movido hacia arriba */
+    .connecting {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 22%;
+      color: #fff;
+      background: rgba(0, 0, 0, 0.45);
+      z-index: 99;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .connecting i {
+      color: #ffffff;
+      font-size: 34px !important;
+    }
+    .connecting.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    /* Indicador de cámara offline */
+    .camera-offline {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.9);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 16px;
+      z-index: 5;
+    }
+    .camera-offline.active {
+      display: flex;
+    }
+    .camera-offline i {
+      font-size: 48px;
+      color: #fff;
+    }
+    .camera-offline p {
+      color: #fff;
+      font-size: 16px;
+      margin: 0;
+    }
+
+
+
+    /* ====================== PANTALLA DE CUENTA BLOQUEADA ====================== */
+    .blocked-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      text-align: center;
+      padding: 80px 24px 24px;
+      background-color: var(--background);
+      color: var(--light-text);
+    }
+    .blocked-screen h2 {
+      font-size: 28px;
+      margin-bottom: 32px;
+    }
+    .blocked-screen p {
+      font-size: 18px;
+    }
+
+    /* ====================== MODAL DE PANTALLA COMPLETA: EDITAR PERFIL ====================== */
+    .full-screen-modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--background);
+      z-index: 1200;
+      overflow-y: auto;
+      padding: 80px 24px 24px;
+    }
+    .full-screen-modal.active {
+      display: block;
+    }
+    .full-screen-content {
+      background: var(--card-bg);
+      padding: 80px 24px 24px;
+      border-radius: 8px;
+      max-width: 600px;
+      margin: 40px auto;
+      position: relative;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .full-screen-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 24px;
+      cursor: pointer;
+      color: var(--light-text);
+    }
+
+    /* ====================== GRID DE FOTOS ====================== */
+    .photo-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-gap: 10px;
+      margin-top: 20px;
+    }
+    .photo-grid .photo-slot {
+      width: 100%;
+      padding-top: 100%;
+      position: relative;
+      background-color: #ddd;
+      border-radius: 4px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .photo-grid .photo-slot img {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* ====================== MODAL DE REPORTE ESTILO GOOGLE ====================== */
+    .report-modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100vh;
+      background: var(--google-bg);
+      z-index: 1300;
+      animation: fadeInModal 0.2s ease;
+      overflow-y: auto;
+    }
+    .report-modal.active {
+      display: block;
+    }
+    @keyframes fadeInModal {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .report-content {
+      background: var(--google-bg);
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      min-height: 100vh;
+      position: relative;
+      padding: 80px 24px 24px;
+    }
+    .report-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      align-items: center;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--google-border);
+      background: var(--google-bg);
+      z-index: 10;
+    }
+    .report-close-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: none;
+      border: none;
+      color: var(--google-text);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      margin-right: 16px;
+    }
+    .report-close-btn:hover {
+      background: var(--google-hover);
+    }
+    .report-close-btn i {
+      font-size: 24px;
+    }
+    .report-header h2 {
+      margin: 0;
+      color: var(--google-text);
+      font-size: 22px;
+      font-weight: 400;
+    }
+    .report-body {
+      padding: 0;
+    }
+    .report-user-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 16px;
+      background: var(--google-hover);
+      border-radius: 8px;
+      margin-bottom: 24px;
+      border: 1px solid var(--google-border);
+    }
+    .report-user-info img {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .report-user-info .user-details h3 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--google-text);
+      box-shadow: inset 0 0 0 1px rgba(205, 4, 11, 0.1);
+    }
+    .report-user-info .user-details p {
+      margin: 4px 0 0 0;
+      font-size: 14px;
+      color: var(--google-text-secondary);
+    }
+    .report-subtitle {
+      color: var(--google-text);
+      font-size: 16px;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+    .report-description {
+      color: var(--google-text-secondary);
+      font-size: 14px;
+      margin-bottom: 24px;
+      line-height: 1.5;
+    }
+    .report-options {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .report-option {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px;
+      border-radius: 8px;
+      background: transparent;
+      border: 1px solid var(--google-border);
+      transition: all 0.2s ease;
+      cursor: pointer;
+      position: relative;
+    }
+    .report-option:hover {
+      background: var(--google-hover);
+      border-color: var(--google-blue);
+    }
+    .report-option.selected {
+      background: var(--google-focus);
+      border-color: var(--google-blue);
+      border-width: 2px;
+      padding: 15px;
+    }
+    .report-option .option-icon {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .report-option .option-icon i {
+      color: var(--google-red);
+      font-size: 20px;
+    }
+    .report-option .option-text {
+      flex: 1;
+    }
+    .report-option .option-text span {
+      font-size: 14px;
+      color: var(--google-text);
+      font-weight: 400;
+    }
+    .report-option .option-check {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid var(--google-border);
+      position: relative;
+      transition: all 0.2s ease;
+    }
+    .report-option.selected .option-check {
+      background: var(--google-blue);
+      border-color: var(--google-blue);
+    }
+    .report-option.selected .option-check::after {
+      content: '✓';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-size: 12px;
+      font-weight: bold;
+    }
+    .report-actions {
+      display: flex;
+      gap: 12px;
+      padding-top: 24px;
+      position: sticky;
+      bottom: 0;
+      background: var(--google-bg);
+      padding-bottom: 24px;
+    }
+    .btn-cancel {
+      flex: 1;
+      padding: 10px 24px;
+      border: 1px solid var(--google-border);
+      background: transparent;
+      border-radius: 4px;
+      color: var(--google-blue);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-weight: 500;
+      font-size: 14px;
+    }
+    .btn-cancel:hover {
+      background: var(--google-hover);
+    }
+    .btn-report {
+      flex: 2;
+      padding: 10px 24px;
+      border: none;
+      background: var(--google-blue);
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-weight: 500;
+      font-size: 14px;
+    }
+    .btn-report:hover {
+      background: var(--google-blue-hover);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    }
+    .btn-report:disabled {
+      background: var(--google-border);
+      cursor: not-allowed;
+      color: var(--google-text-secondary);
+    }
+    .report-status {
+      margin-top: 16px;
+      text-align: center;
+      font-size: 14px;
+      min-height: 20px;
+      color: var(--google-text-secondary);
+    }
+
+    /* Animaciones para mensajes de reporte */
+    .report-success-message,
+    .report-error-message {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      padding: 24px;
+      border-radius: 8px;
+      margin-top: 16px;
+    }
+
+    .report-success-message {
+      background: #e6f4ea;
+      border: 1px solid #34a853;
+    }
+
+    .report-success-message i {
+      font-size: 48px;
+      color: #34a853;
+      animation: successPulse 0.6s ease;
+    }
+
+    .report-success-message p:first-of-type {
+      font-weight: 500;
+      color: var(--google-text);
+      margin: 0;
+      font-size: 16px;
+    }
+
+    .report-success-message p:last-of-type {
+      color: var(--google-text-secondary);
+      margin: 0;
+      font-size: 14px;
+    }
+
+    .report-error-message {
+      background: #fce8e6;
+      border: 1px solid #ea4335;
+    }
+
+    .report-error-message i {
+      font-size: 48px;
+      color: #ea4335;
+      animation: errorShake 0.5s ease;
+    }
+
+    .report-error-message p {
+      color: var(--google-text);
+      margin: 0;
+      font-size: 14px;
+    }
+
+    @keyframes successPulse {
+      0% { transform: scale(0.8); opacity: 0; }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes errorShake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+
+    /* Animaciones para opciones de reporte */
+    .report-option {
+      transition: all 0.2s ease;
+    }
+
+    .report-option:hover {
+      transform: translateY(-1px);
+    }
+
+    /* Animación del botón de reporte */
+    .btn-report {
+      transition: all 0.2s ease;
+    }
+
+    .btn-report:not(:disabled):hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-report .fa-spinner {
+      animation: spin 1s linear infinite;
+    }
+
+    .btn-report .fa-check {
+      animation: checkmark 0.6s ease;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes checkmark {
+      0% { transform: scale(0); }
+      50% { transform: scale(1.2); }
+      100% { transform: scale(1); }
+    }
+
+    /* ====================== ESTILOS PARA LA NUEVA PANTALLA DE AJUSTES ====================== */
+    .settings-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 400px;
+      margin: 0 auto;
+      padding-top: 30px;
+    }
+    .settings-header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 32px;
+    }
+    .settings-avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 40px;
+      overflow: hidden;
+      margin-bottom: 10px;
+    }
+    .settings-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    #settingsNameAge {
+      font-size: 20px;
+      margin: 5px 0 0 0;
+      text-align: center;
+    }
+    .settings-country {
+      font-size: 14px;
+      color: var(--gray-text);
+      margin: 2px 0;
+    }
+    .settings-phone {
+      font-size: 13px;
+      color: var(--gray-text);
+      margin: 2px 0 10px;
+    }
+    .settings-actions {
+      margin-bottom: 15px;
+    }
+    .settings-stats {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 32px;
+    }
+    .stat-item {
+      background-color: var(--card-bg);
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 10px;
+      text-align: center;
+      flex: 1;
+    }
+    .stat-item span {
+      font-size: 16px;
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+    }
+    .settings-photo-card {
+      width: 100%;
+      padding: 80px 24px 24px;
+      border: 2px dashed #ddd;
+      border-radius: 8px;
+      text-align: center;
+      color: var(--gray-text);
+      cursor: pointer;
+    }
+    .settings-photo-card:hover {
+      background-color: rgba(0, 0, 0, 0.02);
+    }
+
+    /* ====================== NUEVA PANTALLA: ESTADO DE LA CUENTA ====================== */
+    .account-status-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: clamp(78px, 14vh, 140px) 24px 40px;
+      position: relative;
+      height: 100%;
+      gap: 10px;
+    }
+    .scan-circle {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 4px solid var(--google-blue);
+      position: relative;
+      margin-bottom: 32px;
+      animation: rotateScan 2s linear infinite; /* animación de “escaneo” */
+    }
+    @keyframes rotateScan {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .scan-circle img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .status-info {
+      text-align: center;
+      font-size: 16px;
+      margin-bottom: 32px;
+    }
+    .penalties-list {
+      margin-top: 20px;
+      text-align: left;
+    }
+    .penalties-list p {
+      margin: 5px 0;
+      color: red;
+    }
+    .appeal-btn {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background-color: var(--google-blue);
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .appeal-btn:hover {
+      opacity: 0.9;
+    }
+
+    /* ====================== MODAL DE BLOQUEO POR OFENSAS - PANTALLA COMPLETA ESTILO TWITTER ====================== */
+    .offense-modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: var(--background);
+      z-index: 1500;
+      animation: slideUpFullscreen 0.4s ease;
+      overflow-y: auto;
+    }
+    .offense-modal.active {
+      display: block;
+    }
+    @keyframes slideUpFullscreen {
+      from {
+        transform: translateY(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+    .offense-content {
+      background: var(--background);
+      width: 100%;
+      height: 100%;
+      padding: 40px 20px;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: center;
+      position: relative;
+    }
+    .offense-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: var(--background);
+      border-bottom: 1px solid var(--border-color);
+      padding: 16px 20px;
+      z-index: 1600;
+      display: flex;
+      align-items: center;
+      backdrop-filter: blur(12px);
+    }
+    .offense-header h1 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--light-text);
+      text-align: center;
+      flex: 1;
+    }
+    .offense-close-btn {
+      position: absolute;
+      left: 16px;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--hover-bg);
+      border: none;
+      color: var(--light-text);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+    }
+    .offense-close-btn:hover {
+      background: var(--border-color);
+    }
+    .offense-main-content {
+      margin-top: 80px;
+      max-width: 500px;
+      width: 100%;
+    }
+    .offense-icon {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 32px;
+      background: var(--danger-color);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: pulseOffense 2s infinite;
+      box-shadow: 0 20px 40px rgba(244, 33, 46, 0.3);
+    }
+    @keyframes pulseOffense {
+      0%, 100% { transform: scale(1); box-shadow: 0 20px 40px rgba(244, 33, 46, 0.3); }
+      50% { transform: scale(1.05); box-shadow: 0 25px 50px rgba(244, 33, 46, 0.4); }
+    }
+    .offense-icon i {
+      font-size: 48px;
+      color: white;
+    }
+    .offense-title {
+      font-size: 32px;
+      font-weight: 900;
+      color: var(--light-text);
+      margin-bottom: 8px;
+      letter-spacing: -1px;
+    }
+    .offense-subtitle {
+      font-size: 20px;
+      color: var(--danger-color);
+      margin-bottom: 24px;
+      font-weight: 700;
+    }
+    .offense-description {
+      font-size: 16px;
+      color: var(--gray-text);
+      line-height: 1.6;
+      margin-bottom: 32px;
+      padding: 0 16px;
+    }
+    .offense-timer {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 24px;
+      margin: 24px 0;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12);
+    }
+    .offense-timer h3 {
+      margin: 0 0 16px 0;
+      color: var(--light-text);
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .offense-countdown {
+      font-size: 36px;
+      font-weight: 900;
+      color: var(--danger-color);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto;
+      letter-spacing: 1px;
+    }
+    .offense-detected-word {
+      background: rgba(244, 33, 46, 0.1);
+      border: 1px solid rgba(244, 33, 46, 0.3);
+      border-radius: 14px;
+      padding: 16px 20px;
+      margin: 24px 0;
+      color: var(--danger-color);
+      font-weight: 700;
+      font-size: 16px;
+    }
+    .offense-warning-indicator {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--background);
+      z-index: 1400;
+      animation: warningSlideUp 0.3s ease;
+    }
+    .offense-warning-indicator.active {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+    @keyframes warningSlideUp {
+      from {
+        transform: translateY(100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+    .warning-content {
+      text-align: center;
+      padding: 40px 20px;
+      max-width: 400px;
+    }
+    .warning-icon {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 24px;
+      background: linear-gradient(135deg, #FF6B6B, #FF5722);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: warningPulse 1s ease infinite;
+    }
+    @keyframes warningPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+    .warning-icon i {
+      font-size: 40px;
+      color: white;
+    }
+    .warning-title {
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--light-text);
+      margin-bottom: 16px;
+    }
+    .warning-message {
+      font-size: 16px;
+      color: var(--gray-text);
+      line-height: 1.5;
+      margin-bottom: 24px;
+    }
+    .warning-word {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin: 16px 0;
+      font-family: monospace;
+      color: var(--danger-color);
+      font-weight: 600;
+    }
+    .warning-dismiss-btn {
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 9999px;
+      padding: 12px 24px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .warning-dismiss-btn:hover {
+      background: #1A8CD8;
+      transform: translateY(-1px);
+    }
+
+    /* ====================== COUNTRY SEARCH DROPDOWN ====================== */
+    .country-dropdown {
+      position: relative;
+      width: 100%;
+      margin-top: 5px;
+    }
+    .country-list {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      max-height: 120px;
+      overflow-y: auto;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      z-index: 1000;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .country-item {
+      padding: 12px 15px;
+      cursor: pointer;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--light-text);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .country-item:hover {
+      background: var(--hover-bg);
+    }
+    .country-item:last-child {
+      border-bottom: none;
+    }
+    .country-flag {
+      font-size: 18px;
+    }
+
+    /* ====================== OPTIMIZACIONES MÓVILES ====================== */
+    @supports(padding: max(0px)) {
+      .screen-content {
+        padding-left: max(10px, env(safe-area-inset-left));
+        padding-right: max(10px, env(safe-area-inset-right));
+      }
+    }
+
+    @media (max-width: 480px) {
+      .logo h1 {
+        font-size: 26px;
+        margin-bottom: 3px;
+        margin-top: 0;
+        padding-top: 0;
+      }
+
+      .logo {
+        margin-top: 0;
+        margin-bottom: 8px;
+        padding-top: 0;
+      }
+
+      .logo p {
+        margin-top: 0;
+        margin-bottom: 3px;
+        padding-top: 0;
+      }
+
+      .form-group {
+        margin-bottom: 8px;
+        margin-top: 0;
+      }
+
+      .social-login {
+        margin-bottom: 8px;
+        margin-top: 0;
+      }
+
+      input, select {
+        font-size: 16px; /* Previene zoom en iOS */
+        padding: 11px 12px;
+      }
+
+      .screen-content {
+        padding: 54px 14px 22px;
+        margin-top: 0;
+      }
+
+      #authMethodScreen .screen-content,
+      #loginScreen .screen-content,
+      #registerScreen .screen-content,
+      #forgotPasswordScreen .screen-content,
+      #profileSetupScreen .screen-content,
+      #countryScreen .screen-content {
+        padding-top: 58px;
+      }
+    }
+
+    /* Prevenir problemas de altura en móviles */
+    @media (max-height: 600px) {
+      .screen-content {
+        min-height: 100vh;
+        justify-content: flex-start;
+        padding-top: 34px;
+      }
+
+      .logo {
+        margin-top: 0;
+        margin-bottom: 16px;
+      }
+
+      .form-group {
+        margin-bottom: 12px;
+      }
+    }
+
+    /* Ajuste específico para pantallas muy pequeñas */
+    @media (max-height: 500px) {
+      .logo h1 {
+        font-size: 22px;
+        margin-bottom: 4px;
+      }
+
+      .logo p {
+        font-size: 14px;
+        margin-bottom: 0;
+      }
+
+      .logo {
+        margin-top: 0;
+        margin-bottom: 12px;
+      }
+
+      .screen-content {
+        padding-top: 20px;
+      }
+    }
+
+
+
+    /* ====================== NUEVA PANTALLA DE SOPORTE (INCIDENCIAS) ====================== */
+    .support-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 80px 24px 24px;
+      height: 100%;
+      overflow-y: auto;
+    }
+    .support-container h2 {
+      margin-bottom: 32px;
+    }
+    .support-header {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 32px;
+    }
+    .support-content {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .incidence-list {
+      width: 100%;
+      margin-bottom: 32px;
+      text-align: left;
+    }
+    .incidence-item {
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 10px;
+      margin-bottom: 10px;
+      background-color: var(--card-bg);
+      cursor: pointer;
+    }
+    .incidence-item h4 {
+      margin: 0;
+      font-size: 16px;
+      color: var(--primary-color);
+    }
+    .incidence-item p {
+      margin: 5px 0 0 0;
+      font-size: 14px;
+      color: var(--gray-text);
+    }
+    .btn-new-incidence {
+      margin-bottom: 32px;
+      background-color: var(--fb-blue);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+    .new-incidence-form {
+      display: none; /* Se muestra cuando el usuario pulsa "Abrir incidencia" */
+      width: 100%;
+      background-color: var(--card-bg);
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 32px;
+    }
+    .new-incidence-form textarea {
+      width: 100%;
+      min-height: 80px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 10px;
+      resize: none;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+    .incidence-response {
+      margin-top: 10px;
+      color: blue;
+      font-size: 14px;
+    }
+
+
+    #settingsScreen,
+    #profileScreen,
+    #activityScreen,
+    #notificationsScreen,
+    #legalScreen,
+    #supportScreen {
+      background: #ffffff;
+    }
+
+    .settings-screen-content {
+      width: 100%;
+      max-width: none;
+      min-height: 100vh;
+      margin: 0;
+      padding: calc(64px + env(safe-area-inset-top)) 0 0;
+      background: #ffffff;
+    }
+
+    .screen-topbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1200;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: calc(12px + env(safe-area-inset-top)) 16px 12px;
+      background: #ffffff;
+      backdrop-filter: none;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .screen-topbar h2 {
+      color: #111827;
+      font-size: 18px;
+      margin: 0;
+      letter-spacing: 0.2px;
+    }
+
+    .screen-close-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid #d1d5db;
+      background: #ffffff;
+      color: #111827;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+
+    .settings-hero {
+      background: #ffffff;
+      color: #111827;
+      border-radius: 0;
+      padding: 18px 16px;
+      margin-bottom: 0;
+      border: none;
+      box-shadow: none;
+    }
+
+    .settings-hero h3 { font-size: 22px; margin-bottom: 8px; }
+    .settings-hero p { color: var(--google-text-secondary); font-size: 13px; }
+
+    .settings-list { display: grid; gap: 10px; }
+
+    .settings-item {
+      width: 100%;
+      border: none;
+      border-radius: 0;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px;
+      cursor: pointer;
+      box-shadow: none;
+      border-top: 1px solid #eceff3;
+    }
+
+    .settings-item-left { display: flex; align-items: center; gap: 12px; }
+    .settings-item-left i {
+      width: 38px; height: 38px; border-radius: 12px;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: #fff1f2; color: var(--primary-color);
+      font-size: 16px;
+    }
+    .settings-item-left span {
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.1px;
+      color: #111827;
+    }
+
+    .profile-summary-card,
+    .activity-card,
+    .legal-card,
+    .notifications-card,
+    .support-card {
+      border: none;
+      border-radius: 0;
+      background: #fff;
+      padding: 16px;
+      margin-bottom: 0;
+      box-shadow: none;
+      border-top: 1px solid #eceff3;
+    }
+
+    .profile-header { display:flex; align-items:center; gap:12px; margin-bottom:14px; }
+    .profile-header img { width:68px; height:68px; border-radius:50%; object-fit:cover; border:3px solid #fff; box-shadow: 0 4px 14px rgba(0,0,0,0.2); }
+
+    .kpi-grid { display:grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .kpi { border-radius:12px; border:1px solid #eceff3; padding:10px; background:#fafafa; }
+    .kpi strong { display:block; font-size:20px; margin-top:4px; }
+
+    .activity-tabs { display:flex; gap:8px; overflow-x:auto; padding-bottom:6px; margin-bottom:10px; }
+    .activity-tab {
+      border: 1px solid #d8dbe3;
+      background: #fff;
+      color: #1f2937;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 12px;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+    .activity-tab.active {
+      background: #cd040b;
+      color: #fff;
+      border-color: #cd040b;
+    }
+
+    .activity-chart-card {
+      margin: 10px 0 14px;
+      border: 1px solid #e8edf4;
+      border-radius: 10px;
+      background: #fcfdff;
+      padding: 10px;
+    }
+    .activity-chart-head {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      font-size:12px;
+      margin-bottom: 8px;
+      color:#334155;
+    }
+    .activity-chart-value {
+      font-weight: 700;
+      font-variant-numeric: tabular-nums;
+      color:#b91c1c;
+      background:#fff1f2;
+      border:1px solid #fecdd3;
+      padding:2px 8px;
+      border-radius:999px;
+    }
+    .activity-chart-wrap {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background:#fff;
+      border:1px solid #e7ecf3;
+      border-radius:8px;
+      overflow:hidden;
+    }
+    .activity-chart-wrap svg { width:100%; height:100%; display:block; }
+    .activity-chart-xlabels {
+      display:grid;
+      grid-template-columns: repeat(7, 1fr);
+      margin-top: 6px;
+      font-size: 10px;
+      color:#64748b;
+      text-align:center;
+    }
+    .activity-scrubber {
+      width: 100%;
+      margin-top: 8px;
+      accent-color: #cd040b;
+    }
+
+    .country-pill { display:flex; align-items:center; justify-content:space-between; font-size:13px; border-radius:10px; padding:8px 10px; background:#f8fafc; margin-bottom:8px; border:1px solid #edf2f7; }
+    .activity-live { display:flex; align-items:center; gap:8px; color:#059669; font-size:13px; margin-bottom:10px; }
+    .activity-live::before { content:""; width:8px; height:8px; border-radius:50%; background:#10b981; box-shadow: 0 0 0 6px rgba(16,185,129,.14); }
+
+    .legal-text {
+      max-height: 56vh;
+      overflow-y: auto;
+      line-height: 1.62;
+      color: var(--google-text-secondary);
+      font-size: 13px;
+      padding-right: 4px;
+    }
+
+  
+/* === FIX MOVIL + OMEGLE AUTH === */
+html,body{ background:#000 !important; overflow:hidden !important; position:fixed !important; inset:0 !important; height:100dvh !important; }
+.container{ max-width:480px !important; left:50% !important; transform:translateX(-50%) !important; background:#000 !important; }
+.screen{ background:#fff !important; }
+.screen-content{ max-width:480px !important; padding:0 !important; min-height:100dvh !important; background:#fff !important; }
+
+/* Omegle header */
+.omegle-header{ background:#f7f7f7; border-bottom:1px solid #ddd; padding:18px 16px 12px; text-align:left; }
+.omegle-logo{ font-size:34px; font-weight:900; letter-spacing:-1px; color:#000; }
+.omegle-logo span{ color:#cd040b; }
+.omegle-tagline{ font-size:12px; color:#555; margin-top:3px; }
+.omegle-main{ padding:14px; text-align:left; flex:1; overflow-y:auto; }
+.omegle-box{ border:1px solid #ccc; background:#fff; border-radius:4px; padding:12px; margin-bottom:12px; }
+.omegle-box h3{ font-size:13px; font-weight:800; margin-bottom:4px; }
+.omegle-box p{ font-size:11px; color:#444; line-height:1.4; }
+.omegle-interests{ display:flex; gap:6px; margin-top:8px; }
+.omegle-interests input{ flex:1; border:1px solid #999 !important; border-radius:3px !important; padding:6px 8px !important; font-size:12px !important; background:#fff !important; }
+.omegle-start-grid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:12px 0; }
+.omegle-btn{ border:1px solid #000; border-radius:4px; padding:14px 6px; font-weight:900; font-size:12px; text-transform:uppercase; display:flex; flex-direction:column; align-items:center; gap:2px; }
+.omegle-btn.video{ background:#cd040b; color:#fff; border-color:#8a0005; }
+.omegle-btn.text{ background:#fff; color:#000; }
+.omegle-disclaimer{ background:#eef; border:1px solid #cce; padding:8px; font-size:10px; color:#333; border-radius:3px; }
+.omegle-login-card{ border:1px solid #ddd; border-radius:4px; padding:12px; background:#fafafa; }
+.omegle-login-card label{ font-size:11px; font-weight:700; color:#000; display:block; margin-bottom:3px; }
+.omegle-login-card input{ width:100%; border:1px solid #aaa !important; border-radius:3px !important; padding:8px !important; background:#fff !important; font-size:13px !important; margin-bottom:8px !important; }
+.omegle-footer{ text-align:center; font-size:10px; color:#777; padding:10px; border-top:1px solid #eee; }
+
+/* Fix profileSetupScreen que estaba fuera de lugar */
+#profileSetupScreen .avatar-upload{ width:90px; height:90px; margin:12px auto; border-radius:50%; background:#eee; display:flex; align-items:center; justify-content:center; position:relative; overflow:hidden; border:2px solid #ddd; cursor:pointer; }
+#profileSetupScreen .avatar-upload img{ width:100%; height:100%; object-fit:cover; display:none; }
+#profileSetupScreen .form-group{ margin:12px 16px; }
+#profileSetupScreen .form-group label{ font-size:11px; font-weight:700; }
+#profileSetupScreen .form-group input{ border:1px solid #aaa !important; border-radius:3px !important; padding:10px !important; font-size:14px !important; }
+
+/* VideoCallScreen OmeTV movil */
+#videoCallScreen{ background:#000 !important; padding:0 !important; }
+#videoCallScreen video#remoteVideo{ position:absolute !important; inset:0 !important; width:100% !important; height:100% !important; object-fit:cover !important; background:#0a0a0a !important; }
+#videoCallScreen video#localVideo{ position:absolute !important; top:calc(52px + env(safe-area-inset-top)) !important; right:10px !important; width:88px !important; height:118px !important; border-radius:14px !important; border:1.5px solid rgba(255,255,255,0.25) !important; z-index:25 !important; }
+#videoCallScreen .watermark{ top:calc(12px + env(safe-area-inset-top)) !important; left:12px !important; font-size:14px !important; background:rgba(0,0,0,0.3); padding:4px 8px; border-radius:8px; }
+
+</style>
+</head>
+<body>
+  <!-- La marca de agua se mostrará únicamente en el videoCallScreen -->
+  <div class="watermark">BealyChat</div>
+  <!-- Ícono de Estado de Cuenta (solo en videollamada) -->
+  <div class="account-status-icon"
+       onclick="openAccountStatusScreen()"
+       style="display: none;">
+    <i class="fa-solid fa-user-shield"></i>
+  </div>
+  <!-- Ícono de Reporte (solo en videollamada) -->
+  <div class="report-icon" onclick="openReportModal()"
+       style="display: none;">
+    <i class="fa-solid fa-flag"></i>
+  </div>
+  <div class="profile-icon" onclick="openProfileScreen()"
+       style="display: none;">
+    <i class="fa-solid fa-user"></i>
+  </div>
+  <div class="config-icon" onclick="openConfigScreen()"
+       style="display: none;">
+    <i class="fa-solid fa-gear"></i>
+  </div>
+
+  <!-- Google AdSense Ad Unit -->
+  <ins class="adsbygoogle"
+       style="display:block"
+       data-ad-client="ca-pub-4653147807800151"
+       data-ad-slot="1234567890"
+       data-ad-format="auto"
+       data-full-width-responsive="true"></ins>
+
+  <div class="screen" id="supportScreen">
+    <div class="screen-topbar">
+      <h2>Soporte</h2>
+      <button class="screen-close-btn" onclick="goToScreen('settingsScreen')"><i class="fa-solid fa-times"></i></button>
+    </div>
+    <div class="settings-screen-content">
+      <div class="support-card">
+        <p style="margin-bottom:10px;color:var(--gray-text);">Describe tu problema. Te responderemos y la respuesta llegará a Notificaciones.</p>
+        <div class="incidence-list" id="incidenceList"></div>
+        <button class="btn-new-incidence" onclick="toggleNewIncidenceForm()">
+          <i class="fa-solid fa-plus"></i> Nueva Consulta
+        </button>
+        <div class="new-incidence-form" id="newIncidenceForm" style="display:none;">
+          <h3>Crear Nueva Consulta</h3>
+          <p>Describe tu problema o pregunta (mínimo 11 caracteres)</p>
+          <textarea id="incidenceDescription" placeholder="¿En qué podemos ayudarte?"></textarea>
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <p id="charCounter" style="color:var(--fb-gray);">0/500</p>
+            <button class="btn-new-incidence" onclick="submitIncidence()">Enviar Consulta</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+       (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+
+  <div class="container">
+    <!-- PANTALLAS: LOGIN, REGISTRO, RECUPERAR, PERFIL, FECHA NACIMIENTO, PAÍS, VIDEOLLAMADA, BLOQUEADO -->
+    
+    <div class="screen active" id="authMethodScreen">
+      <div class="screen-content" style="display:flex; flex-direction:column;">
+        <div class="omegle-header">
+          <div class="omegle-logo">Bealy<span>Chat</span></div>
+          <div class="omegle-tagline">¡Habla con extraños! - Alternativa a Omegle</div>
+        </div>
+        <div class="omegle-main">
+          <div class="omegle-box">
+            <h3>¿Qué quieres hablar?</h3>
+            <p>Agrega intereses separados por comas (opcional). Ej: música, México, gaming</p>
+            <div class="omegle-interests">
+              <input id="omegleInterests" placeholder="Ej: música, anime, deportes">
+              <button onclick="document.getElementById('omegleInterests').value=''">Limpiar</button>
+            </div>
+          </div>
+          <div class="omegle-start-grid">
+            <button class="omegle-btn video" onclick="handleOmegleStart('video')"><span><i class='fa-solid fa-video'></i> VIDEO</span><small>Con cámara</small></button>
+            <button class="omegle-btn text" onclick="handleOmegleStart('text')"><span><i class='fa-solid fa-comment'></i> TEXTO</span><small>Solo chat</small></button>
+          </div>
+          <div class="omegle-disclaimer"><strong>18+ solamente.</strong> Al iniciar aceptas no mostrar desnudos y que el video puede ser moderado. Usa el botón Reportar si ves algo malo.</div>
+          <div style="margin-top:12px; border-top:1px dashed #ccc; padding-top:10px;">
+            <p style="font-size:11px; color:#555; margin-bottom:6px;">¿Ya tienes cuenta?</p>
+            <div style="display:flex; gap:8px;">
+              <button style="flex:1; border:1px solid #cd040b; background:#fff; color:#cd040b; padding:8px; border-radius:4px; font-weight:700; font-size:11px;" onclick="goToScreen('loginScreen')">Email</button>
+              <button style="flex:1; border:1px solid #ddd; background:#fff; padding:8px; border-radius:4px; font-weight:700; font-size:11px;" onclick="if(window.signInWithGoogle) signInWithGoogle()"><i class="fa-brands fa-google"></i> Google</button>
+            </div>
+          </div>
+        </div>
+        <div class="omegle-footer">BealyChat es anónimo y gratuito. No guardamos tus conversaciones.</div>
+      </div>
+    </div>
+
+
+    
+    <div class="screen" id="loginScreen">
+      <div class="screen-content" style="display:flex; flex-direction:column;">
+        <div class="omegle-header">
+          <div class="omegle-logo" style="font-size:28px;">Bealy<span>Chat</span></div>
+          <div class="omegle-tagline">Iniciar sesión - Rápido como Omegle</div>
+        </div>
+        <div class="omegle-main">
+          <div class="omegle-login-card">
+            <label>Correo</label>
+            <input type="email" id="email" placeholder="tu@email.com" required>
+            <label>Contraseña</label>
+            <input type="password" id="password" placeholder="••••••••" required>
+            <button type="button" onclick="loginUser()" style="background:#cd040b; color:#fff; border:none; border-radius:4px; width:100%; padding:11px; font-weight:800; text-transform:uppercase; font-size:12px;">Entrar y Chatear</button>
+            <div style="display:flex; justify-content:space-between; margin-top:8px; font-size:10px;">
+              <a href="#" onclick="goToScreen('forgotPasswordScreen')" style="color:#cd040b;">¿Olvidaste contraseña?</a>
+              <a href="#" onclick="goToScreen('registerScreen')" style="color:#000; font-weight:700;">Crear cuenta</a>
+            </div>
+          </div>
+          <button onclick="goToScreen('authMethodScreen')" style="margin-top:10px; background:transparent; border:none; color:#666; font-size:11px; text-decoration:underline;"><i class="fa-solid fa-arrow-left"></i> Volver al inicio</button>
+        </div>
+      </div>
+    </div>
+
+
+    
+    <div class="screen" id="registerScreen">
+      <div class="screen-content" style="display:flex; flex-direction:column;">
+        <div class="omegle-header">
+          <div class="omegle-logo" style="font-size:28px;">Bealy<span>Chat</span></div>
+          <div class="omegle-tagline">Crear cuenta en 10 segundos</div>
+        </div>
+        <div class="omegle-main">
+          <div class="omegle-login-card">
+            <label>Correo</label>
+            <input type="email" id="registerEmail" placeholder="tu@email.com" required>
+            <label>Contraseña</label>
+            <input type="password" id="registerPassword" placeholder="Mínimo 6 caracteres" required>
+            <label>Confirmar</label>
+            <input type="password" id="confirmPassword" placeholder="Repite contraseña" required>
+            <label>País</label>
+            <input type="text" id="registerCountrySearch" placeholder="Buscar país..." oninput="filterCountries()" onclick="showCountryList()">
+            <input type="hidden" id="registerCountry">
+            <div class="country-dropdown" id="countryDropdown" style="display:none;"><div class="country-list" id="countryList"></div></div>
+            <button type="button" onclick="registerUser()" style="background:#cd040b; color:#fff; border:none; border-radius:4px; width:100%; padding:11px; font-weight:800; text-transform:uppercase; font-size:12px; margin-top:8px;">Crear cuenta</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+
+    <div class="screen" id="countryScreen">
+      <div class="screen-content">
+        <div class="logo">
+          <h1>BealyChat</h1>
+        </div>
+        <div>
+          <div class="form-group">
+            <label for="country">País</label>
+            <div class="input-group">
+              <i class="fa-solid fa-globe"></i>
+              <select id="country">
+                <option value="" disabled selected>Selecciona tu país</option>
+                <option value="US">Estados Unidos</option>
+                <option value="MX">México</option>
+                <option value="ES">España</option>
+                <option value="KR">Corea del Sur</option>
+                <option value="CN">China</option>
+                <option value="OT">Otro</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="interestsInput">Intereses (estilo Omegle)</label>
+            <div class="input-group">
+              <input type="text" id="interestsInput" placeholder="Ej: música, anime, gaming, deportes">
+            </div>
+          </div>
+          <button type="button" class="btn btn-primary mt-4" onclick="updateProfileAndConnect()">Conectar ahora</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="screen" id="videoCallScreen">
+      <div class="video-grid">
+        <div class="video-container">
+          <div class="local-video">
+            <video id="localVideo" autoplay playsinline muted></video>
+          </div>
+        </div>
+        <div class="video-container">
+          <div class="remote-video" id="remoteVideoContainer">
+            <video id="remoteVideo" autoplay playsinline></video>
+            <div class="camera-offline" id="remoteCameraOffline">
+              <i class="fa-solid fa-video-slash"></i>
+              <p>Cámara Offline</p>
+            </div>
+          <!-- Info básica del usuario -->
+          <div class="user-info" id="remoteUserInfo">
+            <img id="remoteAvatar" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2230%22 height=%2230%22 viewBox=%220 0 30 30%22%3E%3Crect width=%2230%22 height=%2230%22 fill=%22%23e8eaed%22/%3E%3Ccircle cx=%2215%22 cy=%2211%22 r=%225%22 fill=%22%239aa0a6%22/%3E%3Crect x=%227%22 y=%2219%22 width=%2216%22 height=%227%22 rx=%223.5%22 fill=%22%239aa0a6%22/%3E%3C/svg%3E" alt="User" width="30" height="30">
+            <span id="remoteName"></span>
+            <!-- Indicador de conexión -->
+            <span id="connectionIndicator" class="connection-indicator"></span>
+          </div>
+          <div class="connecting" id="connectingIndicator">
+            <i class="fa-solid fa-spinner fa-spin" aria-label="Buscando conexión"></i>
+          </div>
+        </div>
+        <div class="video-controls">
+          <div class="control-btn" onclick="toggleAudio()" title="Micrófono">
+            <i class="fa-solid fa-microphone-slash" id="micIcon"></i>
+          </div>
+          <div class="control-btn" onclick="restartCall()" title="Siguiente usuario">
+            <i class="fa-solid fa-forward"></i>
+          </div>
+        </div>
+        <div class="swipe-hint" id="swipeHint">⇆</div>
+
+        <div class="chat-panel" id="chatPanel">
+          <div class="emoji-carousel" id="emojiCarousel"></div>
+          <div class="chat-input-row">
+            <input id="chatInput" type="text" maxlength="120" placeholder="Escribe un mensaje...">
+            <button type="button" id="sendChatBtn" onclick="sendChatMessage()">Enviar</button>
+          </div>
+          <div class="chat-messages" id="chatMessages"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="screen" id="blockedScreen">
+      <div class="screen-content blocked-screen">
+        <h2>Lo sentimos</h2>
+        <p>
+          Su cuenta ha sido bloqueada porque es menor de edad o por infracciones a la comunidad.<br>
+          No podrá acceder a la aplicación.<br>
+          Su cuenta estará disponible dentro de tres días aproximadamente.<br>
+          Si cree que es un error, póngase en contacto con soporte.
+        </p>
+      </div>
+    </div>
+
+
+  </div>
+
+  <!-- MODAL FULL SCREEN: EDITAR PERFIL -->
+  <div class="full-screen-modal" id="profileModal">
+    <div class="full-screen-content">
+      <span class="full-screen-close" onclick="closeProfileModal()">&times;</span>
+      <h2>Editar Perfil</h2>
+      <div class="avatar-upload" onclick="document.getElementById('avatarInputProfile').click()">
+        <input type="file" id="avatarInputProfile" style="display: none;" accept="image/*">
+        <i class="fa-solid fa-camera"></i>
+        <img id="avatarPreviewProfile" src="" alt="Avatar">
+      </div>
+      <div class="form-group">
+        <label for="usernameProfile">Nombre de usuario</label>
+        <div class="input-group">
+          <i class="fa-solid fa-user"></i>
+          <input type="text" id="usernameProfile" placeholder="Elige un nombre de usuario">
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="emailProfile">Correo electrónico</label>
+        <div class="input-group">
+          <i class="fa-solid fa-envelope"></i>
+          <input type="email" id="emailProfile" placeholder="Tu correo electrónico" disabled>
+        </div>
+      </div>
+      <h3>Mis Fotos</h3>
+      <div class="photo-grid" id="photoGrid">
+        <div class="photo-slot" onclick="uploadPhoto(0)" id="slot0"></div>
+        <div class="photo-slot" onclick="uploadPhoto(1)" id="slot1"></div>
+        <div class="photo-slot" onclick="uploadPhoto(2)" id="slot2"></div>
+        <div class="photo-slot" onclick="uploadPhoto(3)" id="slot3"></div>
+        <div class="photo-slot" onclick="uploadPhoto(4)" id="slot4"></div>
+        <div class="photo-slot" onclick="uploadPhoto(5)" id="slot5"></div>
+      </div>
+      <input type="file" id="photoInput" accept="image/*" style="display:none" onchange="handlePhotoUpload(event)">
+      <br>
+      <button type="button" class="btn btn-primary" onclick="savePhotos()">Guardar</button>
+      <br><br>
+      <button type="button" class="btn btn-outline" onclick="updateProfileData()">Actualizar Perfil</button>
+    </div>
+  </div>
+
+  <!-- MODAL ESTILO TWITTER: REPORTAR USUARIO -->
+  <div class="report-modal" id="reportModal">
+    <div class="report-content">
+      <div class="report-header">
+        <button class="report-close-btn" onclick="closeReportModal()">
+          <i class="fa-solid fa-times"></i>
+        </button>
+        <h2>Reportar</h2>
+      </div>
+
+      <div class="report-body">
+        <div class="report-user-info">
+          <img id="reportUserAvatar" src="" alt="Usuario">
+          <div class="user-details">
+            <h3 id="reportUsername">Usuario</h3>
+            <p>@usuario</p>
+          </div>
+        </div>
+
+        <h3 class="report-subtitle">¿Cuál es el problema?</h3>
+        <p class="report-description">Tu reporte es anónimo, excepto si reportas una infracción de propiedad intelectual. Si alguien está en peligro inmediato, llama a las autoridades locales.</p>
+
+        <div class="report-options">
+          <div class="report-option" onclick="selectReportOption('desnudos')">
+            <div class="option-icon">
+              <i class="fa-solid fa-eye-slash"></i>
+            </div>
+            <div class="option-text">
+              <span>Es contenido abusivo o dañino</span>
+            </div>
+            <div class="option-check"></div>
+          </div>
+
+          <div class="report-option" onclick="selectReportOption('violencia')">
+            <div class="option-icon">
+              <i class="fa-solid fa-hand-fist"></i>
+            </div>
+            <div class="option-text">
+              <span>Expresa intenciones de autolesión o suicidio</span>
+            </div>
+            <div class="option-check"></div>
+          </div>
+
+          <div class="report-option" onclick="selectReportOption('explicito')">
+            <div class="option-icon">
+              <i class="fa-solid fa-ban"></i>
+            </div>
+            <div class="option-text">
+              <span>Comportamiento inapropiado</span>
+            </div>
+            <div class="option-check"></div>
+          </div>
+
+          <div class="report-option" onclick="selectReportOption('menor')">
+            <div class="option-icon">
+              <i class="fa-solid fa-child"></i>
+            </div>
+            <div class="option-text">
+              <span>Puede involucrar a un menor</span>
+            </div>
+            <div class="option-check"></div>
+          </div>
+
+          <div class="report-option" onclick="selectReportOption('acoso')">
+            <div class="option-icon">
+              <i class="fa-solid fa-bullhorn"></i>
+            </div>
+            <div class="option-text">
+              <span>Es spam</span>
+            </div>
+            <div class="option-check"></div>
+          </div>
+
+          <div class="report-option" onclick="selectReportOption('suplantacion')">
+            <div class="option-icon">
+              <i class="fa-solid fa-user-secret"></i>
+            </div>
+            <div class="option-text">
+              <span>Suplanta a alguien</span>
+            </div>
+            <div class="option-check"></div>
+          </div>
+
+          <div class="report-option" onclick="selectReportOption('otro')">
+            <div class="option-icon">
+              <i class="fa-solid fa-ellipsis"></i>
+            </div>
+            <div class="option-text">
+              <span>Algo más</span>
+            </div>
+            <div class="option-check"></div>
+          </div>
+        </div>
+
+        <div class="report-actions">
+          <button type="button" class="btn-cancel" onclick="closeReportModal()">Cancelar</button>
+          <button type="button" class="btn-report" onclick="submitReport()" disabled>
+            Reportar
+          </button>
+        </div>
+
+        <div class="report-status" id="reportStatus"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NUEVA PANTALLA: ESTADO DE LA CUENTA -->
+  <div class="screen" id="accountStatusScreen">
+    <div class="screen-content account-status-screen" id="accountStatusContainer">
+      <div class="scan-circle" id="scanCircle">
+        <img id="scanAvatar" src="https://cdn-icons-png.flaticon.com/512/3237/3237472.png" alt="Avatar Scanning">
+      </div>
+      <div class="status-info" id="statusInfo">
+        <p>Escaneando cuenta, por favor espera...</p>
+      </div>
+      <div class="penalties-list" id="penaltiesList"></div>
+    </div>
+  </div>
+
+  <!-- MODAL DE BLOQUEO POR OFENSAS - PANTALLA COMPLETA -->
+  <div class="offense-modal" id="offenseModal">
+    <div class="offense-content">
+      <div class="offense-header">
+        <button class="offense-close-btn" onclick="closeOffenseModal()">
+          <i class="fa-solid fa-times"></i>
+        </button>
+        <h1>Cuenta Suspendida</h1>
+      </div>
+
+      <div class="offense-main-content">
+        <div class="offense-icon">
+          <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <h2 class="offense-title">Cuenta Bloqueada</h2>
+        <h3 class="offense-subtitle">Moderación Automática Activada</h3>
+        <p class="offense-description">
+          Nuestros sistemas de moderación automática han detectado contenido inapropiado o lenguaje ofensivo en tu transmisión.
+          Tu cuenta ha sido bloqueada temporalmente para mantener un ambiente seguro para todos los usuarios.
+        </p>
+        <div class="offense-detected-word" id="detectedWord">
+          Palabra detectada: <span id="offensiveWordDisplay"></span>
+        </div>
+        <div class="offense-timer">
+          <h3>Tiempo restante de bloqueo</h3>
+          <div class="offense-countdown" id="offenseCountdown">
+            3 días 00:00:00
+          </div>
+        </div>
+        <p class="offense-description">
+          Puedes apelar esta decisión contactando a nuestro equipo de soporte.
+          Recuerda seguir nuestras pautas de la comunidad para evitar futuras restricciones.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- INDICADOR DE ADVERTENCIA - PANTALLA COMPLETA -->
+
+  <div class="offense-warning-indicator" id="warningIndicator">
+    <div class="warning-content">
+      <div class="warning-icon">
+        <i class="fa-solid fa-exclamation-triangle"></i>
+      </div>
+      <h2 class="warning-title">Lenguaje Inapropiado Detectado</h2>
+      <p class="warning-message">
+        Nuestro sistema ha detectado lenguaje ofensivo en tu transmisión.
+        Este es tu <span id="warningCount">1</span> de 3 advertencias.
+      </p>
+      <div class="warning-word" id="warningWordDisplay">
+        Palabra detectada: "ejemplo"
+      </div>
+      <p class="warning-message">
+        Por favor, mantén un lenguaje apropiado. Si recibes 3 advertencias,
+        tu cuenta será bloqueada temporalmente.
+      </p>
+      <button class="warning-dismiss-btn" onclick="dismissWarning()">
+        Entendido
+      </button>
+    </div>
+  </div>
+
+  <!-- SECCIONES DE CONFIGURACIÓN / PERFIL / ACTIVIDAD / NOTIFICACIONES / LEGAL -->
+  <div class="screen" id="settingsScreen">
+    <div class="screen-topbar">
+      <h2>Configuración</h2>
+      <button class="screen-close-btn" onclick="goToScreen('videoCallScreen')"><i class="fa-solid fa-times"></i></button>
+    </div>
+    <div class="settings-screen-content">
+      <div class="settings-hero">
+        <h3>Configuración</h3>
+        <p>Administra tu cuenta, actividad, notificaciones, soporte y legal.</p>
+      </div>
+      <div class="settings-list">
+        <button class="settings-item" onclick="goToScreen('activityScreen')">
+          <span class="settings-item-left"><i class="fa-solid fa-chart-line"></i><span>Tu actividad</span></span>
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+        <button class="settings-item" onclick="goToScreen('notificationsScreen')">
+          <span class="settings-item-left"><i class="fa-solid fa-bell"></i><span>Notificaciones</span></span>
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+        <button class="settings-item" onclick="openSupportScreen()">
+          <span class="settings-item-left"><i class="fa-solid fa-headset"></i><span>Soporte</span></span>
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+        <button class="settings-item" onclick="goToScreen('legalScreen')">
+          <span class="settings-item-left"><i class="fa-solid fa-scale-balanced"></i><span>Legal</span></span>
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="profileScreen">
+    <div class="screen-topbar">
+      <h2>Perfil</h2>
+      <button class="screen-close-btn" onclick="goToScreen('videoCallScreen')"><i class="fa-solid fa-times"></i></button>
+    </div>
+    <div class="settings-screen-content">
+      <div class="profile-summary-card">
+        <div class="profile-header">
+          <img id="profileScreenAvatar" src="https://cdn-icons-png.flaticon.com/512/3237/3237472.png" alt="avatar">
+          <div>
+            <h3 id="profileScreenName">Usuario</h3>
+            <p id="profileScreenCountry">País no definido</p>
+          </div>
+        </div>
+        <div class="kpi-grid">
+          <div class="kpi"><span>Conexiones</span><strong id="profileTotalConnections">0</strong></div>
+          <div class="kpi"><span>Interacciones</span><strong id="profileTotalInteractions">0</strong></div>
+          <div class="kpi"><span>Seguidores</span><strong id="profileFollowers">0</strong></div>
+          <div class="kpi"><span>Reportes</span><strong id="profileReports">0</strong></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="activityScreen">
+    <div class="screen-topbar">
+      <h2>Tu actividad</h2>
+      <button class="screen-close-btn" onclick="goToScreen('settingsScreen')"><i class="fa-solid fa-times"></i></button>
+    </div>
+    <div class="settings-screen-content">
+      <div class="activity-card">
+
+        <div class="activity-tabs">
+          <button class="activity-tab active" data-metric="connections" onclick="selectActivityMetric('connections')">Conexiones</button>
+          <button class="activity-tab" data-metric="minutes" onclick="selectActivityMetric('minutes')">Minutos</button>
+          <button class="activity-tab" data-metric="interactions" onclick="selectActivityMetric('interactions')">Interacción</button>
+        </div>
+        <div class="kpi-grid" style="margin-bottom:12px;">
+          <div class="kpi"><span>Usuarios conectados</span><strong id="activityConnectionsCount">0</strong></div>
+          <div class="kpi"><span>Tiempo total</span><strong id="activityMinutes">0m</strong></div>
+        </div>
+        <div class="activity-chart-card">
+          <div class="activity-chart-head">
+            <span id="activityChartMetricLabel">Conexiones</span>
+            <strong class="activity-chart-value" id="activityChartPointValue">0</strong>
+          </div>
+          <div class="activity-chart-wrap">
+            <svg id="activityChartSvg" viewBox="0 0 320 180" preserveAspectRatio="none"></svg>
+          </div>
+          <div class="activity-chart-xlabels" id="activityChartXLabels"></div>
+          <input id="activityScrubber" class="activity-scrubber" type="range" min="0" max="6" value="6" oninput="updateActivityScrubber(this.value)">
+        </div>
+        <h4 style="margin-bottom:8px;">Países con los que has conectado</h4>
+        <div id="activityCountryList"></div>
+        <h4 style="margin:12px 0 8px;">Nivel de interacción</h4>
+        <p id="activityInteractionLabel">Aún sin suficiente información.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="notificationsScreen">
+    <div class="screen-topbar">
+      <h2>Notificaciones</h2>
+      <button class="screen-close-btn" onclick="goToScreen('settingsScreen')"><i class="fa-solid fa-times"></i></button>
+    </div>
+    <div class="settings-screen-content">
+      <div class="notifications-card">
+        <p style="margin:8px 0 12px;">Aquí llegarán notificaciones del sistema y respuestas de soporte.</p>
+        <div id="notificationsList">
+          <p style="color:var(--gray-text);">Sin notificaciones por ahora.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="screen" id="legalScreen">
+    <div class="screen-topbar">
+      <h2>Legal</h2>
+      <button class="screen-close-btn" onclick="goToScreen('settingsScreen')"><i class="fa-solid fa-times"></i></button>
+    </div>
+    <div class="settings-screen-content">
+      <div class="legal-card">
+        <h3>Términos de servicio</h3>
+        <div class="legal-text" id="termsText">
+          <p>Bienvenido a BealyChat. Al utilizar la plataforma, aceptas mantener una conducta respetuosa, no compartir contenido ilegal, y cumplir con la mayoría de edad aplicable en tu jurisdicción.</p>
+          <p>1) Uso permitido: BealyChat es una plataforma de videochat aleatorio para socializar. Está prohibido usar la app para acoso, fraude, spam, explotación, extorsión, distribución de malware o cualquier actividad ilícita.</p>
+          <p>2) Moderación y seguridad: Nos reservamos el derecho de aplicar advertencias, suspensiones temporales o bloqueos permanentes cuando se detecte comportamiento que incumpla estas reglas. Los procesos pueden incluir revisión automática y reportes de usuarios.</p>
+          <p>3) Contenido del usuario: Eres responsable del contenido que compartes (texto, audio, video, imagen, nombre de usuario y foto de perfil). No publiques información sensible de terceros sin consentimiento.</p>
+          <p>4) Edad mínima: Solo usuarios con edad legal permitida pueden utilizar BealyChat. Las cuentas que infrinjan este requisito pueden ser suspendidas inmediatamente.</p>
+          <p>5) Disponibilidad del servicio: Intentamos mantener la plataforma operativa 24/7; sin embargo, puede haber interrupciones por mantenimiento, incidentes técnicos o causas externas.</p>
+          <p>6) Propiedad intelectual: El software, diseño y marca de BealyChat pertenecen a sus titulares. No está permitido copiar, revender o explotar el servicio sin autorización.</p>
+          <p>7) Limitación de responsabilidad: BealyChat ofrece la plataforma "tal cual". No garantizamos que todas las interacciones entre usuarios sean adecuadas. Usa el servicio bajo tu propio criterio y reporta cualquier abuso.</p>
+          <p>8) Cambios de términos: Podemos actualizar estos términos. El uso continuo después de cambios implica aceptación de la nueva versión.</p>
+        </div>
+      </div>
+      <div class="legal-card">
+        <h3>Política de privacidad</h3>
+        <div class="legal-text" id="privacyText">
+          <p>Recopilamos información básica para operar el servicio: correo de acceso, identificador de cuenta, país seleccionado, preferencias de interés, y datos técnicos de conexión.</p>
+          <p>1) Finalidad: Usamos datos para autenticar, conectar usuarios, moderar contenido, atender soporte y mejorar rendimiento.</p>
+          <p>2) Seguridad: Aplicamos medidas técnicas y organizativas razonables para proteger tu información. Aun así, ningún sistema es completamente invulnerable.</p>
+          <p>3) Conservación: Conservamos datos por el tiempo necesario para cumplir finalidades de seguridad, continuidad del servicio y obligaciones legales.</p>
+          <p>4) Reportes y soporte: Si envías una incidencia, almacenamos su contenido y la respuesta del equipo. Las respuestas pueden mostrarse en tu sección de notificaciones.</p>
+          <p>5) Compartición: No vendemos datos personales. Solo compartimos información cuando sea necesario para operar la plataforma, cumplir la ley o responder a requerimientos legítimos.</p>
+          <p>6) Tus derechos: Puedes solicitar actualización de datos de perfil o, cuando aplique, eliminación de cuenta conforme a normativa local.</p>
+          <p>7) Contacto: Para consultas de privacidad o soporte, utiliza la sección Soporte dentro de la aplicación.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ====================== INICIALIZAR FIREBASE ====================== */
+    const firebaseConfig = {
+      apiKey: "AIzaSyC9v2qp6zGtmvsFiOknlmTHnN6zZY1RLcI",
+      authDomain: "ggggg-f2508.firebaseapp.com",
+      databaseURL: "https://ggggg-f2508-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "ggggg-f2508",
+      storageBucket: "ggggg-f2508.firebasestorage.app",
+      messagingSenderId: "120837533638",
+      appId: "1:120837533638:web:6720ebd1367f3acf9f4cc7",
+      measurementId: "G-E2JX3ZGG5K"
+    };
+    firebase.initializeApp(firebaseConfig);
+    firebase.analytics();
+
+    const auth = firebase.auth();
+    const database = firebase.database();
+
+    auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+      .then(() => {
+        console.log("Persistencia configurada");
+        authObserverReady = true;
+      })
+      .catch(error => {
+        console.error("Error configurando persistencia:", error);
+        authObserverReady = true;
+      });
+
+    /* ====================== VARIABLES GLOBALES ====================== */
+    let currentUser = null;
+    let currentProfile = null;
+    let activityListenersBound = false;
+    let profileStats = {
+      connections: 0,
+      interactions: 0,
+      minutes: 0,
+      reports: 0,
+      followers: 0,
+      countries: {}
+    };
+    let activeCallConnectedAt = null;
+    let activeCallConnectionLogged = false;
+    let currentRemoteCountry = '';
+
+    // Lista completa de países con sus códigos y banderas
+    const COUNTRIES = [
+      { code: 'AD', name: 'Andorra', flag: '🇦🇩' },
+      { code: 'AE', name: 'Emiratos Árabes Unidos', flag: '🇦🇪' },
+      { code: 'AF', name: 'Afganistán', flag: '🇦🇫' },
+      { code: 'AG', name: 'Antigua y Barbuda', flag: '🇦🇬' },
+      { code: 'AI', name: 'Anguila', flag: '🇦🇮' },
+      { code: 'AL', name: 'Albania', flag: '🇦🇱' },
+      { code: 'AM', name: 'Armenia', flag: '🇦🇲' },
+      { code: 'AO', name: 'Angola', flag: '🇦🇴' },
+      { code: 'AQ', name: 'Antártida', flag: '🇦🇶' },
+      { code: 'AR', name: 'Argentina', flag: '🇦🇷' },
+      { code: 'AS', name: 'Samoa Americana', flag: '🇦🇸' },
+      { code: 'AT', name: 'Austria', flag: '🇦🇹' },
+      { code: 'AU', name: 'Australia', flag: '🇦🇺' },
+      { code: 'AW', name: 'Aruba', flag: '🇦🇼' },
+      { code: 'AX', name: 'Islas Åland', flag: '🇦🇽' },
+      { code: 'AZ', name: 'Azerbaiyán', flag: '🇦🇿' },
+      { code: 'BA', name: 'Bosnia y Herzegovina', flag: '🇧🇦' },
+      { code: 'BB', name: 'Barbados', flag: '🇧🇧' },
+      { code: 'BD', name: 'Bangladesh', flag: '🇧🇩' },
+      { code: 'BE', name: 'Bélgica', flag: '🇧🇪' },
+      { code: 'BF', name: 'Burkina Faso', flag: '🇧🇫' },
+      { code: 'BG', name: 'Bulgaria', flag: '🇧🇬' },
+      { code: 'BH', name: 'Baréin', flag: '🇧🇭' },
+      { code: 'BI', name: 'Burundi', flag: '🇧🇮' },
+      { code: 'BJ', name: 'Benín', flag: '🇧🇯' },
+      { code: 'BL', name: 'San Bartolomé', flag: '🇧🇱' },
+      { code: 'BM', name: 'Bermudas', flag: '🇧🇲' },
+      { code: 'BN', name: 'Brunéi', flag: '🇧🇳' },
+      { code: 'BO', name: 'Bolivia', flag: '🇧🇴' },
+      { code: 'BQ', name: 'Bonaire', flag: '🇧🇶' },
+      { code: 'BR', name: 'Brasil', flag: '🇧🇷' },
+      { code: 'BS', name: 'Bahamas', flag: '🇧🇸' },
+      { code: 'BT', name: 'Bután', flag: '🇧🇹' },
+      { code: 'BV', name: 'Isla Bouvet', flag: '🇧🇻' },
+      { code: 'BW', name: 'Botsuana', flag: '🇧🇼' },
+      { code: 'BY', name: 'Bielorrusia', flag: '🇧🇾' },
+      { code: 'BZ', name: 'Belice', flag: '🇧🇿' },
+      { code: 'CA', name: 'Canadá', flag: '🇨🇦' },
+      { code: 'CC', name: 'Islas Cocos', flag: '🇨🇨' },
+      { code: 'CD', name: 'República Democrática del Congo', flag: '🇨🇩' },
+      { code: 'CF', name: 'República Centroafricana', flag: '🇨🇫' },
+      { code: 'CG', name: 'República del Congo', flag: '🇨🇬' },
+      { code: 'CH', name: 'Suiza', flag: '🇨🇭' },
+      { code: 'CI', name: 'Costa de Marfil', flag: '🇨🇮' },
+      { code: 'CK', name: 'Islas Cook', flag: '🇨🇰' },
+      { code: 'CL', name: 'Chile', flag: '🇨🇱' },
+      { code: 'CM', name: 'Camerún', flag: '🇨🇲' },
+      { code: 'CN', name: 'China', flag: '🇨🇳' },
+      { code: 'CO', name: 'Colombia', flag: '🇨🇴' },
+      { code: 'CR', name: 'Costa Rica', flag: '🇨🇷' },
+      { code: 'CU', name: 'Cuba', flag: '🇨🇺' },
+      { code: 'CV', name: 'Cabo Verde', flag: '🇨🇻' },
+      { code: 'CW', name: 'Curazao', flag: '🇨🇼' },
+      { code: 'CX', name: 'Isla de Navidad', flag: '🇨🇽' },
+      { code: 'CY', name: 'Chipre', flag: '🇨🇾' },
+      { code: 'CZ', name: 'República Checa', flag: '🇨🇿' },
+      { code: 'DE', name: 'Alemania', flag: '🇩🇪' },
+      { code: 'DJ', name: 'Yibuti', flag: '🇩🇯' },
+      { code: 'DK', name: 'Dinamarca', flag: '🇩🇰' },
+      { code: 'DM', name: 'Dominica', flag: '🇩🇲' },
+      { code: 'DO', name: 'República Dominicana', flag: '🇩🇴' },
+      { code: 'DZ', name: 'Argelia', flag: '🇩🇿' },
+      { code: 'EC', name: 'Ecuador', flag: '🇪🇨' },
+      { code: 'EE', name: 'Estonia', flag: '🇪🇪' },
+      { code: 'EG', name: 'Egipto', flag: '🇪🇬' },
+      { code: 'EH', name: 'Sáhara Occidental', flag: '🇪🇭' },
+      { code: 'ER', name: 'Eritrea', flag: '🇪🇷' },
+      { code: 'ES', name: 'España', flag: '🇪🇸' },
+      { code: 'ET', name: 'Etiopía', flag: '🇪🇹' },
+      { code: 'FI', name: 'Finlandia', flag: '🇫🇮' },
+      { code: 'FJ', name: 'Fiyi', flag: '🇫🇯' },
+      { code: 'FK', name: 'Islas Malvinas', flag: '🇫🇰' },
+      { code: 'FM', name: 'Micronesia', flag: '🇫🇲' },
+      { code: 'FO', name: 'Islas Feroe', flag: '🇫🇴' },
+      { code: 'FR', name: 'Francia', flag: '🇫🇷' },
+      { code: 'GA', name: 'Gabón', flag: '🇬🇦' },
+      { code: 'GB', name: 'Reino Unido', flag: '🇬🇧' },
+      { code: 'GD', name: 'Granada', flag: '🇬🇩' },
+      { code: 'GE', name: 'Georgia', flag: '🇬🇪' },
+      { code: 'GF', name: 'Guayana Francesa', flag: '🇬🇫' },
+      { code: 'GG', name: 'Guernsey', flag: '🇬🇬' },
+      { code: 'GH', name: 'Ghana', flag: '🇬🇭' },
+      { code: 'GI', name: 'Gibraltar', flag: '🇬🇮' },
+      { code: 'GL', name: 'Groenlandia', flag: '🇬🇱' },
+      { code: 'GM', name: 'Gambia', flag: '🇬🇲' },
+      { code: 'GN', name: 'Guinea', flag: '🇬🇳' },
+      { code: 'GP', name: 'Guadalupe', flag: '🇬🇵' },
+      { code: 'GQ', name: 'Guinea Ecuatorial', flag: '🇬🇶' },
+      { code: 'GR', name: 'Grecia', flag: '🇬🇷' },
+      { code: 'GS', name: 'Islas Georgias del Sur y Sandwich del Sur', flag: '🇬🇸' },
+      { code: 'GT', name: 'Guatemala', flag: '🇬🇹' },
+      { code: 'GU', name: 'Guam', flag: '🇬🇺' },
+      { code: 'GW', name: 'Guinea-Bisáu', flag: '🇬🇼' },
+      { code: 'GY', name: 'Guyana', flag: '🇬🇾' },
+      { code: 'HK', name: 'Hong Kong', flag: '🇭🇰' },
+      { code: 'HM', name: 'Islas Heard y McDonald', flag: '🇭🇲' },
+      { code: 'HN', name: 'Honduras', flag: '🇭🇳' },
+      { code: 'HR', name: 'Croacia', flag: '🇭🇷' },
+      { code: 'HT', name: 'Haití', flag: '🇭🇹' },
+      { code: 'HU', name: 'Hungría', flag: '🇭🇺' },
+      { code: 'ID', name: 'Indonesia', flag: '🇮🇩' },
+      { code: 'IE', name: 'Irlanda', flag: '🇮🇪' },
+      { code: 'IL', name: 'Israel', flag: '🇮🇱' },
+      { code: 'IM', name: 'Isla de Man', flag: '🇮🇲' },
+      { code: 'IN', name: 'India', flag: '🇮🇳' },
+      { code: 'IO', name: 'Territorio Británico del Océano Índico', flag: '🇮🇴' },
+      { code: 'IQ', name: 'Irak', flag: '🇮🇶' },
+      { code: 'IR', name: 'Irán', flag: '🇮🇷' },
+      { code: 'IS', name: 'Islandia', flag: '🇮🇸' },
+      { code: 'IT', name: 'Italia', flag: '🇮🇹' },
+      { code: 'JE', name: 'Jersey', flag: '🇯🇪' },
+      { code: 'JM', name: 'Jamaica', flag: '🇯🇲' },
+      { code: 'JO', name: 'Jordania', flag: '🇯🇴' },
+      { code: 'JP', name: 'Japón', flag: '🇯🇵' },
+      { code: 'KE', name: 'Kenia', flag: '🇰🇪' },
+      { code: 'KG', name: 'Kirguistán', flag: '🇰🇬' },
+      { code: 'KH', name: 'Camboya', flag: '🇰🇭' },
+      { code: 'KI', name: 'Kiribati', flag: '🇰🇮' },
+      { code: 'KM', name: 'Comoras', flag: '🇰🇲' },
+      { code: 'KN', name: 'San Cristóbal y Nieves', flag: '🇰🇳' },
+      { code: 'KP', name: 'Corea del Norte', flag: '🇰🇵' },
+      { code: 'KR', name: 'Corea del Sur', flag: '🇰🇷' },
+      { code: 'KW', name: 'Kuwait', flag: '🇰🇼' },
+      { code: 'KY', name: 'Islas Caimán', flag: '🇰🇾' },
+      { code: 'KZ', name: 'Kazajistán', flag: '🇰🇿' },
+      { code: 'LA', name: 'Laos', flag: '🇱🇦' },
+      { code: 'LB', name: 'Líbano', flag: '🇱🇧' },
+      { code: 'LC', name: 'Santa Lucía', flag: '🇱🇨' },
+      { code: 'LI', name: 'Liechtenstein', flag: '🇱🇮' },
+      { code: 'LK', name: 'Sri Lanka', flag: '🇱🇰' },
+      { code: 'LR', name: 'Liberia', flag: '🇱🇷' },
+      { code: 'LS', name: 'Lesoto', flag: '🇱🇸' },
+      { code: 'LT', name: 'Lituania', flag: '🇱🇹' },
+      { code: 'LU', name: 'Luxemburgo', flag: '🇱🇺' },
+      { code: 'LV', name: 'Letonia', flag: '🇱🇻' },
+      { code: 'LY', name: 'Libia', flag: '🇱🇾' },
+      { code: 'MA', name: 'Marruecos', flag: '🇲🇦' },
+      { code: 'MC', name: 'Mónaco', flag: '🇲🇨' },
+      { code: 'MD', name: 'Moldavia', flag: '🇲🇩' },
+      { code: 'ME', name: 'Montenegro', flag: '🇲🇪' },
+      { code: 'MF', name: 'San Martín', flag: '🇲🇫' },
+      { code: 'MG', name: 'Madagascar', flag: '🇲🇬' },
+      { code: 'MH', name: 'Islas Marshall', flag: '🇲🇭' },
+      { code: 'MK', name: 'Macedonia del Norte', flag: '🇲🇰' },
+      { code: 'ML', name: 'Malí', flag: '🇲🇱' },
+      { code: 'MM', name: 'Myanmar', flag: '🇲🇲' },
+      { code: 'MN', name: 'Mongolia', flag: '🇲🇳' },
+      { code: 'MO', name: 'Macao', flag: '🇲🇴' },
+      { code: 'MP', name: 'Islas Marianas del Norte', flag: '🇲🇵' },
+      { code: 'MQ', name: 'Martinica', flag: '🇲🇶' },
+      { code: 'MR', name: 'Mauritania', flag: '🇲🇷' },
+      { code: 'MS', name: 'Montserrat', flag: '🇲🇸' },
+      { code: 'MT', name: 'Malta', flag: '🇲🇹' },
+      { code: 'MU', name: 'Mauricio', flag: '🇲🇺' },
+      { code: 'MV', name: 'Maldivas', flag: '🇲🇻' },
+      { code: 'MW', name: 'Malaui', flag: '🇲🇼' },
+      { code: 'MX', name: 'México', flag: '🇲🇽' },
+      { code: 'MY', name: 'Malasia', flag: '🇲🇾' },
+      { code: 'MZ', name: 'Mozambique', flag: '🇲🇿' },
+      { code: 'NA', name: 'Namibia', flag: '🇳🇦' },
+      { code: 'NC', name: 'Nueva Caledonia', flag: '🇳🇨' },
+      { code: 'NE', name: 'Níger', flag: '🇳🇪' },
+      { code: 'NF', name: 'Isla Norfolk', flag: '🇳🇫' },
+      { code: 'NG', name: 'Nigeria', flag: '🇳🇬' },
+      { code: 'NI', name: 'Nicaragua', flag: '🇳🇮' },
+      { code: 'NL', name: 'Países Bajos', flag: '🇳🇱' },
+      { code: 'NO', name: 'Noruega', flag: '🇳🇴' },
+      { code: 'NP', name: 'Nepal', flag: '🇳🇵' },
+      { code: 'NR', name: 'Nauru', flag: '🇳🇷' },
+      { code: 'NU', name: 'Niue', flag: '🇳🇺' },
+      { code: 'NZ', name: 'Nueva Zelanda', flag: '🇳🇿' },
+      { code: 'OM', name: 'Omán', flag: '🇴🇲' },
+      { code: 'PA', name: 'Panamá', flag: '🇵🇦' },
+      { code: 'PE', name: 'Perú', flag: '🇵🇪' },
+      { code: 'PF', name: 'Polinesia Francesa', flag: '🇵🇫' },
+      { code: 'PG', name: 'Papúa Nueva Guinea', flag: '🇵🇬' },
+      { code: 'PH', name: 'Filipinas', flag: '🇵🇭' },
+      { code: 'PK', name: 'Pakistán', flag: '🇵🇰' },
+      { code: 'PL', name: 'Polonia', flag: '🇵🇱' },
+      { code: 'PM', name: 'San Pedro y Miquelón', flag: '🇵🇲' },
+      { code: 'PN', name: 'Islas Pitcairn', flag: '🇵🇳' },
+      { code: 'PR', name: 'Puerto Rico', flag: '🇵🇷' },
+      { code: 'PS', name: 'Palestina', flag: '🇵🇸' },
+      { code: 'PT', name: 'Portugal', flag: '🇵🇹' },
+      { code: 'PW', name: 'Palaos', flag: '🇵🇼' },
+      { code: 'PY', name: 'Paraguay', flag: '🇵🇾' },
+      { code: 'QA', name: 'Catar', flag: '🇶🇦' },
+      { code: 'RE', name: 'Reunión', flag: '🇷🇪' },
+      { code: 'RO', name: 'Rumania', flag: '🇷🇴' },
+      { code: 'RS', name: 'Serbia', flag: '🇷🇸' },
+      { code: 'RU', name: 'Rusia', flag: '🇷🇺' },
+      { code: 'RW', name: 'Ruanda', flag: '🇷🇼' },
+      { code: 'SA', name: 'Arabia Saudí', flag: '🇸🇦' },
+      { code: 'SB', name: 'Islas Salomón', flag: '🇸🇧' },
+      { code: 'SC', name: 'Seychelles', flag: '🇸🇨' },
+      { code: 'SD', name: 'Sudán', flag: '🇸🇩' },
+      { code: 'SE', name: 'Suecia', flag: '🇸🇪' },
+      { code: 'SG', name: 'Singapur', flag: '🇸🇬' },
+      { code: 'SH', name: 'Santa Elena', flag: '🇸🇭' },
+      { code: 'SI', name: 'Eslovenia', flag: '🇸🇮' },
+      { code: 'SJ', name: 'Svalbard y Jan Mayen', flag: '🇸🇯' },
+      { code: 'SK', name: 'Eslovaquia', flag: '🇸🇰' },
+      { code: 'SL', name: 'Sierra Leona', flag: '🇸🇱' },
+      { code: 'SM', name: 'San Marino', flag: '🇸🇲' },
+      { code: 'SN', name: 'Senegal', flag: '🇸🇳' },
+      { code: 'SO', name: 'Somalia', flag: '🇸🇴' },
+      { code: 'SR', name: 'Surinam', flag: '🇸🇷' },
+      { code: 'SS', name: 'Sudán del Sur', flag: '🇸🇸' },
+      { code: 'ST', name: 'Santo Tomé y Príncipe', flag: '🇸🇹' },
+      { code: 'SV', name: 'El Salvador', flag: '🇸🇻' },
+      { code: 'SX', name: 'Sint Maarten', flag: '🇸🇽' },
+      { code: 'SY', name: 'Siria', flag: '🇸🇾' },
+      { code: 'SZ', name: 'Esuatini', flag: '🇸🇿' },
+      { code: 'TC', name: 'Islas Turcas y Caicos', flag: '🇹🇨' },
+      { code: 'TD', name: 'Chad', flag: '🇹🇩' },
+      { code: 'TF', name: 'Territorios Australes Franceses', flag: '🇹🇫' },
+      { code: 'TG', name: 'Togo', flag: '🇹🇬' },
+      { code: 'TH', name: 'Tailandia', flag: '🇹🇭' },
+      { code: 'TJ', name: 'Tayikistán', flag: '🇹🇯' },
+      { code: 'TK', name: 'Tokelau', flag: '🇹🇰' },
+      { code: 'TL', name: 'Timor Oriental', flag: '🇹🇱' },
+      { code: 'TM', name: 'Turkmenistán', flag: '🇹🇲' },
+      { code: 'TN', name: 'Túnez', flag: '🇹🇳' },
+      { code: 'TO', name: 'Tonga', flag: '🇹🇴' },
+      { code: 'TR', name: 'Turquía', flag: '🇹🇷' },
+      { code: 'TT', name: 'Trinidad y Tobago', flag: '🇹🇹' },
+      { code: 'TV', name: 'Tuvalu', flag: '🇹🇻' },
+      { code: 'TW', name: 'Taiwán', flag: '🇹🇼' },
+      { code: 'TZ', name: 'Tanzania', flag: '🇹🇿' },
+      { code: 'UA', name: 'Ucrania', flag: '🇺🇦' },
+      { code: 'UG', name: 'Uganda', flag: '🇺🇬' },
+      { code: 'UM', name: 'Islas Ultramarinas de Estados Unidos', flag: '🇺🇲' },
+      { code: 'US', name: 'Estados Unidos', flag: '🇺🇸' },
+      { code: 'UY', name: 'Uruguay', flag: '🇺🇾' },
+      { code: 'UZ', name: 'Uzbekistán', flag: '🇺🇿' },
+      { code: 'VA', name: 'Ciudad del Vaticano', flag: '🇻🇦' },
+      { code: 'VC', name: 'San Vicente y las Granadinas', flag: '🇻🇨' },
+      { code: 'VE', name: 'Venezuela', flag: '🇻🇪' },
+      { code: 'VG', name: 'Islas Vírgenes Británicas', flag: '🇻🇬' },
+      { code: 'VI', name: 'Islas Vírgenes de los Estados Unidos', flag: '🇻🇮' },
+      { code: 'VN', name: 'Vietnam', flag: '🇻🇳' },
+      { code: 'VU', name: 'Vanuatu', flag: '🇻🇺' },
+      { code: 'WF', name: 'Wallis y Futuna', flag: '🇼🇫' },
+      { code: 'WS', name: 'Samoa', flag: '🇼🇸' },
+      { code: 'YE', name: 'Yemen', flag: '🇾🇪' },
+      { code: 'YT', name: 'Mayotte', flag: '🇾🇹' },
+      { code: 'ZA', name: 'Sudáfrica', flag: '🇿🇦' },
+      { code: 'ZM', name: 'Zambia', flag: '🇿🇲' },
+      { code: 'ZW', name: 'Zimbabue', flag: '🇿🇼' }
+    ];
+    let localStream = null;
+    let remoteStream = null;
+    let peerConnection = null;
+    let currentCallId = null;
+    let userPhotos = [null, null, null, null, null, null];
+    let isSavingProfile = false;
+    let isAvatarProcessing = false;
+    let pendingAvatarDataUrl = '';
+    let remoteUidGlobal = null; // Para el UID remoto
+    let speechRecognition = null;
+    let currentCallMessagesRef = null;
+    let currentParticipantsRef = null;
+    let currentPresenceRef = null;
+    let currentIceCandidatesRef = null;
+    let currentOfferRef = null;
+    let currentAnswerRef = null;
+    let currentRemoteProfileRef = null;
+    let reconnectingInProgress = false;
+    let matchingRetryTimer = null;
+    let connectWatchdogTimer = null;
+    let pendingChatQueue = [];
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let pendingIncomingCallId = null;
+    let callsRef = null;
+    let callsChildAddedHandler = null;
+    let isListening = false;
+    let authObserverReady = false;
+    let offenseCount = 0;
+
+    // Lista de palabras ofensivas - se puede expandir
+    const OFFENSIVE_WORDS = [
+      'pinga', 'pendejo', 'cabrón', 'puto', 'perra', 'zorra',
+      'coño', 'carajo', 'mierda', 'cagada',
+      'bitch', 'fuck', 'shit', 'asshole', 'motherfucker', 'bastard', 'whore', 'slut'
+    ];
+
+    const OFFENSE_THRESHOLD = 5; // Número de ofensas antes del bloqueo
+    const QUICK_EMOJIS = ['😀','😂','😍','😎','🔥','👍','👏','😮','🥳','💯','👋','❤️'];
+    const BLOCK_DURATION_DAYS = 3;
+
+    const configuration = {
+      iceServers: [
+        { urls: "stun:stun.l.google.com:19302" },
+        { urls: "stun:stun1.l.google.com:19302" },
+        {
+          urls: "turn:relay1.expressturn.com:3478",
+          username: "efMS1DHVA7SM7GJ775",
+          credential: "n2IsFT3aam|3waju"
+        }
+      ],
+      iceCandidatePoolSize: 10
+    };
+
+    /* ====================== FUNCIONES DE BÚSQUEDA DE PAÍSES ====================== */
+    function showCountryList() {
+      const dropdown = document.getElementById('countryDropdown');
+      const list = document.getElementById('countryList');
+
+      // Mostrar todos los países inicialmente
+      let html = '';
+      COUNTRIES.forEach(country => {
+        html += `
+          <div class="country-item" onclick="selectCountry('${country.code}', '${country.name}', '${country.flag}')">
+            <span class="country-flag">${country.flag}</span>
+            <span>${country.name}</span>
+          </div>
+        `;
+      });
+
+      list.innerHTML = html;
+      dropdown.style.display = 'block';
+    }
+
+    function filterCountries() {
+      const searchInput = document.getElementById('registerCountrySearch');
+      const searchTerm = searchInput.value.toLowerCase();
+      const dropdown = document.getElementById('countryDropdown');
+      const list = document.getElementById('countryList');
+
+      if(searchTerm.length === 0) {
+        dropdown.style.display = 'none';
+        return;
+      }
+
+      const filteredCountries = COUNTRIES.filter(country =>
+        country.name.toLowerCase().includes(searchTerm) ||
+        country.code.toLowerCase().includes(searchTerm)
+      );
+
+      let html = '';
+      if(filteredCountries.length > 0) {
+        filteredCountries.forEach(country => {
+          html += `
+            <div class="country-item" onclick="selectCountry('${country.code}', '${country.name}', '${country.flag}')">
+              <span class="country-flag">${country.flag}</span>
+              <span>${country.name}</span>
+            </div>
+          `;
+        });
+      } else {
+        html = '<div class="country-item">No se encontraron países</div>';
+      }
+
+      list.innerHTML = html;
+      dropdown.style.display = 'block';
+    }
+
+    function selectCountry(code, name, flag) {
+      const searchInput = document.getElementById('registerCountrySearch');
+      const hiddenInput = document.getElementById('registerCountry');
+      const dropdown = document.getElementById('countryDropdown');
+
+      searchInput.value = `${flag} ${name}`;
+      hiddenInput.value = code;
+      dropdown.style.display = 'none';
+    }
+
+    // Cerrar dropdown al hacer clic fuera
+    document.addEventListener('click', function(event) {
+      const dropdown = document.getElementById('countryDropdown');
+      const searchInput = document.getElementById('registerCountrySearch');
+
+      if(dropdown && !dropdown.contains(event.target) && event.target !== searchInput) {
+        dropdown.style.display = 'none';
+      }
+    });
+
+    /* ====================== MANEJO DE PANTALLAS ====================== */
+    async function goToScreen(screenId) {
+      // Prevenir cambios de pantalla no autorizados
+      if (!screenId || typeof screenId !== 'string') return;
+
+      document.querySelectorAll('.screen').forEach(screen => screen.classList.remove('active'));
+      const targetScreen = document.getElementById(screenId);
+      if (!targetScreen) return;
+
+      targetScreen.classList.add('active');
+
+      // La marca de agua se maneja automáticamente con CSS
+      // Auto-detectar país si es la screen "countryScreen"
+      if(screenId === 'countryScreen'){
+        autoDetectCountry();
+      }
+      // Si es videoCallScreen, iniciamos streaming + matching
+      if(screenId === 'videoCallScreen'){
+        if(window.isInVideoSession && currentCallId){
+          return;
+        }
+        // Mostrar iconos de moderación solo en videollamada
+        document.querySelector('.account-status-icon').style.display = 'flex';
+        document.querySelector('.report-icon').style.display = 'flex';
+        document.querySelector('.profile-icon').style.display = 'flex';
+        document.querySelector('.config-icon').style.display = 'flex';
+
+        bindRealtimeActivity();
+        hydrateProfileWidgets();
+        initEmojiCarousel();
+        showConnecting();
+        const streamReady = await startLocalStream();
+        if(!streamReady || !localStream){
+          hideConnecting();
+          return;
+        }
+        startMatching();
+        // Iniciar monitoreo de voz para detectar ofensas
+        setTimeout(() => {
+          startSpeechMonitoring();
+        }, 2000);
+      } else {
+        document.querySelector('.account-status-icon').style.display = 'none';
+        document.querySelector('.report-icon').style.display = 'none';
+        document.querySelector('.profile-icon').style.display = 'none';
+        document.querySelector('.config-icon').style.display = 'none';
+
+        stopSpeechMonitoring();
+        stopBodyMonitoring();
+
+        if(window.isInVideoSession){
+          window.isInVideoSession = false;
+          await cleanupCurrentCall(true);
+          stopLocalStream();
+          if(currentUser){
+            database.ref('onlineUsers/' + currentUser.uid).remove().catch(()=>{});
+          }
+        }
+      }
+    }
+    function toggleForm(formType) {
+      if(formType === 'registerForm'){
+        goToScreen('registerScreen');
+      } else if(formType === 'forgotPasswordForm'){
+        goToScreen('forgotPasswordScreen');
+      }
+    }
+
+    /* ====================== REGISTRO / LOGIN ====================== */
+    function registerUser() {
+      const email = document.getElementById('registerEmail').value.trim();
+      const password = document.getElementById('registerPassword').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      const country = document.getElementById('registerCountry').value;
+
+      if(!email || !password) {
+        alert("Por favor completa todos los campos");
+        return;
+      }
+
+      if(password !== confirmPassword){
+        alert("Las contraseñas no coinciden");
+        return;
+      }
+
+      if(!country) {
+        alert("Por favor selecciona tu país");
+        return;
+      }
+
+      firebase.auth().createUserWithEmailAndPassword(email, password)
+        .then(userCredential => {
+          console.log("Registro exitoso:", userCredential.user);
+          // Guardar el país seleccionado temporalmente
+          window.tempRegistrationCountry = country;
+          alert("Registro exitoso, completa tu configuración de perfil");
+          goToScreen('profileSetupScreen');
+        })
+        .catch(error => {
+          console.error("Error de registro:", error);
+          let mensaje = "Error al registrarse";
+          switch(error.code) {
+            case 'auth/email-already-in-use':
+              mensaje = "Este correo ya está registrado";
+              break;
+            case 'auth/invalid-email':
+              mensaje = "Correo electrónico inválido";
+              break;
+            case 'auth/operation-not-allowed':
+              mensaje = "El registro por email no está habilitado";
+              break;
+            case 'auth/weak-password':
+              mensaje = "La contraseña es muy débil";
+              break;
+            case 'auth/configuration-not-found':
+              mensaje = "Error de configuración de Firebase. Por favor, inténtalo más tarde";
+              break;
+          }
+          alert(mensaje);
+        });
+    }
+
+    function loginUser() {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+
+      if(!email || !password){
+        alert('Por favor ingresa correo y contraseña');
+        return;
+      }
+
+      auth.signInWithEmailAndPassword(email, password)
+        .then(userCredential => {
+          console.log("Login exitoso:", userCredential.user);
+          // El onAuthStateChanged se ejecutará automáticamente y redirigirá según el estado del perfil
+        })
+        .catch(error => {
+          console.error('Error al iniciar sesión:', error);
+          let mensaje = 'No se pudo iniciar sesión';
+          switch(error.code){
+            case 'auth/invalid-email':
+              mensaje = 'Correo electrónico inválido';
+              break;
+            case 'auth/user-disabled':
+              mensaje = 'Esta cuenta está deshabilitada';
+              break;
+            case 'auth/user-not-found':
+            case 'auth/wrong-password':
+            case 'auth/invalid-credential':
+              mensaje = 'Correo o contraseña incorrectos';
+              break;
+            case 'auth/too-many-requests':
+              mensaje = 'Demasiados intentos. Espera unos minutos y vuelve a intentar';
+              break;
+          }
+          alert(mensaje);
+        });
+    }
+
+    // Observador de autenticación (para corregir que no pida reconfigurar el perfil si ya está completo)
+    auth.onAuthStateChanged(async user => {
+      if(user){
+        currentUser = user;
+        console.log("Usuario autenticado:", user.uid);
+        database.ref('profiles/' + user.uid).once('value')
+          .then(snapshot => {
+            if(snapshot.exists()){
+              currentProfile = snapshot.val();
+              console.log("Perfil cargado:", currentProfile);
+              bindRealtimeActivity();
+              hydrateProfileWidgets();
+
+              // Chequeo si está bloqueado
+              if(currentProfile.blockedUntil){
+                const now = new Date();
+                const blockedUntil = new Date(currentProfile.blockedUntil);
+                if(now < blockedUntil){
+                  // Si es bloqueo por ofensas, mostrar modal especial
+                  if(currentProfile.blockReason && currentProfile.blockReason.includes('Lenguaje ofensivo')){
+                    const detectedWord = currentProfile.blockReason.match(/detectado: "(.+?)"/)?.[1] || 'palabra ofensiva';
+                    showBlockModal(detectedWord, blockedUntil);
+                  } else {
+                    goToScreen('blockedScreen');
+                  }
+                  return;
+                }
+              }
+
+              // Si ya tiene todos los datos necesarios, ir directo a videollamada
+              if(currentProfile.username && currentProfile.country){
+                console.log("Perfil completo, yendo a videollamada");
+                goToScreen('videoCallScreen');
+              } else if(currentProfile.username && !currentProfile.country) {
+                // Si tiene nombre pero no país, ir a selección de país
+                console.log("Falta país, yendo a selección de país");
+                goToScreen('countryScreen');
+              } else {
+                // Si no tiene nombre, ir a configuración de perfil
+                console.log("Perfil incompleto, yendo a setup");
+                goToScreen('profileSetupScreen');
+              }
+            } else {
+              // No existe su perfil en la DB, lo mandamos a la configuración
+              console.log("No hay perfil, yendo a setup");
+              goToScreen('profileSetupScreen');
+            }
+          })
+          .catch(err => {
+            console.error('Error cargando perfil después de iniciar sesión:', err);
+            alert('Iniciaste sesión, pero hubo un problema cargando tu perfil. Intenta nuevamente.');
+            goToScreen('profileSetupScreen');
+          });
+      } else {
+        window.isInVideoSession = false;
+        await cleanupCurrentCall(true).catch(()=>{});
+        stopLocalStream();
+        currentUser = null;
+        currentProfile = null;
+        activityListenersBound = false;
+        profileStats = { connections: 0, interactions: 0, minutes: 0, reports: 0, followers: 0, countries: {} };
+        if(authObserverReady) {
+          goToScreen('authMethodScreen');
+        }
+      }
+    });
+
+    /* ====================== PERFIL ====================== */
+    document.getElementById('loginForm').addEventListener('submit', function(e){
+      e.preventDefault();
+      loginUser();
+    });
+
+    async function compressImageFile(file, maxSize = 512, quality = 0.78) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          const img = new Image();
+          img.onload = function() {
+            const canvas = document.createElement('canvas');
+            let { width, height } = img;
+            if(width > height && width > maxSize){
+              height = Math.round((height * maxSize) / width);
+              width = maxSize;
+            } else if(height >= width && height > maxSize){
+              width = Math.round((width * maxSize) / height);
+              height = maxSize;
+            }
+            canvas.width = width;
+            canvas.height = height;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, width, height);
+            resolve(canvas.toDataURL('image/jpeg', quality));
+          };
+          img.onerror = reject;
+          img.src = event.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    document.getElementById('avatarInput').addEventListener('change', async function(e){
+      const file = e.target.files[0];
+      if(file){
+        const continueBtn = document.getElementById('profileContinueBtn');
+        try {
+          isAvatarProcessing = true;
+          if(continueBtn){
+            continueBtn.disabled = true;
+            continueBtn.textContent = 'Procesando foto...';
+          }
+
+          pendingAvatarDataUrl = await compressImageFile(file);
+          const avatarPreview = document.getElementById('avatarPreview');
+          avatarPreview.src = pendingAvatarDataUrl;
+          avatarPreview.style.display = 'block';
+          document.querySelector('.avatar-upload i').style.display = 'none';
+        } catch(err) {
+          console.error('Error procesando avatar:', err);
+          pendingAvatarDataUrl = '';
+          alert('No se pudo procesar la imagen. Intenta con otra foto.');
+        } finally {
+          isAvatarProcessing = false;
+          if(continueBtn){
+            continueBtn.disabled = false;
+            continueBtn.textContent = 'Continuar';
+          }
+        }
+      }
+    });
+    async function updateProfile() {
+      if(!currentUser){
+        throw new Error("No hay usuario autenticado");
+      }
+
+      // Asegurar que currentProfile existe
+      if(!currentProfile) currentProfile = {};
+
+      // Solo actualizar campos que existen y tienen valores válidos
+      const updates = {};
+
+      if(currentProfile.username && currentProfile.username.trim() !== "") {
+        updates.username = currentProfile.username.trim();
+      }
+
+      if(currentProfile.birthDate) {
+        updates.birthDate = currentProfile.birthDate;
+      }
+
+      if(currentProfile.country) {
+        updates.country = currentProfile.country;
+      }
+
+      if(currentProfile.avatar_url) {
+        updates.avatar_url = currentProfile.avatar_url;
+      }
+
+      // Mantener campos existentes
+      updates.followersCount = currentProfile.followersCount || 0;
+      updates.verified = currentProfile.verified || false;
+      updates.lastUpdated = firebase.database.ServerValue.TIMESTAMP;
+
+      console.log("Actualizando perfil con:", updates);
+
+      try {
+        await database.ref('profiles/' + currentUser.uid).update(updates);
+        // Actualizar el perfil local
+        currentProfile = { ...currentProfile, ...updates };
+        return true;
+      } catch(error) {
+        console.error("Error actualizando perfil:", error);
+        throw error;
+      }
+    }
+    function normalizeInterests(rawText = '') {
+      return rawText
+        .split(',')
+        .map(v => v.trim().toLowerCase())
+        .filter(Boolean)
+        .filter((v, i, arr) => arr.indexOf(v) === i)
+        .slice(0, 8);
+    }
+
+    function hasSharedInterests(a = [], b = []) {
+      if(!a.length || !b.length) return false;
+      const set = new Set(a);
+      return b.some(item => set.has(item));
+    }
+
+    // Esta función ya no es necesaria, se maneja en validateBirthDate
+    async function updateProfileAndConnect(){
+      try {
+        const countrySelect = document.getElementById('country');
+        const selectedCountry = countrySelect ? countrySelect.value : "";
+
+        if(!selectedCountry){
+          alert("Por favor selecciona tu país");
+          return;
+        }
+
+        if(!currentProfile) {
+          alert("Error: Perfil no encontrado");
+          return;
+        }
+
+        const interestsInput = document.getElementById('interestsInput');
+        const interests = normalizeInterests(interestsInput ? interestsInput.value : '');
+
+        const updateData = {
+          country: selectedCountry,
+          interests,
+          lastUpdated: firebase.database.ServerValue.TIMESTAMP
+        };
+
+        console.log("Actualizando país:", updateData);
+
+        await database.ref('profiles/' + currentUser.uid).update(updateData);
+
+        // Actualizar perfil local
+        currentProfile.country = selectedCountry;
+        currentProfile.interests = updateData.interests;
+
+        console.log("País actualizado, conectando...");
+        goToScreen('videoCallScreen');
+
+      } catch(error){
+        console.error("Error al actualizar país:", error);
+        alert("Error al actualizar el perfil: " + error.message);
+      }
+    }
+    function updateProfileData() {
+      const username = document.getElementById('usernameProfile').value;
+      if(username === ""){
+        alert("Ingresa un nombre de usuario");
+        return;
+      }
+      const updatedProfile = {
+        username: username,
+        avatar_url: document.getElementById('avatarPreviewProfile').src || currentProfile.avatar_url,
+        followersCount: currentProfile.followersCount || 0,
+        verified: currentProfile.verified || false
+      };
+      database.ref('profiles/' + currentUser.uid).update(updatedProfile)
+        .then(() => {
+          alert("Perfil actualizado");
+          closeProfileModal();
+        })
+        .catch(err => alert("Error al actualizar perfil: " + err));
+    }
+
+    /* ====================== GUARDAR PERFIL Y CONTINUAR ====================== */
+    async function saveProfileAndContinue() {
+      if(isSavingProfile) return;
+
+      const continueBtn = document.getElementById('profileContinueBtn');
+      const usernameInput = document.getElementById('username');
+      const username = usernameInput ? usernameInput.value.trim() : "";
+
+      if(!username || username.length < 2){
+        alert("Ingresa un nombre de usuario válido (mínimo 2 caracteres)");
+        return;
+      }
+
+      if(isAvatarProcessing){
+        alert('Espera un momento, todavía se está procesando la foto.');
+        return;
+      }
+
+      if(!currentUser) {
+        alert("Error: Usuario no autenticado");
+        return;
+      }
+
+      try {
+        isSavingProfile = true;
+        if(continueBtn){
+          continueBtn.disabled = true;
+          continueBtn.textContent = 'Guardando...';
+        }
+
+        // Crear o actualizar perfil
+        const profileData = {
+          username: username,
+          birthDate: "2000-01-01", // Fecha por defecto para adultos
+          followersCount: 0,
+          verified: false,
+          createdAt: firebase.database.ServerValue.TIMESTAMP,
+          lastUpdated: firebase.database.ServerValue.TIMESTAMP
+        };
+
+        // Si ya tenemos el país del registro, incluirlo
+        if(window.tempRegistrationCountry) {
+          profileData.country = window.tempRegistrationCountry;
+        }
+
+        // Manejar avatar
+        if(pendingAvatarDataUrl && pendingAvatarDataUrl.startsWith('data:')) {
+          profileData.avatar_url = pendingAvatarDataUrl;
+        } else {
+          const avatarEl = document.getElementById('avatarPreview');
+          if(avatarEl && avatarEl.src && avatarEl.src.startsWith('data:')) {
+            profileData.avatar_url = avatarEl.src;
+          } else {
+            profileData.avatar_url = "https://cdn-icons-png.flaticon.com/512/3237/3237472.png";
+          }
+        }
+
+        console.log("Guardando perfil:", profileData);
+
+        // Guardar directamente en Firebase
+        await database.ref('profiles/' + currentUser.uid).set(profileData);
+
+        // Actualizar perfil local
+        currentProfile = profileData;
+
+        console.log("Perfil guardado exitosamente");
+
+        // Si ya tiene país, ir directo a videollamada, sino a selección de país
+        if(profileData.country) {
+          goToScreen('videoCallScreen');
+        } else {
+          goToScreen('countryScreen');
+        }
+
+      } catch(error) {
+        console.error("Error saving profile:", error);
+        alert("Error al guardar el perfil: " + error.message);
+      } finally {
+        isSavingProfile = false;
+        if(continueBtn){
+          continueBtn.disabled = false;
+          continueBtn.textContent = 'Continuar';
+        }
+      }
+    }
+
+    /* ====================== AUTO DETECTAR PAÍS ====================== */
+    function autoDetectCountry(){
+      fetch('https://ipapi.co/json/')
+        .then(response => response.json())
+        .then(data => {
+          const countryCode = data.country_code;
+          const countrySelect = document.getElementById('country');
+          if(countrySelect){
+            const option = [...countrySelect.options].find(o => o.value === countryCode);
+            if(option){
+              countrySelect.value = countryCode;
+            }
+          }
+        })
+        .catch(error => console.error('Error detectando país:', error));
+    }
+
+
+    function initEmojiCarousel() {
+      const wrap = document.getElementById('emojiCarousel');
+      if(!wrap || wrap.childElementCount) return;
+      QUICK_EMOJIS.forEach(emoji => {
+        const b = document.createElement('button');
+        b.className = 'emoji-btn';
+        b.type = 'button';
+        b.textContent = emoji;
+        b.onclick = () => sendChatMessage(emoji, true);
+        wrap.appendChild(b);
+      });
+    }
+
+    function renderChatMessage(msg, isMine) {
+      const box = document.getElementById('chatMessages');
+      if(!box) return;
+      const el = document.createElement('div');
+      el.className = 'chat-message';
+      const who = isMine ? 'Tú' : 'Otro';
+      el.textContent = `${who}: ${msg.text}`;
+      box.appendChild(el);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function startMessageCleanup(callId){
+      if(window.messageCleanupTimer) clearInterval(window.messageCleanupTimer);
+      window.messageCleanupTimer = setInterval(async () => {
+        if(!callId) return;
+        const snap = await database.ref(`calls/${callId}/messages`).once('value');
+        const all = snap.val() || {};
+        const now = Date.now();
+        Object.entries(all).forEach(([k,v]) => {
+          if(v.expiresAt && v.expiresAt < now){
+            database.ref(`calls/${callId}/messages/${k}`).remove();
+          }
+        });
+      }, 15000);
+    }
+
+    async function sendChatMessage(overrideText = '', isEmoji = false) {
+      const input = document.getElementById('chatInput');
+      const raw = overrideText || (input ? input.value : '');
+      const text = raw.trim();
+      if(!text) return;
+
+      const payload = {
+        senderUid: currentUser?.uid || '',
+        text,
+        type: isEmoji ? 'emoji' : 'text',
+        createdAt: firebase.database.ServerValue.TIMESTAMP,
+        expiresAt: Date.now() + 60000
+      };
+
+      if(!currentCallId || !currentUser) {
+        if(!overrideText) alert('Aún no estás conectado con otro usuario.');
+        return;
+      }
+
+      try {
+        await database.ref(`calls/${currentCallId}/messages`).push(payload);
+        if(input && !overrideText) input.value = '';
+        incrementAnalytics({ interactions: 1 }).catch(() => {});
+      } catch (err) {
+        console.error('Error enviando mensaje, se reintentará:', err);
+        pendingChatQueue.push(payload);
+        if(input && !overrideText) input.value = '';
+      }
+    }
+
+    async function flushPendingChatQueue(){
+      if(!currentCallId || !pendingChatQueue.length) return;
+      const queue = [...pendingChatQueue];
+      pendingChatQueue = [];
+      for(const msg of queue){
+        try {
+          await database.ref(`calls/${currentCallId}/messages`).push(msg);
+        } catch(err){
+          console.error('No se pudo reenviar mensaje en cola:', err);
+          pendingChatQueue.unshift(msg);
+          break;
+        }
+      }
+    }
+
+    function scheduleFindRandomUser(delay = 3000){
+      if(matchingRetryTimer) clearTimeout(matchingRetryTimer);
+      matchingRetryTimer = setTimeout(() => {
+        findRandomUser();
+      }, delay);
+    }
+
+    function autoNextPartner(reason = 'auto') {
+      if(reconnectingInProgress) return;
+      reconnectingInProgress = true;
+      console.log('🔁 Buscando nuevo usuario automáticamente:', reason);
+      showConnecting();
+      offenseCount = 0;
+      cleanupCurrentCall(true).finally(() => {
+        setTimeout(() => {
+          reconnectingInProgress = false;
+          findRandomUser();
+        }, 900);
+      });
+    }
+
+    async function cleanupCurrentCall(removeCallNode = false) {
+      await finalizeCallAnalytics();
+      activeCallConnectionLogged = false;
+      if(matchingRetryTimer){ clearTimeout(matchingRetryTimer); matchingRetryTimer = null; }
+      if(connectWatchdogTimer){ clearTimeout(connectWatchdogTimer); connectWatchdogTimer = null; }
+
+      try {
+        if(peerConnection){ peerConnection.close(); }
+      } catch(e) {}
+      peerConnection = null;
+      remoteStream = null;
+      const remoteVideoEl = document.getElementById('remoteVideo');
+      if(remoteVideoEl) remoteVideoEl.srcObject = null;
+
+      if(currentCallMessagesRef){ currentCallMessagesRef.off(); currentCallMessagesRef = null; }
+      if(currentParticipantsRef){ currentParticipantsRef.off(); currentParticipantsRef = null; }
+      if(currentPresenceRef){ currentPresenceRef.off(); currentPresenceRef = null; }
+      if(currentIceCandidatesRef){ currentIceCandidatesRef.off(); currentIceCandidatesRef = null; }
+      if(currentOfferRef){ currentOfferRef.off(); currentOfferRef = null; }
+      if(currentAnswerRef){ currentAnswerRef.off(); currentAnswerRef = null; }
+      if(currentRemoteProfileRef){ currentRemoteProfileRef.off(); currentRemoteProfileRef = null; }
+
+      if(window.messageCleanupTimer){ clearInterval(window.messageCleanupTimer); window.messageCleanupTimer = null; }
+      const chatBox = document.getElementById('chatMessages');
+      if(chatBox) chatBox.innerHTML = '';
+
+      if(currentCallId){
+        const callIdToCleanup = currentCallId;
+        currentCallId = null;
+
+        if(currentUser?.uid){
+          await database.ref(`calls/${callIdToCleanup}/presence/${currentUser.uid}`).remove().catch(()=>{});
+        }
+
+        if(removeCallNode){
+          const partsSnap = await database.ref(`calls/${callIdToCleanup}/participants`).once('value').catch(()=>null);
+          const parts = partsSnap && partsSnap.val ? (partsSnap.val() || {}) : {};
+          await database.ref('calls/' + callIdToCleanup).remove().catch(()=>{});
+          const otherUid = (parts.caller === currentUser?.uid) ? parts.callee : parts.caller;
+          if(otherUid){
+            await database.ref('onlineUsers/' + otherUid + '/status').set('available').catch(()=>{});
+          }
+        }
+      }
+
+      pendingChatQueue = [];
+      remoteUidGlobal = null;
+      currentRemoteCountry = '';
+      pendingIncomingCallId = null;
+      unregisterCallsListener();
+
+      if(currentUser && window.isInVideoSession){
+        await database.ref('onlineUsers/' + currentUser.uid + '/status').set('available').catch(()=>{});
+      }
+
+      hideConnecting();
+    }
+
+    /* ====================== PRESENCIA Y MATCHING ====================== */
+    async function startMatching(){
+      if(!currentUser || !currentProfile || !currentProfile.username || !currentProfile.country){
+        console.error("❌ Perfil incompleto, no se puede marcar como online");
+        if(!currentProfile || !currentProfile.username){
+          alert('Completa tu perfil (al menos nombre) antes de conectar.');
+          goToScreen('profileSetupScreen');
+        } else if(!currentProfile.country){
+          alert('Selecciona tu país antes de conectar.');
+          goToScreen('countryScreen');
+        }
+        return;
+      }
+
+      const safeAvatar = currentProfile.avatar_url || 'https://cdn-icons-png.flaticon.com/512/3237/3237472.png';
+      if(!currentProfile.avatar_url){
+        currentProfile.avatar_url = safeAvatar;
+        database.ref('profiles/' + currentUser.uid + '/avatar_url').set(safeAvatar).catch(()=>{});
+      }
+
+      console.log("✅ Marcando usuario como online:", currentUser.uid);
+      window.isInVideoSession = true;
+      activeCallConnectedAt = null;
+      activeCallConnectionLogged = false;
+      const userRef = database.ref('onlineUsers/' + currentUser.uid);
+      await userRef.set({
+        username: currentProfile.username,
+        avatar_url: safeAvatar,
+        country: currentProfile.country,
+        birthDate: currentProfile.birthDate || null,
+        interests: Array.isArray(currentProfile.interests) ? currentProfile.interests : [],
+        timestamp: firebase.database.ServerValue.TIMESTAMP,
+        status: 'available'
+      });
+      userRef.onDisconnect().remove();
+      registerCallsListener();
+
+      scheduleFindRandomUser(800);
+    }
+
+    async function findRandomUser(){
+      if(!currentUser || !window.isInVideoSession || currentCallId) return;
+      try {
+        console.log("🔍 Buscando usuarios online...");
+        const snapshot = await database.ref('onlineUsers').once('value');
+        const online = snapshot.val() || {};
+        const myInterests = Array.isArray(currentProfile?.interests) ? currentProfile.interests : [];
+        const availableEntries = Object.entries(online)
+          .filter(([uid, data]) => uid !== currentUser.uid && data && data.status === 'available');
+
+        const preferred = myInterests.length
+          ? availableEntries.filter(([, data]) => hasSharedInterests(myInterests, data.interests || []))
+          : [];
+
+        const pool = preferred.length ? preferred : availableEntries;
+        const candidates = pool.map(([uid]) => uid);
+
+        console.log("👥 Usuarios online disponibles:", candidates.length, "| coincidencias:", preferred.length);
+
+        if(candidates.length === 0){
+          console.log("⏳ Nadie disponible, reintentando en 2.5s...");
+          scheduleFindRandomUser(2500);
+          return;
+        }
+
+        const randomUid = candidates[Math.floor(Math.random() * candidates.length)];
+        console.log("🎯 Usuario seleccionado:", randomUid);
+        await createCall(randomUid);
+      } catch(err){
+        console.error('❌ Error buscando usuario, retry:', err);
+        scheduleFindRandomUser(3000);
+      }
+    }
+
+
+    function registerCallsListener(){
+      if(callsRef && callsChildAddedHandler) return;
+      callsRef = database.ref('calls');
+      callsChildAddedHandler = snapshot => {
+        const callId = snapshot.key;
+        const callData = snapshot.val();
+        if(!callData || !callData.participants) return;
+        const { caller, callee } = callData.participants;
+        const createdAt = callData.createdAt || 0;
+        if(createdAt && (Date.now() - createdAt) > 45000) return;
+        if(callee === currentUser?.uid){
+          if(!window.isInVideoSession) return;
+          if(currentCallId && currentCallId !== callId) return;
+          if(pendingIncomingCallId && pendingIncomingCallId !== callId) return;
+
+          const acceptIncomingCall = async () => {
+            pendingIncomingCallId = callId;
+            if(!localStream){
+              await startLocalStream();
+            }
+            if(!localStream){
+              console.warn('⚠️ No hay stream local para aceptar llamada entrante');
+              database.ref('onlineUsers/' + currentUser.uid + '/status').set('available').catch(()=>{});
+              database.ref('onlineUsers/' + caller + '/status').set('available').catch(()=>{});
+              database.ref('calls/' + callId).remove().catch(()=>{});
+              pendingIncomingCallId = null;
+              return;
+            }
+
+            currentCallId = callId;
+            database.ref('onlineUsers/' + currentUser.uid + '/status').set('busy').catch(()=>{});
+            database.ref('onlineUsers/' + caller + '/status').set('busy').catch(()=>{});
+            database.ref(`calls/${callId}/presence/${currentUser.uid}`).set(true);
+            database.ref(`calls/${callId}/presence/${currentUser.uid}`).onDisconnect().remove();
+            startWebRTC(callId, false);
+            pendingIncomingCallId = null;
+          };
+
+          acceptIncomingCall().catch(err => {
+            console.error('❌ Error aceptando llamada entrante:', err);
+            pendingIncomingCallId = null;
+          });
+        }
+      };
+      callsRef.on('child_added', callsChildAddedHandler);
+    }
+
+    function unregisterCallsListener(){
+      if(callsRef && callsChildAddedHandler){
+        callsRef.off('child_added', callsChildAddedHandler);
+      }
+      callsRef = null;
+      callsChildAddedHandler = null;
+    }
+
+    async function createCall(remoteUid){
+      const remoteStatusRef = database.ref('onlineUsers/' + remoteUid + '/status');
+      const lockResult = await remoteStatusRef.transaction((status) => {
+        if(status === 'available') return 'ringing';
+        return; // abort
+      });
+
+      if(!lockResult.committed){
+        console.log('⛔ Usuario remoto ya no está disponible, reintentando...');
+        scheduleFindRandomUser(500);
+        return;
+      }
+
+      const callId = database.ref('calls').push().key;
+      currentCallId = callId;
+      console.log("📞 Creando llamada:", callId);
+
+      try {
+        await database.ref('onlineUsers/' + currentUser.uid + '/status').set('busy').catch(()=>{});
+        await database.ref('calls/' + callId).set({
+          participants: {
+            caller: currentUser.uid,
+            callee: remoteUid
+          },
+          createdAt: firebase.database.ServerValue.TIMESTAMP
+        });
+        await database.ref(`calls/${callId}/presence/${currentUser.uid}`).set(true);
+        database.ref(`calls/${callId}/presence/${currentUser.uid}`).onDisconnect().remove();
+
+        startWebRTC(callId, true);
+      } catch(err){
+        console.error('❌ Error creando llamada:', err);
+        await database.ref('onlineUsers/' + currentUser.uid + '/status').set('available').catch(()=>{});
+        await database.ref('onlineUsers/' + remoteUid + '/status').set('available').catch(()=>{});
+        await database.ref('calls/' + callId).remove().catch(()=>{});
+        currentCallId = null;
+        scheduleFindRandomUser(1200);
+      }
+    }
+
+    /* ====================== SISTEMA DE DETECCIÓN DE OFENSAS ====================== */
+    function initSpeechRecognition() {
+      if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        console.warn('Speech Recognition no está disponible en este navegador');
+        return;
+      }
+
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      speechRecognition = new SpeechRecognition();
+
+      speechRecognition.continuous = true;
+      speechRecognition.interimResults = true;
+      speechRecognition.lang = 'es-ES';
+
+      speechRecognition.onstart = () => {
+        console.log('🎤 Monitoreo de audio iniciado');
+        isListening = true;
+      };
+
+      speechRecognition.onresult = (event) => {
+        let finalTranscript = '';
+
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          if (event.results[i].isFinal && event.results[i][0].confidence > 0.7) {
+            finalTranscript += event.results[i][0].transcript + ' ';
+          }
+        }
+
+        if (finalTranscript.trim() !== '' && finalTranscript.length > 2) {
+          console.log('🗣️ Texto detectado:', finalTranscript);
+          // Debounce para evitar múltiples detecciones
+          clearTimeout(window.speechTimeout);
+          window.speechTimeout = setTimeout(() => {
+            checkForOffensiveLanguage(finalTranscript);
+          }, 500);
+        }
+      };
+
+      speechRecognition.onerror = (event) => {
+        console.error('Error en reconocimiento de voz:', event.error);
+        if (event.error !== 'no-speech') {
+          setTimeout(() => {
+            if (isListening) startSpeechMonitoring();
+          }, 1000);
+        }
+      };
+
+      speechRecognition.onend = () => {
+        console.log('🎤 Reconocimiento de voz terminado');
+        if (isListening) {
+          setTimeout(() => startSpeechMonitoring(), 500);
+        }
+      };
+    }
+
+    function startSpeechMonitoring() {
+      if (!speechRecognition) {
+        initSpeechRecognition();
+      }
+
+      if (speechRecognition && !isListening) {
+        try {
+          speechRecognition.start();
+        } catch (error) {
+          console.error('Error iniciando reconocimiento:', error);
+        }
+      }
+    }
+
+    function stopSpeechMonitoring() {
+      isListening = false;
+      if (speechRecognition) {
+        speechRecognition.stop();
+      }
+    }
+
+    function checkForOffensiveLanguage(text) {
+      const normalizedText = text.toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^\w\s]/g, ''); // Remover puntuación
+
+      const words = normalizedText.split(/\s+/);
+
+      for (const word of OFFENSIVE_WORDS) {
+        const normalizedWord = word.toLowerCase()
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '');
+
+        // Buscar coincidencias exactas en palabras completas
+        for (const textWord of words) {
+          if (textWord === normalizedWord) {
+            console.log('🚨 Palabra ofensiva detectada:', word);
+            handleOffensiveLanguage(word);
+            return;
+          }
+        }
+      }
+    }
+
+    async function handleOffensiveLanguage(detectedWord) {
+      offenseCount++;
+
+      if (offenseCount < OFFENSE_THRESHOLD) {
+        showWarning(detectedWord);
+
+        // Registrar la advertencia en Firebase
+        if (currentUser) {
+          database.ref(`warnings/${currentUser.uid}`).push({
+            word: detectedWord,
+            timestamp: firebase.database.ServerValue.TIMESTAMP,
+            count: offenseCount
+          });
+        }
+      } else {
+        // Bloquear usuario
+        await blockUserForOffense(detectedWord);
+      }
+    }
+
+    function showWarning(word) {
+      const indicator = document.getElementById('warningIndicator');
+      const wordDisplay = document.getElementById('warningWordDisplay');
+      const countDisplay = document.getElementById('warningCount');
+
+      wordDisplay.textContent = `Palabra detectada: "${word}"`;
+      countDisplay.textContent = offenseCount;
+
+      indicator.classList.add('active');
+    }
+
+    function dismissWarning() {
+      const indicator = document.getElementById('warningIndicator');
+      indicator.classList.remove('active');
+    }
+
+    function closeOffenseModal() {
+      const modal = document.getElementById('offenseModal');
+      modal.classList.remove('active');
+    }
+
+    async function blockUserForOffense(detectedWord) {
+      if (!currentUser) return;
+
+      const blockUntil = new Date();
+      blockUntil.setDate(blockUntil.getDate() + BLOCK_DURATION_DAYS);
+
+      const blockData = {
+        blocked: true,
+        blockedUntil: blockUntil.toISOString(),
+        blockReason: `Lenguaje ofensivo detectado: "${detectedWord}"`,
+        offenseCount: offenseCount,
+        lastOffense: firebase.database.ServerValue.TIMESTAMP
+      };
+
+      try {
+        console.log("🚫 Bloqueando usuario:", currentUser.uid, blockData);
+
+        // Actualizar perfil del usuario
+        await database.ref(`profiles/${currentUser.uid}`).update(blockData);
+        console.log("✅ Perfil actualizado con bloqueo");
+
+        // Registrar el bloqueo en nodo separado
+        await database.ref(`blocks/${currentUser.uid}`).push({
+          reason: blockData.blockReason,
+          detectedWord: detectedWord,
+          duration: BLOCK_DURATION_DAYS,
+          blockedUntil: blockUntil.toISOString(),
+          timestamp: firebase.database.ServerValue.TIMESTAMP,
+          automatic: true
+        });
+        console.log("✅ Bloqueo registrado en /blocks");
+
+        // Actualizar perfil local
+        currentProfile.blocked = true;
+        currentProfile.blockedUntil = blockUntil.toISOString();
+        currentProfile.blockReason = blockData.blockReason;
+
+        // Mostrar modal de bloqueo
+        showBlockModal(detectedWord, blockUntil);
+
+        // Detener reconocimiento de voz
+        stopSpeechMonitoring();
+        stopBodyMonitoring();
+
+        // Cerrar la llamada actual
+        if (peerConnection) {
+          peerConnection.close();
+        }
+
+        // Remover del listado de usuarios online
+        await database.ref(`onlineUsers/${currentUser.uid}`).remove();
+
+        console.log(`🚫 Usuario bloqueado por ${BLOCK_DURATION_DAYS} días por: "${detectedWord}"`);
+
+      } catch (error) {
+        console.error('❌ Error bloqueando usuario:', error);
+      }
+    }
+
+    function showBlockModal(detectedWord, blockUntil) {
+      document.getElementById('offensiveWordDisplay').textContent = detectedWord;
+      document.getElementById('offenseModal').classList.add('active');
+
+      // Iniciar countdown
+      startBlockCountdown(blockUntil);
+    }
+
+    function startBlockCountdown(blockUntil) {
+      const countdownElement = document.getElementById('offenseCountdown');
+
+      function updateCountdown() {
+        const now = new Date().getTime();
+        const blockTime = new Date(blockUntil).getTime();
+        const distance = blockTime - now;
+
+        if (distance > 0) {
+          const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+          const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+          const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+          const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+          countdownElement.textContent = `${days} días ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        } else {
+          countdownElement.textContent = "Bloqueo expirado";
+          // Aquí podrías automaticamente desbloquear al usuario
+        }
+      }
+
+      updateCountdown();
+      setInterval(updateCountdown, 1000);
+    }
+
+    function startBodyMonitoring() {
+      // Detección corporal desactivada por solicitud del producto.
+      return;
+    }
+
+    function stopBodyMonitoring() {
+      return;
+    }
+
+    /* ====================== WEBRTC ====================== */
+    async function startLocalStream(){
+      try {
+        if(localStream && localStream.getTracks().some(track => track.readyState === 'live')){
+          const localVideo = document.getElementById('localVideo');
+          localVideo.srcObject = localStream;
+          await localVideo.play().catch(()=>{});
+          return true;
+        }
+
+        localStream = await navigator.mediaDevices.getUserMedia({
+          video: {
+            width: { ideal: 1280 },
+            height: { ideal: 720 },
+            facingMode: "user"
+          },
+          audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true
+          }
+        });
+
+        const localVideo = document.getElementById('localVideo');
+        localVideo.srcObject = localStream;
+        await localVideo.play();
+        console.log("✅ Video local iniciado");
+        return true;
+      } catch(error){
+        console.error("❌ Error accediendo a cámara y micrófono:", error);
+        localStream = null;
+        alert("No se pudo acceder a la cámara/micrófono. Verifica los permisos.");
+        return false;
+      }
+      localStream = null;
+      const localVideo = document.getElementById('localVideo');
+      if(localVideo) localVideo.srcObject = null;
+    }
+
+    function stopLocalStream(){
+      if(localStream){
+        localStream.getTracks().forEach(track => {
+          try { track.stop(); } catch(e) {}
+        });
+      }
+      localStream = null;
+      const localVideo = document.getElementById('localVideo');
+      if(localVideo) localVideo.srcObject = null;
+    }
+    function startWebRTC(callId, isCaller){
+      peerConnection = new RTCPeerConnection(configuration);
+      console.log("🔄 Iniciando WebRTC, es caller?", isCaller);
+
+      if(localStream){
+        localStream.getTracks().forEach(track => {
+          peerConnection.addTrack(track, localStream);
+          console.log("➕ Track agregado:", track.kind);
+        });
+      } else {
+        console.warn("⚠️ No hay stream local disponible");
+      }
+
+      // Indicador de conexión
+      peerConnection.oniceconnectionstatechange = () => {
+        console.log("🔌 ICE Connection State:", peerConnection.iceConnectionState);
+        const indicator = document.getElementById('connectionIndicator');
+        if(peerConnection.iceConnectionState === "connected" || peerConnection.iceConnectionState === "completed"){
+          indicator.style.backgroundColor = "green";
+          console.log("✅ Conexión establecida");
+          flushPendingChatQueue();
+          if(!activeCallConnectionLogged){
+            activeCallConnectionLogged = true;
+            activeCallConnectedAt = Date.now();
+            incrementAnalytics({ connections: 1, countryName: currentRemoteCountry || 'Sin país' }).catch(() => {});
+          }
+        } else if(peerConnection.iceConnectionState === "disconnected" || peerConnection.iceConnectionState === "failed" || peerConnection.iceConnectionState === "closed"){
+          indicator.style.backgroundColor = "red";
+          console.log("❌ Conexión fallida o desconectada");
+          finalizeCallAnalytics().catch(() => {});
+          activeCallConnectionLogged = false;
+          autoNextPartner('ice-' + peerConnection.iceConnectionState);
+        } else {
+          indicator.style.backgroundColor = "orange";
+        }
+      };
+
+      peerConnection.ontrack = (event) => {
+        console.log("📹 Evento ontrack recibido:", event.track.kind);
+        const remoteVideo = document.getElementById('remoteVideo');
+        if(event.streams && event.streams[0]){
+          remoteStream = event.streams[0];
+          remoteVideo.srcObject = remoteStream;
+          console.log("✅ Stream remoto asignado");
+        } else {
+          if(!remoteStream){
+            remoteStream = new MediaStream();
+            remoteVideo.srcObject = remoteStream;
+          }
+          remoteStream.addTrack(event.track);
+          console.log("✅ Track remoto agregado");
+        }
+        remoteVideo.play().then(() => {
+          console.log("✅ Video remoto reproduciendo");
+          hideConnecting();
+        }).catch(e => console.error("❌ Error al reproducir video remoto:", e));
+      };
+
+      peerConnection.onicecandidate = event => {
+        if(event.candidate){
+          console.log("🧊 Enviando ICE candidate");
+          database.ref(`calls/${callId}/iceCandidates`).push({ from: currentUser.uid, candidate: JSON.stringify(event.candidate) });
+        }
+      };
+
+      currentIceCandidatesRef = database.ref(`calls/${callId}/iceCandidates`);
+      currentIceCandidatesRef.on('child_added', snapshot => {
+        const candidatePayload = snapshot.val();
+        if(!candidatePayload || candidatePayload.from === currentUser.uid || !candidatePayload.candidate) return;
+        try {
+          const candidate = new RTCIceCandidate(JSON.parse(candidatePayload.candidate));
+          peerConnection.addIceCandidate(candidate)
+            .then(() => console.log("✅ ICE candidate agregado"))
+            .catch(e => console.error("❌ Error agregando ICE candidate:", e));
+        } catch(e){
+          console.error('❌ ICE candidate inválido:', e);
+        }
+      });
+
+      if(isCaller){
+        createOffer(callId);
+      } else {
+        currentOfferRef = database.ref(`calls/${callId}/offer`);
+        currentOfferRef.on('value', async snapshot => {
+          const offerData = snapshot.val();
+          if(offerData){
+            try {
+              const offer = new RTCSessionDescription(JSON.parse(offerData));
+              await peerConnection.setRemoteDescription(offer);
+              console.log("✅ Oferta recibida y aplicada");
+              const answer = await peerConnection.createAnswer();
+              await peerConnection.setLocalDescription(answer);
+              await database.ref(`calls/${callId}/answer`).set(JSON.stringify(answer));
+              console.log("✅ Respuesta enviada");
+            } catch(err){
+              console.error("❌ Error procesando la oferta:", err);
+            }
+          }
+        });
+      }
+
+      currentAnswerRef = database.ref(`calls/${callId}/answer`);
+      currentAnswerRef.on('value', async snapshot => {
+        const answerData = snapshot.val();
+        if(answerData && peerConnection.signalingState === 'have-local-offer'){
+          try {
+            const answer = new RTCSessionDescription(JSON.parse(answerData));
+            await peerConnection.setRemoteDescription(answer);
+            console.log("✅ Respuesta recibida y aplicada");
+          } catch(err){
+            console.error("❌ Error al aplicar respuesta:", err);
+          }
+        }
+      });
+
+      // Cargar info del usuario remoto
+      database.ref(`calls/${callId}/participants`).once('value', snap => {
+        const parts = snap.val() || {};
+        let remoteUid = isCaller ? parts.callee : parts.caller;
+        remoteUidGlobal = remoteUid;
+        console.log("👤 remoteUid detectado:", remoteUid);
+        if(!remoteUid){
+          console.error("❌ No se encontró remoteUid");
+          document.getElementById('remoteName').textContent = "";
+          document.getElementById('remoteAvatar').src = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2230%22 height=%2230%22 viewBox=%220 0 30 30%22%3E%3Crect width=%2230%22 height=%2230%22 fill=%22%23e8eaed%22/%3E%3Ccircle cx=%2215%22 cy=%2211%22 r=%225%22 fill=%22%239aa0a6%22/%3E%3Crect x=%227%22 y=%2219%22 width=%2216%22 height=%227%22 rx=%223.5%22 fill=%22%239aa0a6%22/%3E%3C/svg%3E';
+          return;
+        }
+        if(currentRemoteProfileRef){ currentRemoteProfileRef.off(); }
+        currentRemoteProfileRef = database.ref('profiles/' + remoteUid);
+        currentRemoteProfileRef.on('value', userSnap => {
+          if(userSnap.exists()){
+            const rProfile = userSnap.val();
+            document.getElementById('remoteAvatar').src = rProfile.avatar_url || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2230%22 height=%2230%22 viewBox=%220 0 30 30%22%3E%3Crect width=%2230%22 height=%2230%22 fill=%22%23e8eaed%22/%3E%3Ccircle cx=%2215%22 cy=%2211%22 r=%225%22 fill=%22%239aa0a6%22/%3E%3Crect x=%227%22 y=%2219%22 width=%2216%22 height=%227%22 rx=%223.5%22 fill=%22%239aa0a6%22/%3E%3C/svg%3E';
+            let nameText = rProfile.username ? rProfile.username : "";
+            document.getElementById('remoteName').textContent = nameText;
+            currentRemoteCountry = rProfile.country || 'Sin país';
+          } else {
+            document.getElementById('remoteName').textContent = "";
+            document.getElementById('remoteAvatar').src = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2230%22 height=%2230%22 viewBox=%220 0 30 30%22%3E%3Crect width=%2230%22 height=%2230%22 fill=%22%23e8eaed%22/%3E%3Ccircle cx=%2215%22 cy=%2211%22 r=%225%22 fill=%22%239aa0a6%22/%3E%3Crect x=%227%22 y=%2219%22 width=%2216%22 height=%227%22 rx=%223.5%22 fill=%22%239aa0a6%22/%3E%3C/svg%3E';
+            currentRemoteCountry = '';
+          }
+        });
+      });
+
+      currentCallMessagesRef = database.ref(`calls/${callId}/messages`);
+      currentCallMessagesRef.on('child_added', snap => {
+        const msg = snap.val();
+        if(!msg || !msg.text) return;
+        if(msg.expiresAt && msg.expiresAt < Date.now()){
+          snap.ref.remove();
+          return;
+        }
+        renderChatMessage(msg, msg.senderUid === currentUser?.uid);
+        flushPendingChatQueue();
+      });
+      startMessageCleanup(callId);
+
+      currentParticipantsRef = database.ref(`calls/${callId}/participants`);
+      currentParticipantsRef.on('value', snap => {
+        const parts = snap.val();
+        if(!parts || !parts.caller || !parts.callee){
+          autoNextPartner('participants-missing');
+        }
+      });
+
+      const callStartedAt = Date.now();
+      if(connectWatchdogTimer) clearTimeout(connectWatchdogTimer);
+      connectWatchdogTimer = setTimeout(() => {
+        if(currentCallId !== callId) return;
+        const state = peerConnection?.iceConnectionState;
+        if(state !== 'connected' && state !== 'completed'){
+          console.warn('⏱️ Timeout de conexión, cambiando de usuario');
+          autoNextPartner('connect-timeout');
+        }
+      }, 18000);
+
+      currentPresenceRef = database.ref(`calls/${callId}/presence`);
+      currentPresenceRef.on('value', snap => {
+        if(currentCallId !== callId) return;
+        const pres = snap.val() || {};
+        const count = Object.keys(pres).length;
+        const iceState = peerConnection?.iceConnectionState;
+        const isConnected = iceState === 'connected' || iceState === 'completed';
+        if(count < 2 && isConnected){
+          autoNextPartner('peer-left');
+        }
+      });
+
+    }
+    async function createOffer(callId){
+      try {
+        const offer = await peerConnection.createOffer();
+        await peerConnection.setLocalDescription(offer);
+        await database.ref(`calls/${callId}/offer`).set(JSON.stringify(offer));
+        console.log("Oferta creada y enviada");
+      } catch(error){
+        console.error("Error creando oferta:", error);
+      }
+    }
+    function showConnecting(){
+      document.getElementById('connectingIndicator').classList.add('active');
+    }
+    function hideConnecting(){
+      document.getElementById('connectingIndicator').classList.remove('active');
+    }
+    function toggleAudio(){
+      if(!localStream) return;
+      localStream.getAudioTracks().forEach(track => track.enabled = !track.enabled);
+      document.getElementById('micIcon').classList.toggle('fa-microphone-slash');
+      document.getElementById('micIcon').classList.toggle('fa-microphone');
+    }
+    function restartCall(){
+      autoNextPartner('manual-next');
+    }
+
+    window.addEventListener('beforeunload', () => {
+      stopLocalStream();
+      if(currentUser){
+        database.ref(`onlineUsers/${currentUser.uid}`).remove();
+      }
+      if(currentCallId && currentUser){
+        database.ref(`calls/${currentCallId}/presence/${currentUser.uid}`).remove();
+      }
+    });
+
+    document.getElementById('chatInput')?.addEventListener('keydown', function(e){
+      if(e.key === 'Enter'){
+        e.preventDefault();
+        sendChatMessage();
+      }
+    });
+
+
+    const remoteVideoContainer = document.getElementById('remoteVideoContainer');
+    if(remoteVideoContainer){
+      remoteVideoContainer.addEventListener('touchstart', (e) => {
+        const t = e.changedTouches && e.changedTouches[0];
+        if(!t) return;
+        touchStartX = t.clientX;
+        touchStartY = t.clientY;
+      }, { passive: true });
+
+      remoteVideoContainer.addEventListener('touchend', (e) => {
+        const t = e.changedTouches && e.changedTouches[0];
+        if(!t) return;
+        const dx = t.clientX - touchStartX;
+        const dy = t.clientY - touchStartY;
+        const isHorizontalSwipe = Math.abs(dx) > 85 && Math.abs(dx) > Math.abs(dy) * 1.2;
+        if(isHorizontalSwipe){
+          autoNextPartner('swipe-next');
+        }
+      }, { passive: true });
+    }
+
+    document.getElementById('registerPassword').addEventListener('focus', () => {
+      document.getElementById('passwordMonkey').style.display = 'block';
+    });
+    document.getElementById('registerPassword').addEventListener('blur', () => {
+      document.getElementById('passwordMonkey').style.display = 'none';
+    });
+    document.getElementById('confirmPassword').addEventListener('focus', () => {
+      document.getElementById('passwordMonkeyConfirm').style.display = 'block';
+    });
+    document.getElementById('confirmPassword').addEventListener('blur', () => {
+      document.getElementById('passwordMonkeyConfirm').style.display = 'none';
+    });
+
+    /* ====================== MODAL: EDITAR PERFIL ====================== */
+    function openProfileModal() {
+      if(currentUser && currentProfile) {
+        document.getElementById('avatarPreviewProfile').src = currentProfile.avatar_url || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22100%22 height=%22100%22 viewBox=%220 0 100 100%22%3E%3Crect width=%22100%22 height=%22100%22 fill=%22%23e8eaed%22/%3E%3Ccircle cx=%2250%22 cy=%2238%22 r=%2217%22 fill=%22%239aa0a6%22/%3E%3Crect x=%2224%22 y=%2262%22 width=%2252%22 height=%2222%22 rx=%2211%22 fill=%22%239aa0a6%22/%3E%3C/svg%3E';
+        document.getElementById('usernameProfile').value = currentProfile.username || "";
+        document.getElementById('emailProfile').value = currentUser.email;
+      }
+      document.getElementById('profileModal').classList.add('active');
+    }
+    function closeProfileModal() {
+      document.getElementById('profileModal').classList.remove('active');
+    }
+    function uploadPhoto(slotIndex) {
+      window.currentPhotoSlot = slotIndex;
+      document.getElementById('photoInput').click();
+    }
+    function handlePhotoUpload(event) {
+      const file = event.target.files[0];
+      if(file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          userPhotos[window.currentPhotoSlot] = e.target.result;
+          document.getElementById('slot' + window.currentPhotoSlot).innerHTML = `<img src="${e.target.result}" alt="Foto ${window.currentPhotoSlot+1}">`;
+        }
+        reader.readAsDataURL(file);
+      }
+    }
+    function savePhotos() {
+      if(!currentUser) return;
+      database.ref('userPhotos/' + currentUser.uid).set(userPhotos)
+        .then(() => {
+          alert("Fotos guardadas exitosamente");
+          closeProfileModal();
+        })
+        .catch(err => alert("Error al guardar fotos: " + err));
+    }
+
+    /* ====================== MODAL: REPORTAR USUARIO ====================== */
+    function openReportModal() {
+      const modal = document.getElementById('reportModal');
+      const avatar = document.getElementById('reportUserAvatar');
+      const username = document.getElementById('reportUsername');
+
+      // Ocultar iconos de moderación
+      document.querySelector('.account-status-icon').style.display = 'none';
+      document.querySelector('.report-icon').style.display = 'none';
+      document.querySelector('.profile-icon').style.display = 'none';
+      document.querySelector('.config-icon').style.display = 'none';
+
+      // Obtener información del usuario remoto
+      if(remoteUidGlobal) {
+        database.ref('profiles/' + remoteUidGlobal).once('value')
+          .then(snapshot => {
+            const profile = snapshot.val();
+            if(profile) {
+              avatar.src = profile.avatar_url || 'https://cdn-icons-png.flaticon.com/512/3237/3237472.png';
+              username.textContent = profile.username || 'Usuario';
+            }
+          });
+      }
+
+      modal.classList.add('active');
+      document.getElementById('reportStatus').innerHTML = "";
+    }
+    function closeReportModal() {
+      document.getElementById('reportModal').classList.remove('active');
+      document.getElementById('reportStatus').innerHTML = "";
+
+      // Mostrar iconos de moderación nuevamente
+      document.querySelector('.account-status-icon').style.display = 'flex';
+      document.querySelector('.report-icon').style.display = 'flex';
+      document.querySelector('.profile-icon').style.display = 'flex';
+      document.querySelector('.config-icon').style.display = 'flex';
+
+      // Resetear selecciones
+      selectedReportOption = null;
+      document.querySelectorAll('.report-option').forEach(opt => {
+        opt.classList.remove('selected');
+      });
+
+      // Deshabilitar botón de reportar
+      const reportBtn = document.querySelector('.btn-report');
+      reportBtn.disabled = true;
+    }
+    function captureScreenshot() {
+      return "https://via.placeholder.com/300x200.png?text=Screenshot";
+    }
+    let selectedReportOption = null;
+
+    function selectReportOption(option) {
+      selectedReportOption = option;
+      document.querySelectorAll('.report-option').forEach(opt => {
+        opt.classList.remove('selected');
+      });
+      event.currentTarget.classList.add('selected');
+
+      // Habilitar el botón de reportar
+      const reportBtn = document.querySelector('.btn-report');
+      reportBtn.disabled = false;
+    }
+
+    // Sistema de puntuación de riesgo por tipo de reporte
+    const RISK_SCORES = {
+      'desnudos': 60,
+      'violencia': 70,
+      'explicito': 65,
+      'menor': 80,
+      'acoso': 50,
+      'spam': 20,
+      'suplantacion': 40,
+      'otro': 10
+    };
+
+    async function analyzeImage(imageUrl) {
+      try {
+        const [result] = await client.safeSearchDetection(imageUrl);
+        const detections = result.safeSearchAnnotation;
+
+        let imageRiskScore = 0;
+        if(detections.adult === 'VERY_LIKELY') imageRiskScore += 80;
+        if(detections.violence === 'VERY_LIKELY') imageRiskScore += 70;
+        if(detections.racy === 'VERY_LIKELY') imageRiskScore += 60;
+
+        return imageRiskScore;
+      } catch(err) {
+        console.error('Error analizando imagen:', err);
+        return 0;
+      }
+    }
+
+    // Analiza el historial de reportes
+    async function analyzeReportHistory(uid) {
+      const reportsSnap = await database.ref('reports/' + uid).once('value');
+      const reports = reportsSnap.val() || {};
+
+      let riskScore = 0;
+      let reportCount = 0;
+      let recentReports = 0;
+      let confirmedReports = 0;
+      const now = Date.now();
+
+      for(const report of Object.values(reports)) {
+        reportCount++;
+        if (now - report.timestamp < 7 * 24 * 60 * 60 * 1000) { // Últimos 7 días
+          recentReports++;
+          const baseScore = RISK_SCORES[report.tipo] || 0;
+
+          // Analizar evidencia de imagen si existe
+          if(report.evidenceUrl) {
+            const imageScore = await analyzeImage(report.evidenceUrl);
+            riskScore += (baseScore + imageScore) / 2;
+            if(imageScore > 50) confirmedReports++;
+          } else {
+            riskScore += baseScore * 0.5; // Menor peso sin evidencia
+          }
+        }
+      }
+
+      // Ajustar score basado en reportes confirmados
+      if(confirmedReports > 0) {
+        riskScore *= (1 + (confirmedReports / recentReports) * 0.5);
+      }
+
+      return {
+        totalReports: reportCount,
+        recentReports,
+        riskScore: riskScore / (recentReports || 1)
+      };
+    }
+
+    // Actualiza el estado de la cuenta basado en el análisis
+    async function updateAccountStatus(uid, riskAnalysis) {
+      const blockThreshold = 70;
+      const warningThreshold = 40;
+
+      let accountStatus = {
+        riskLevel: riskAnalysis.riskScore,
+        lastAnalysis: firebase.database.ServerValue.TIMESTAMP
+      };
+
+      if (riskAnalysis.riskScore >= blockThreshold) {
+        accountStatus.blocked = true;
+        accountStatus.blockedUntil = Date.now() + (7 * 24 * 60 * 60 * 1000); // 7 días
+        accountStatus.blockReason = 'Multiple serious reports detected';
+      } else if (riskAnalysis.riskScore >= warningThreshold) {
+        accountStatus.warned = true;
+        accountStatus.warningTimestamp = firebase.database.ServerValue.TIMESTAMP;
+      }
+
+      await database.ref('profiles/' + uid).update(accountStatus);
+      return accountStatus;
+    }
+
+    function submitReport() {
+      if (!selectedReportOption) {
+        alert('Por favor selecciona un motivo para el reporte');
+        return;
+      }
+
+      if (!remoteUidGlobal) {
+        alert('No se puede identificar al usuario a reportar');
+        return;
+      }
+
+      // Mostrar animación de envío
+      const reportBtn = document.querySelector('.btn-report');
+      const originalText = reportBtn.innerHTML;
+
+      // Deshabilitar el botón y mostrar spinner
+      reportBtn.disabled = true;
+      reportBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Enviando...';
+      reportBtn.style.opacity = '0.7';
+
+      // Animación de las opciones desapareciendo
+      const options = document.querySelectorAll('.report-option');
+      options.forEach((option, index) => {
+        setTimeout(() => {
+          option.style.transform = 'translateX(-100%)';
+          option.style.opacity = '0';
+        }, index * 100);
+      });
+
+      const reportData = {
+        tipo: selectedReportOption,
+        reporter: currentUser ? currentUser.uid : "desconocido",
+        timestamp: firebase.database.ServerValue.TIMESTAMP,
+        riskScore: RISK_SCORES[selectedReportOption] || 0
+      };
+
+      // Simular delay para mostrar animaciones
+      setTimeout(() => {
+        database.ref('reports/' + remoteUidGlobal).push(reportData)
+          .then(() => {
+            // Animación de éxito
+            reportBtn.innerHTML = '<i class="fa-solid fa-check"></i> ¡Enviado!';
+            reportBtn.style.background = 'var(--success-color)';
+            reportBtn.style.opacity = '1';
+
+            // Mostrar mensaje de éxito con animación
+            const statusEl = document.getElementById('reportStatus');
+            statusEl.innerHTML = `
+              <div class="report-success-message">
+                <i class="fa-solid fa-check-circle"></i>
+                <p>¡Gracias por reportar!</p>
+                <p>Hemos recibido tu reporte y lo revisaremos pronto.</p>
+              </div>
+            `;
+
+            // Animar la aparición del mensaje
+            const successMsg = statusEl.querySelector('.report-success-message');
+            successMsg.style.opacity = '0';
+            successMsg.style.transform = 'translateY(20px)';
+
+            setTimeout(() => {
+              successMsg.style.transition = 'all 0.3s ease';
+              successMsg.style.opacity = '1';
+              successMsg.style.transform = 'translateY(0)';
+            }, 100);
+
+            // Cerrar modal con animación
+            setTimeout(() => {
+              closeReportModalWithAnimation();
+            }, 2500);
+          })
+          .catch(err => {
+            console.error("Error en el reporte:", err);
+
+            // Animación de error
+            reportBtn.innerHTML = '<i class="fa-solid fa-exclamation-triangle"></i> Error';
+            reportBtn.style.background = 'var(--danger-color)';
+
+            document.getElementById('reportStatus').innerHTML = `
+              <div class="report-error-message">
+                <i class="fa-solid fa-exclamation-circle"></i>
+                <p style='color:var(--danger-color);'>Error al enviar el reporte</p>
+                <p style='color:var(--gray-text);'>Por favor, inténtalo de nuevo</p>
+              </div>
+            `;
+
+            // Restaurar botón después de 3 segundos
+            setTimeout(() => {
+              reportBtn.disabled = false;
+              reportBtn.innerHTML = originalText;
+              reportBtn.style.background = 'var(--danger-color)';
+              reportBtn.style.opacity = '1';
+
+              // Restaurar opciones
+              options.forEach((option, index) => {
+                setTimeout(() => {
+                  option.style.transform = 'translateX(0)';
+                  option.style.opacity = '1';
+                }, index * 50);
+              });
+            }, 3000);
+          });
+      }, 1000);
+    }
+
+    function closeReportModalWithAnimation() {
+      const modal = document.getElementById('reportModal');
+      const content = modal.querySelector('.report-content');
+
+      // Animación de salida
+      content.style.transform = 'scale(0.95) translateY(20px)';
+      content.style.opacity = '0';
+      modal.style.opacity = '0';
+
+      setTimeout(() => {
+        closeReportModal();
+
+        // Resetear estilos para próxima vez
+        content.style.transform = '';
+        content.style.opacity = '';
+        modal.style.opacity = '';
+
+        const reportBtn = document.querySelector('.btn-report');
+        reportBtn.disabled = false;
+        reportBtn.innerHTML = 'Reportar';
+        reportBtn.style.background = 'var(--danger-color)';
+        reportBtn.style.opacity = '1';
+
+        // Resetear opciones
+        const options = document.querySelectorAll('.report-option');
+        options.forEach(option => {
+          option.style.transform = '';
+          option.style.opacity = '';
+        });
+      }, 300);
+    }
+
+    /* ====================== FUNCIONES DE USUARIO ====================== */
+
+    /* ====================== FUNCIÓN FOLLOW ====================== */
+    function followRemoteUser() {
+      if(!remoteUidGlobal || !currentUser) return;
+      if(remoteUidGlobal === currentUser.uid) {
+        alert("No puedes seguirte a ti mismo.");
+        return;
+      }
+      database.ref('followers/' + remoteUidGlobal + '/' + currentUser.uid).set(true)
+        .then(async () => {
+          const remoteProfileRef = database.ref('profiles/' + remoteUidGlobal);
+          remoteProfileRef.transaction(profile => {
+            if(profile){
+              if(!profile.followersCount) profile.followersCount = 0;
+              profile.followersCount += 1;
+              if(profile.followersCount >= 20){
+                profile.verified = true;
+              }
+            }
+            return profile;
+          });
+          const followBtn = document.querySelector('.user-info .follow-btn');
+          followBtn.textContent = "Seguido";
+          followBtn.style.backgroundColor = "red";
+          followBtn.disabled = true;
+        })
+        .catch(err => console.error("Error al seguir:", err));
+    }
+
+    /* ====================== PANTALLA DE ESTADO DE CUENTA ====================== */
+    function openAccountStatusScreen() {
+      // Ocultar iconos de moderación
+      document.querySelector('.account-status-icon').style.display = 'none';
+      document.querySelector('.report-icon').style.display = 'none';
+      document.querySelector('.profile-icon').style.display = 'none';
+      document.querySelector('.config-icon').style.display = 'none';
+
+      goToScreen('accountStatusScreen');
+      const scanAvatar = document.getElementById('scanAvatar');
+      scanAvatar.src = currentProfile.avatar_url || 'https://cdn-icons-png.flaticon.com/512/3237/3237472.png';
+      document.getElementById('statusInfo').innerHTML = "<p>Escaneando cuenta, por favor espera...</p>";
+      document.getElementById('penaltiesList').innerHTML = "";
+      setTimeout(() => {
+        checkAccountPenalties();
+      }, 10000); // 10 seg
+    }
+    async function checkAccountPenalties() {
+      if(!currentUser) return;
+
+      let analysisResults = {
+        penalties: [],
+        riskLevel: 0,
+        warningCount: 0,
+        recentReports: 0
+      };
+
+      // Verificar edad
+      const birthDate = new Date(currentProfile.birthDate);
+      const now = new Date();
+      let age = now.getFullYear() - birthDate.getFullYear();
+      const m = now.getMonth() - birthDate.getMonth();
+      if(m < 0 || (m === 0 && now.getDate() < birthDate.getDate())){
+        age--;
+      }
+      if(age < 18){
+        analysisResults.penalties.push({
+          type: "AGE_RESTRICTION",
+          severity: "HIGH",
+          message: "Usuario menor de edad. Restricción permanente."
+        });
+        analysisResults.riskLevel += 100;
+      }
+
+      // Analizar reportes recientes
+      const reportAnalysis = await analyzeReportHistory(currentUser.uid);
+      analysisResults.recentReports = reportAnalysis.recentReports;
+      analysisResults.riskLevel += reportAnalysis.riskScore;
+
+      // Verificar bloqueos y advertencias
+      if(currentProfile.blocked){
+        const blockEndDate = new Date(currentProfile.blockedUntil);
+        analysisResults.penalties.push({
+          type: "ACCOUNT_BLOCKED",
+          severity: "HIGH",
+          message: `Cuenta bloqueada hasta: ${blockEndDate.toLocaleDateString()}`,
+          reason: currentProfile.blockReason || "Múltiples infracciones"
+        });
+      }
+
+      if(currentProfile.warned){
+        analysisResults.penalties.push({
+          type: "WARNING",
+          severity: "MEDIUM",
+          message: "Cuenta con advertencia activa"
+        });
+        analysisResults.warningCount++;
+      }
+
+      // Generar HTML basado en el análisis
+      let statusHTML = "";
+      let penaltiesHTML = "";
+
+      if(analysisResults.penalties.length > 0){
+        statusHTML = `
+          <p>Análisis de cuenta completado</p>
+          <p>Nivel de riesgo: ${analysisResults.riskLevel.toFixed(1)}</p>
+          <p>Reportes recientes: ${analysisResults.recentReports}</p>
+        `;
+
+        analysisResults.penalties.forEach(penalty => {
+          penaltiesHTML += `
+            <div class="penalty-item ${penalty.severity.toLowerCase()}">
+              <p><strong>${penalty.type}:</strong> ${penalty.message}</p>
+            </div>
+          `;
+        });
+
+        if(analysisResults.riskLevel >= 70){
+          penaltiesHTML += `
+            <p class="warning-text">Tu cuenta está en riesgo de ser suspendida permanentemente.</p>
+          `;
+        }
+
+        penaltiesHTML += "<button class='appeal-btn' onclick='appealPenalty()'>Apelar Penalizaciones</button>";
+      } else {
+        statusHTML = `
+          <p>Cuenta en buen estado</p>
+          <p>Nivel de riesgo: ${analysisResults.riskLevel.toFixed(1)}</p>
+        `;
+      }
+
+      document.getElementById('statusInfo').innerHTML = statusHTML;
+      document.getElementById('penaltiesList').innerHTML = penaltiesHTML;
+    }
+    function appealPenalty() {
+      alert("Enviando apelación al administrador...");
+      database.ref('appeals/' + currentUser.uid).push({
+        reason: "El usuario solicita eliminación de penalización",
+        timestamp: firebase.database.ServerValue.TIMESTAMP
+      }).then(() => {
+        alert("Apelación enviada. Esperando respuesta del administrador...");
+        setTimeout(() => {
+          database.ref('profiles/' + currentUser.uid).update({
+            blocked: null,
+            blockedUntil: null
+          });
+          currentProfile.blocked = null;
+          currentProfile.blockedUntil = null;
+          alert("El administrador ha aceptado la apelación. Penalización eliminada.");
+          goToScreen('settingsScreen');
+        }, 3000);
+      }).catch(err => {
+        console.error("Error al enviar apelación:", err);
+      });
+    }
+
+    /* ====================== PANTALLA DE SOPORTE (INCIDENCIAS) ====================== */
+    function openSupportScreen() {
+      goToScreen('supportScreen');
+      loadUserIncidences();
+    }
+    function toggleNewIncidenceForm() {
+      const form = document.getElementById('newIncidenceForm');
+      if(form.style.display === 'block'){
+        form.style.display = 'none';
+      } else {
+        form.style.display = 'block';
+      }
+    }
+    function loadUserIncidences() {
+      if(!currentUser) return;
+      const incidenceListEl = document.getElementById('incidenceList');
+      incidenceListEl.innerHTML = "<p>Cargando incidencias...</p>";
+      database.ref('incidences/' + currentUser.uid).on('value', snapshot => {
+        const data = snapshot.val();
+        if(!data){
+          incidenceListEl.innerHTML = "<p>No hay incidencias.</p>";
+          return;
+        }
+        let html = "";
+        const keys = Object.keys(data);
+        keys.forEach(key => {
+          const inc = data[key];
+          html += `
+            <div class="incidence-item">
+              <h4>Incidencia ID: ${key}</h4>
+              <p><strong>Descripción:</strong> ${inc.problem}</p>
+              ${
+                inc.adminResponse
+                  ? `<p class="incidence-response"><strong>Respuesta Admin:</strong> ${inc.adminResponse}</p>`
+                  : `<p style="color:orange;">(Sin respuesta aún)</p>`
+              }
+            </div>
+          `;
+        });
+        incidenceListEl.innerHTML = html;
+      });
+    }
+    function submitIncidence() {
+      const desc = document.getElementById('incidenceDescription').value;
+      if(desc.length < 11){
+        alert("La descripción debe tener al menos 11 caracteres.");
+        return;
+      }
+      const incidenceRef = database.ref('incidences/' + currentUser.uid).push();
+      incidenceRef.set({
+        problem: desc,
+        adminResponse: "",
+        status: "open",
+        createdAt: firebase.database.ServerValue.TIMESTAMP
+      }).then(() => {
+        alert("Incidencia enviada. Espera la respuesta del administrador.");
+        document.getElementById('incidenceDescription').value = "";
+        document.getElementById('charCounter').textContent = "0/500";
+        toggleNewIncidenceForm();
+      }).catch(err => {
+        console.error("Error creando incidencia:", err);
+      });
+    }
+
+    function openProfileScreen() {
+      hydrateProfileWidgets();
+      goToScreen('profileScreen');
+    }
+
+    function openConfigScreen() {
+      goToScreen('settingsScreen');
+      bindRealtimeActivity();
+    }
+
+    function hydrateProfileWidgets() {
+      if(!currentProfile) return;
+      document.getElementById('profileScreenAvatar').src = currentProfile.avatar_url || 'https://cdn-icons-png.flaticon.com/512/3237/3237472.png';
+      document.getElementById('profileScreenName').textContent = currentProfile.username || 'Usuario';
+      document.getElementById('profileScreenCountry').textContent = currentProfile.country || 'País no definido';
+      renderRealtimeCards();
+    }
+
+    function selectActivityMetric(metric) {
+      document.querySelectorAll('.activity-tab').forEach(tab => {
+        tab.classList.toggle('active', tab.dataset.metric === metric);
+      });
+      renderActivityChart(metric, 6);
+    }
+
+    function renderActivityBars(metric = 'connections') {
+      // Compat alias: mantiene llamadas existentes
+      renderActivityChart(metric);
+    }
+
+    function getActivitySeries(metric = 'connections') {
+      const base = Number(profileStats[metric] || 0);
+      const seed = metric === 'minutes' ? 7 : (metric === 'interactions' ? 5 : 9);
+      const points = Array.from({length: 7}, (_, i) => {
+        const factor = 0.46 + (i * 0.1);
+        const noise = ((i * seed) % 4) * 0.05;
+        return Math.max(0, Math.round(base * factor + (base * noise)));
+      });
+      points[6] = base;
+      return points;
+    }
+
+    function updateActivityScrubber(index) {
+      const metric = document.querySelector('.activity-tab.active')?.dataset.metric || 'connections';
+      renderActivityChart(metric, Number(index));
+    }
+
+    function renderActivityChart(metric = 'connections', selectedIndex = null) {
+      const svg = document.getElementById('activityChartSvg');
+      const labelEl = document.getElementById('activityChartMetricLabel');
+      const valueEl = document.getElementById('activityChartPointValue');
+      const xLabelsEl = document.getElementById('activityChartXLabels');
+      const scrubber = document.getElementById('activityScrubber');
+      if(!svg || !labelEl || !valueEl || !xLabelsEl || !scrubber) return;
+
+      const labelMap = { connections: 'Conexiones', minutes: 'Minutos', interactions: 'Interacciones' };
+      const series = getActivitySeries(metric);
+      const maxY = Math.max(5, ...series);
+      const idx = selectedIndex == null ? Number(scrubber.value || 6) : selectedIndex;
+      scrubber.value = String(idx);
+      labelEl.textContent = labelMap[metric] || 'Métrica';
+      valueEl.textContent = String(series[idx] || 0);
+
+      const W = 320, H = 180;
+      const m = {l:34,r:12,t:12,b:24};
+      const innerW = W-m.l-m.r;
+      const innerH = H-m.t-m.b;
+
+      const x = i => m.l + (i/6)*innerW;
+      const y = v => m.t + innerH - (v/maxY)*innerH;
+
+      const yTicks = [0, 0.25, 0.5, 0.75, 1].map(r => Math.round(maxY*r));
+      const yGuides = yTicks.map(v => `<line x1="${m.l}" y1="${y(v)}" x2="${W-m.r}" y2="${y(v)}" stroke="#e8edf3" stroke-width="1"/><text x="${m.l-6}" y="${y(v)+3}" text-anchor="end" font-size="9" fill="#94a3b8">${v}</text>`).join('');
+      const xTicks = Array.from({length:7}, (_,i)=>`<text x="${x(i)}" y="${H-6}" text-anchor="middle" font-size="9" fill="#94a3b8">${i+1}</text>`).join('');
+      const poly = series.map((v,i)=>`${x(i)},${y(v)}`).join(' ');
+      const activeX = x(idx);
+      const activeY = y(series[idx]||0);
+
+      svg.innerHTML = `
+        <line x1="${m.l}" y1="${m.t}" x2="${m.l}" y2="${H-m.b}" stroke="#cfd8e3" stroke-width="1.2"/>
+        <line x1="${m.l}" y1="${H-m.b}" x2="${W-m.r}" y2="${H-m.b}" stroke="#cfd8e3" stroke-width="1.2"/>
+        ${yGuides}
+        <polyline points="${poly}" fill="none" stroke="#cd040b" stroke-width="2.3"/>
+        ${series.map((v,i)=>`<circle cx="${x(i)}" cy="${y(v)}" r="${i===idx?4.4:2.8}" fill="${i===idx?'#cd040b':'#fca5a5'}"/>`).join('')}
+        <line x1="${activeX}" y1="${m.t}" x2="${activeX}" y2="${H-m.b}" stroke="#fecaca" stroke-width="1" stroke-dasharray="3 2"/>
+        ${xTicks}
+      `;
+
+      const dayLabels = ['D1','D2','D3','D4','D5','D6','Hoy'];
+      xLabelsEl.innerHTML = dayLabels.map((d,i)=>`<span style="font-weight:${i===idx?700:500};color:${i===idx?'#b91c1c':'#64748b'}">${d}</span>`).join('');
+    }
+
+    function renderRealtimeCards() {
+      document.getElementById('profileTotalConnections').textContent = String(profileStats.connections || 0);
+      document.getElementById('profileTotalInteractions').textContent = String(profileStats.interactions || 0);
+      document.getElementById('profileFollowers').textContent = String(profileStats.followers || 0);
+      document.getElementById('profileReports').textContent = String(profileStats.reports || 0);
+
+      document.getElementById('activityConnectionsCount').textContent = String(profileStats.connections || 0);
+      document.getElementById('activityMinutes').textContent = `${profileStats.minutes || 0}m`;
+
+      const countryList = document.getElementById('activityCountryList');
+      const countries = Object.entries(profileStats.countries || {}).sort((a,b) => (b[1]||0) - (a[1]||0));
+      if(!countries.length) {
+        countryList.innerHTML = '<p style="color:var(--gray-text);">Aún no hay conexiones registradas por país.</p>';
+      } else {
+        countryList.innerHTML = countries.slice(0,6).map(([country,count]) => `<div class="country-pill"><span>${country}</span><strong>${count}</strong></div>`).join('');
+      }
+
+      renderActivityChart(document.querySelector('.activity-tab.active')?.dataset.metric || 'connections');
+
+      const interactionLabel = document.getElementById('activityInteractionLabel');
+      if((profileStats.interactions || 0) >= 20) {
+        interactionLabel.textContent = 'Interacción alta: estás conversando de forma frecuente con otros usuarios.';
+      } else if((profileStats.interactions || 0) >= 8) {
+        interactionLabel.textContent = 'Interacción media: tu nivel de actividad es constante.';
+      } else {
+        interactionLabel.textContent = 'Interacción inicial: sigue conectando para desbloquear más estadísticas.';
+      }
+    }
+
+    async function incrementAnalytics(changes = {}) {
+      if(!currentUser) return;
+      const ref = database.ref('analytics/' + currentUser.uid);
+      await ref.transaction(prev => {
+        const base = prev || { connections: 0, interactions: 0, minutes: 0, reports: 0, countries: {} };
+        base.connections = Number(base.connections || 0) + Number(changes.connections || 0);
+        base.interactions = Number(base.interactions || 0) + Number(changes.interactions || 0);
+        base.minutes = Number(base.minutes || 0) + Number(changes.minutes || 0);
+        base.reports = Number(base.reports || 0) + Number(changes.reports || 0);
+        base.countries = base.countries || {};
+        if(changes.countryName){
+          const key = changes.countryName;
+          base.countries[key] = Number(base.countries[key] || 0) + 1;
+        }
+        return base;
+      });
+    }
+
+    async function finalizeCallAnalytics() {
+      if(!activeCallConnectedAt || !currentUser) return;
+      const elapsedMin = Math.max(1, Math.floor((Date.now() - activeCallConnectedAt) / 60000));
+      activeCallConnectedAt = null;
+      try {
+        await incrementAnalytics({ minutes: elapsedMin });
+      } catch(err) {
+        console.warn('No se pudo actualizar minutos de actividad:', err);
+      }
+    }
+
+    function bindRealtimeActivity() {
+      if(!currentUser || activityListenersBound) return;
+      activityListenersBound = true;
+
+      database.ref('analytics/' + currentUser.uid).on('value', snap => {
+        const data = snap.val() || {};
+        profileStats.connections = Number(data.connections || 0);
+        profileStats.interactions = Number(data.interactions || 0);
+        profileStats.minutes = Number(data.minutes || 0);
+        profileStats.reports = Number(data.reports || 0);
+        profileStats.countries = data.countries || {};
+        renderRealtimeCards();
+      });
+
+      database.ref('profiles/' + currentUser.uid + '/followersCount').on('value', snap => {
+        profileStats.followers = Number(snap.val() || 0);
+        renderRealtimeCards();
+      });
+
+      database.ref('incidences/' + currentUser.uid).on('value', snap => {
+        const data = snap.val() || {};
+        const notes = [];
+        Object.keys(data).forEach(key => {
+          const item = data[key] || {};
+          if(item.adminResponse){
+            notes.push(`<div class="country-pill"><span>Soporte</span><strong>${item.adminResponse}</strong></div>`);
+          }
+        });
+        const host = document.getElementById('notificationsList');
+        if(host){
+          host.innerHTML = notes.length
+            ? notes.join('')
+            : '<p style="color:var(--gray-text);">Aquí llegarán notificaciones del sistema.</p>';
+        }
+      });
+    }
+    document.getElementById('incidenceDescription').addEventListener('input', e => {
+      const val = e.target.value;
+      const counterEl = document.getElementById('charCounter');
+      counterEl.textContent = val.length + "/500";
+    });
+  </script>
+
+<script>
+function handleOmegleStart(mode){
+  const v=document.getElementById('omegleInterests')?.value||'';
+  if(v) localStorage.setItem('bealy_interests', v);
+  const user = firebase.auth().currentUser;
+  if(user){
+    goToScreen('videoCallScreen');
+  } else {
+    goToScreen('loginScreen');
+  }
+}
+</script>
+
+<script>(function(){var loc=location.href.replace(/#.*$/,"");var ATTR_NAMES=["data-product-id","data-productid","data-product_id","product-id","productid","product_id","data-source-entity-id","source-entity-id","source_entity_id","data-product","data-metadata","data-meta"];var DATASET_KEYS=["productId","productid","product_id","sourceEntityId","sourceentityid","source_entity_id","product","metadata","meta"];function readProductId(value){if(typeof value!=="string"||value.length===0)return null;if(/^[0-9]{6,}$/.test(value))return value;var match=value.match(/(?:product(?:_|-)?id|source(?:_|-)?entity(?:_|-)?id)["'=:\s]+([0-9]{6,})/i);return match?match[1]:null}function extractProductId(start){for(var node=start;node&&node!==document.body;node=node.parentElement){for(var i=0;i<ATTR_NAMES.length;i++){var attrValue=node.getAttribute&&node.getAttribute(ATTR_NAMES[i]);var attrProductId=readProductId(attrValue);if(attrProductId)return attrProductId}var dataset=node.dataset||null;if(dataset){for(var j=0;j<DATASET_KEYS.length;j++){var dataValue=dataset[DATASET_KEYS[j]];var dataProductId=readProductId(dataValue);if(dataProductId)return dataProductId}}}return null}document.addEventListener("click",function(e){var target=e.target instanceof Element?e.target:null;if(!target)return;var a=target.closest?target.closest("a[href]"):null;if(!a||!a.href||!/^https?:\/\//.test(a.href))return;if(a.href.replace(/#.*$/,"")===loc)return;if(parent===window)return;var productId=extractProductId(target)||extractProductId(a);if(productId){e.preventDefault();parent.postMessage({type:"ecto-artifact-link-click",productId:productId},"*");return}e.preventDefault();parent.postMessage({type:"ecto:usercontent-link-click",href:a.href},"*")},true)})();</script><script>(function(){var FOCUS_TYPE="ecto:artifact-focus-request";var CLOSE_TYPE="ecto:artifact-close-request";function focusArtifactDocument(){var body=document.body;if(!body)return;try{window.focus();}catch(e){}if(!body.hasAttribute("tabindex"))body.setAttribute("tabindex","-1");try{body.focus({preventScroll:true});}catch(e){try{body.focus();}catch(e2){}}}window.addEventListener("message",function(event){if(event.source!==window.parent)return;var data=event.data;if(!data||typeof data!=="object"||data.type!==FOCUS_TYPE)return;if(document.readyState==="loading"){document.addEventListener("DOMContentLoaded",focusArtifactDocument,{once:true});return;}focusArtifactDocument();});window.addEventListener("keydown",function(event){if(event.key!=="Escape")return;window.setTimeout(function(){if(event.defaultPrevented)return;window.parent.postMessage({type:CLOSE_TYPE},"*");},0);});})();</script></body>
+</html>
